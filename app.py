@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from waitress import serve
 
 
 app = Flask(__name__)
@@ -10,5 +11,11 @@ def hello_world():
     return jsonify([{"id": 1, "name": "Draft"}, {"id": 2, "name": "Tester"}])
 
 
+mode = "pro"
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    if mode == "dev":
+        app.run(host='0.0.0.0', port=50100, debug=True)
+    else:
+        serve(app, host='0.0.0.0', port=50100, threads=1)
