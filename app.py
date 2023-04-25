@@ -1,5 +1,5 @@
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, MessageAction
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
 from linebot.exceptions import (
     InvalidSignatureError
@@ -63,6 +63,53 @@ def lineWebhook():
     return 'OK'
 
 
+def send_card_message(event):
+    carousel_template = CarouselTemplate(
+        columns=[
+            CarouselColumn(
+                thumbnail_image_url='https://example.com/image1.jpg',
+                title='Card 1 Title',
+                text='Card 1 Text',
+                actions=[
+                    MessageAction(
+                        label='Button 1',
+                        text='Button 1 clicked'
+                    )
+                ]
+            ),
+            CarouselColumn(
+                thumbnail_image_url='https://example.com/image2.jpg',
+                title='Card 2 Title',
+                text='Card 2 Text',
+                actions=[
+                    MessageAction(
+                        label='Button 2',
+                        text='Button 2 clicked'
+                    )
+                ]
+            ),
+            CarouselColumn(
+                thumbnail_image_url='https://example.com/image3.jpg',
+                title='Card 3 Title',
+                text='Card 3 Text',
+                actions=[
+                    MessageAction(
+                        label='Button 3',
+                        text='Button 3 clicked'
+                    )
+                ]
+            )
+        ]
+    )
+
+    message = TemplateSendMessage(
+        alt_text='Carousel template',
+        template=carousel_template
+    )
+
+    line_bot_api.reply_message(event.reply_token, message)
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     print("body: ", event, flush=True)
@@ -81,27 +128,61 @@ def handle_message(event):
     # )
     # line_bot_api.reply_message(event.reply_token, location_message)
 
-    quick_reply_items = [
-        QuickReplyButton(
-            action=MessageAction(
-                label='Yes',
-                text='Yes'
+    # quick_reply_items = [
+    #     QuickReplyButton(
+    #         action=MessageAction(
+    #             label='Yes',
+    #             text='Yes'
+    #         )
+    #     ),
+    #     QuickReplyButton(
+    #         action=MessageAction(
+    #             label='No',
+    #             text='No',
+    #         )
+    #     )
+    # ]
+
+    # quick_reply = QuickReply(items=quick_reply_items)
+
+    # message = TextSendMessage(
+    #     text='Do you like LINE bot SDK?',
+    #     quick_reply=quick_reply
+    # )
+    # line_bot_api.reply_message(event.reply_token, message)
+
+    bubble = BubbleContainer(
+        direction='ltr',
+        hero=ImageComponent(
+            url='https://sv1.picz.in.th/images/2023/04/25/y9AG0V.jpg',
+            size='full',
+            aspect_ratio='20:13',
+            aspect_mode='cover',
+            action=URIAction(
+                uri='https://www.youtube.com/',
+                label='label'
             )
         ),
-        QuickReplyButton(
-            action=MessageAction(
-                label='No',
-                text='No'
-            )
+        body=BoxComponent(
+            layout='vertical',
+            contents=[
+                TextComponent(text='Hello,'),
+                TextComponent(text='World!'),
+                SeparatorComponent(),
+                TextComponent(text='This is a Flex Message.')
+            ]
+        ),
+        footer=BoxComponent(
+            layout='vertical',
+            contents=[
+                TextComponent(text='Footer'),
+                TextComponent(text='Text')
+            ]
         )
-    ]
-
-    quick_reply = QuickReply(items=quick_reply_items)
-
-    message = TextSendMessage(
-        text='Do you like LINE bot SDK?',
-        quick_reply=quick_reply
     )
+
+    message = FlexSendMessage(alt_text='Flex Message', contents=bubble)
+
     line_bot_api.reply_message(event.reply_token, message)
 
 
