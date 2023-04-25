@@ -4,3 +4,4 @@ waitress
 tensorflow
 line-bot-sdk
 Pillow
+dotenv
