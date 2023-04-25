@@ -16,6 +16,8 @@ from io import BytesIO
 import base64
 from dotenv import load_dotenv
 import os
+import h5py
+
 
 # Load variables from .env file into environment
 load_dotenv()
@@ -39,7 +41,12 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 # Load the model
-model = load_model(model_path, compile=False)
+model = load_model("keras_Model.h5", compile=False)
+with h5py.File('keras_Model.h5', 'r') as f:
+    model = load_model(f)
+
+model.summary()
+
 
 # Load the labels
 class_names = open("labels.txt", "r").readlines()
