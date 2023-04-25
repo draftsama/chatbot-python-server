@@ -1,5 +1,5 @@
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, MessageAction
 )
 from linebot.exceptions import (
     InvalidSignatureError
@@ -69,9 +69,40 @@ def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
     print("profile: ", profile, flush=True)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text))
+    # line_bot_api.reply_message(
+    #     event.reply_token,
+    #     TextSendMessage(text=event.message.text))
+
+    location_message = LocationSendMessage(
+        title='My Location',
+        address='Tokyo',
+        latitude=35.65910807942215,
+        longitude=139.70372892916203
+    )
+    line_bot_api.reply_message(event.reply_token, location_message)
+
+    quick_reply_items = [
+        QuickReplyButton(
+            action=MessageAction(
+                label='Yes',
+                text='Yes'
+            )
+        ),
+        QuickReplyButton(
+            action=MessageAction(
+                label='No',
+                text='No'
+            )
+        )
+    ]
+
+    quick_reply = QuickReply(items=quick_reply_items)
+
+    message = TextSendMessage(
+        text='Do you like LINE bot SDK?',
+        quick_reply=quick_reply
+    )
+    line_bot_api.reply_message(event.reply_token, message)
 
 
 @app.route('/get', methods=['GET'])
