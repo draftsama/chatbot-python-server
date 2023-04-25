@@ -36,7 +36,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-with open('flex_message.json', 'r') as f:
+with open('flex_message_template.json', 'r') as f:
     flex_message_json = json.load(f)
 
 
