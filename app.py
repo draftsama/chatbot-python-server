@@ -125,7 +125,7 @@ def handle_message(event):
         reply_flex_message_options(event.reply_token)
         return
 
-    if len(re.findall("ค้นหาด้วยชื่อ", event.message.text)) != 0:
+    if len(re.findall("ค้นหาจากแคตตาล็อก", event.message.text)) != 0:
         reply_flex_message_find_products(event.reply_token)
         return
 
