@@ -53,6 +53,7 @@ def lineWebhook():
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
+    print("Request body: ", body)
 
     # handle webhook body
     try:
@@ -66,7 +67,6 @@ def lineWebhook():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    print(event)
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
