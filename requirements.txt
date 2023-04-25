@@ -1,8 +1,6 @@
 numpy
 flask
 waitress
-tensorflow
 line-bot-sdk
 Pillow
 python-dotenv
-h5py

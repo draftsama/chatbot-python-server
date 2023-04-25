@@ -9,14 +9,12 @@ from linebot import (
 )
 from flask import Flask, jsonify, request, abort
 from waitress import serve
-from keras.models import load_model  # TensorFlow is required for Keras to work
 from PIL import Image, ImageOps
 import numpy as np
 from io import BytesIO
 import base64
 from dotenv import load_dotenv
 import os
-import h5py
 
 
 # Load variables from .env file into environment
@@ -38,33 +36,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-# Load the labels
-class_names = open("labels.txt", "r").readlines()
-print("class_names --->", class_names)
-
-
 # Load the model
-with h5py.File('/opt/render/project/src/keras_Model.h5', 'r') as f:
-    model = load_model(f)
-
-model.summary()
-
-
-def test():
-    image = Image.open('input.png').convert('RGB')
-    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-    size = (224, 224)
-    image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
-    image_array = np.asarray(image)
-    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-    data[0] = normalized_image_array
-    prediction = model.predict(data)
-
-    print(class_names, prediction)
-    image.close()
-
-
-# test()
 
 
 def load_image_from_base64(base64_string):
@@ -102,34 +74,6 @@ def handle_message(event):
 @app.route('/get', methods=['GET'])
 def hello_world():
     return jsonify([{"id": 1, "name": "Draft"}, {"id": 2, "name": "Tester"}])
-
-
-@app.route('/check_image', methods=['POST'])
-def upload_image():
-    base64 = request.json['image']
-    image = load_image_from_base64(base64).convert('RGB')
-    # file_path = "image.png"
-    # save_image_from_base64(base64, file_path)
-    data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-    size = (224, 224)
-    image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
-    image_array = np.asarray(image)
-    normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
-    data[0] = normalized_image_array
-
-    # Predicts the model
-    prediction = model.predict(data)
-    index = np.argmax(prediction)
-    class_name = class_names[index]
-    confidence_score = prediction[0][index]
-
-    result = {"class": class_name[2:].strip(
-    ), "score": float(confidence_score)}
-
-    image.close()
-    base64 = ''
-
-    return jsonify(result)
 
 
 if __name__ == '__main__':
