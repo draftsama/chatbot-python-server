@@ -154,7 +154,7 @@ def handle_message(event):
     bubble = BubbleContainer(
         direction='ltr',
         hero=ImageComponent(
-            url='https://sv1.picz.in.th/images/2023/04/25/y9AG0V.jpg',
+            url='https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
             size='full',
             aspect_ratio='20:13',
             aspect_mode='cover',
