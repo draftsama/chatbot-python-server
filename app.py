@@ -66,8 +66,10 @@ def lineWebhook():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     print("Request body: ", event, flush=True)
-    profile = line_bot_api.get_profile(event.source.userId)
-    print("profile: ", profile, flush=True)
+    # profile = line_bot_api.get_profile(event.source.userId)
+    user_id = event.source.user_id
+    print(f"Received message from user ID: {user_id}")
+    # print("profile: ", profile, flush=True)
 
     line_bot_api.reply_message(
         event.reply_token,
