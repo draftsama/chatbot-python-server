@@ -127,18 +127,21 @@ def handle_message(event):
 
     if len(re.findall("ค้นหาด้วยชื่อ", event.message.text)) != 0:
         reply_flex_message_find_products(event.reply_token)
+        return
+
+    if len(re.findall("ค้นหาร้านค้า", event.message.text)) != 0:
+        location_message = LocationSendMessage(
+            title='DoHome',
+            address='DoHome',
+            latitude=13.7667711,
+            longitude=100.5488918
+        )
+        line_bot_api.reply_message(event.reply_token, location_message)
+        return
 
     # line_bot_api.reply_message(
     #     event.reply_token,
     #     TextSendMessage(text="@"+profile.display_name))
-
-    # location_message = LocationSendMessage(
-    #     title='My Location',
-    #     address='Tokyo',
-    #     latitude=35.65910807942215,
-    #     longitude=139.70372892916203
-    # )
-    # line_bot_api.reply_message(event.reply_token, location_message)
 
     # quick_reply_items = [
     #     QuickReplyButton(
