@@ -64,53 +64,6 @@ def lineWebhook():
     return 'OK'
 
 
-def send_card_message(event):
-    carousel_template = CarouselTemplate(
-        columns=[
-            CarouselColumn(
-                thumbnail_image_url='https://example.com/image1.jpg',
-                title='Card 1 Title',
-                text='Card 1 Text',
-                actions=[
-                    MessageAction(
-                        label='Button 1',
-                        text='Button 1 clicked'
-                    )
-                ]
-            ),
-            CarouselColumn(
-                thumbnail_image_url='https://example.com/image2.jpg',
-                title='Card 2 Title',
-                text='Card 2 Text',
-                actions=[
-                    MessageAction(
-                        label='Button 2',
-                        text='Button 2 clicked'
-                    )
-                ]
-            ),
-            CarouselColumn(
-                thumbnail_image_url='https://example.com/image3.jpg',
-                title='Card 3 Title',
-                text='Card 3 Text',
-                actions=[
-                    MessageAction(
-                        label='Button 3',
-                        text='Button 3 clicked'
-                    )
-                ]
-            )
-        ]
-    )
-
-    message = TemplateSendMessage(
-        alt_text='Carousel template',
-        template=carousel_template
-    )
-
-    line_bot_api.reply_message(event.reply_token, message)
-
-
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     print("body: ", event, flush=True)
@@ -151,7 +104,7 @@ def handle_message(event):
     #     quick_reply=quick_reply
     # )
     # line_bot_api.reply_message(event.reply_token, message)
-
+    print(flex_message_json, flush=True)
     flex_message = FlexSendMessage.new_from_json_dict(flex_message_json)
 
     line_bot_api.reply_message(event.reply_token, flex_message)
