@@ -1,0 +1,88 @@
+{
+    "type": "bubble",
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "contents": [
+            {
+                "type": "text",
+                "text": "MARINE",
+                "size": "sm",
+                "wrap": true,
+                "margin": "none",
+                "style": "normal",
+                "decoration": "none"
+            },
+            {
+                "type": "separator",
+                "margin": "md"
+            },
+            {
+                "type": "box",
+                "layout": "horizontal",
+                "margin": "xs",
+                "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                            "type": "message",
+                            "label": "ค้นหาด้วยชื่อ",
+                            "text": "ค้นหาด้วยชื่อ"
+                        },
+                        "margin": "md",
+                        "gravity": "bottom",
+                        "color": "#FFFFFF"
+                    }
+                ],
+                "backgroundColor": "#1C0B97",
+                "spacing": "xs"
+            },
+            {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                            "type": "message",
+                            "label": "ค้นหาด้วยภาพ",
+                            "text": "ค้นหาด้วยภาพ"
+                        },
+                        "color": "#FFFFFF"
+                    }
+                ],
+                "backgroundColor": "#A2B6F4",
+                "margin": "xs",
+                "spacing": "xs"
+            },
+            {
+                "type": "box",
+                "layout": "horizontal",
+                "contents": [
+                    {
+                        "type": "button",
+                        "action": {
+                            "type": "message",
+                            "label": "ค้นหาจากแคตตาล็อก",
+                            "text": "ค้นหาจากแคตตาล็อก"
+                        },
+                        "color": "#FFFFFF"
+                    }
+                ],
+                "backgroundColor": "#1C0B97",
+                "spacing": "xs",
+                "margin": "xs",
+                "action": {
+                    "type": "uri",
+                    "label": "ค้นหาจากแคตตาล็อก",
+                    "uri": "http://linecorp.com/"
+                }
+            }
+        ]
+    },
+    "styles": {
+        "footer": {
+            "separator": true
+        }
+    }
+}

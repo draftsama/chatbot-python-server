@@ -1,0 +1,102 @@
+{
+    "type": "bubble",
+    "hero": {
+        "type": "image",
+        "size": "full",
+        "aspectRatio": "15:9",
+        "aspectMode": "cover",
+        "url": "https://sv1.picz.in.th/images/2023/04/25/y96TZD.jpg",
+        "offsetTop": "none",
+        "offsetStart": "none",
+        "offsetBottom": "none",
+        "offsetEnd": "none"
+    },
+    "body": {
+        "type": "box",
+        "layout": "vertical",
+        "spacing": "sm",
+        "contents": [
+            {
+                "type": "text",
+                "text": "MR-S DG เออร์รี่วู้ด",
+                "wrap": true,
+                "weight": "bold",
+                "size": "xl"
+            },
+            {
+                "type": "box",
+                "layout": "baseline",
+                "contents": [
+                    {
+                        "type": "text",
+                        "text": "฿136",
+                        "wrap": true,
+                        "weight": "bold",
+                        "size": "xl",
+                        "flex": 0
+                    },
+                    {
+                        "type": "text",
+                        "text": ".99",
+                        "wrap": true,
+                        "weight": "bold",
+                        "size": "sm",
+                        "flex": 0
+                    }
+                ]
+            }
+        ]
+    },
+    "footer": {
+        "type": "box",
+        "layout": "horizontal",
+        "spacing": "md",
+        "contents": [
+            {
+                "type": "button",
+                "action": {
+                    "type": "uri",
+                    "label": "รายละเอียด",
+                    "uri": "https://www.dohome.co.th/en/marine-ceramic-floor-tiles-60x60-a-dg-r-t-early-wood-10323038.html"
+                },
+                "color": "#FFFFFF",
+                "position": "relative",
+                "margin": "none"
+            },
+            {
+                "type": "separator",
+                "margin": "md",
+                "color": "#FFFFFF"
+            },
+            {
+                "type": "button",
+                "color": "#FFFFFF",
+                "offsetTop": "none",
+                "offsetBottom": "md",
+                "action": {
+                    "type": "uri",
+                    "label": "สั่งซื้อสินค้า",
+                    "uri": "https://www.dohome.co.th/en/marine-ceramic-floor-tiles-60x60-a-dg-r-t-early-wood-10323038.html"
+                }
+            }
+        ],
+        "margin": "md",
+        "cornerRadius": "none",
+        "borderWidth": "none",
+        "paddingBottom": "none",
+        "flex": 0,
+        "action": {
+            "type": "message",
+            "label": "action",
+            "text": "hello"
+        },
+        "backgroundColor": "#161864",
+        "position": "relative",
+        "background": {
+            "type": "linearGradient",
+            "angle": "0deg",
+            "startColor": "#000000",
+            "endColor": "#ffffff"
+        }
+    }
+}

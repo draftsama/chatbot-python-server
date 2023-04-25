@@ -1,3 +1,0 @@
-0 Flush Toilet
-1 Basin
-2 Gas Stove

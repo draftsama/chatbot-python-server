@@ -2,11 +2,12 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
 from linebot.exceptions import (
-    InvalidSignatureError
+    InvalidSignatureError, LineBotApiError
 )
 from linebot import (
     LineBotApi, WebhookHandler
 )
+
 from flask import Flask, jsonify, request, abort
 from waitress import serve
 from PIL import Image, ImageOps
@@ -16,6 +17,8 @@ import base64
 from dotenv import load_dotenv
 import os
 import json
+import re
+
 
 # Load variables from .env file into environment
 load_dotenv()
@@ -36,8 +39,56 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-with open('flex_message_template.json', 'r') as f:
-    flex_message_json = json.load(f)
+flex_message_options = None
+with open('flex_message_options.json', 'r') as f:
+    message = dict()
+    message['type'] = 'carousel'
+    message['contents'] = [json.load(f)]
+    flex_message_options = FlexSendMessage(
+        alt_text="Test", contents=message)
+
+
+def reply_flex_message_options(reply):
+    try:
+        line_bot_api.reply_message(reply, flex_message_options)
+    except LineBotApiError as e:
+        print('e.status_code:', e.status_code)
+        print('e.error.message:', e.error.message)
+        print('e.error.details:', e.error.details)
+
+
+flex_message_find_products = None
+with open('product_message.json', 'r') as f:
+    message = dict()
+    message['type'] = 'carousel'
+    i = json.load(f)
+    message['contents'] = [i, i, i]
+    flex_message_find_products = FlexSendMessage(
+        alt_text="Test", contents=message)
+
+
+def reply_flex_message_find_products(reply):
+    try:
+        line_bot_api.reply_message(reply, flex_message_find_products)
+    except LineBotApiError as e:
+        print('e.status_code:', e.status_code)
+        print('e.error.message:', e.error.message)
+        print('e.error.details:', e.error.details)
+
+
+# message = dict()
+# message['type'] = 'carousel'
+# message['contents'] = [flex_message_json, flex_message_json]
+
+# flex_messages = FlexSendMessage(
+#     alt_text="Test", contents=message)
+
+# try:
+#     line_bot_api.broadcast(flex_messages)
+# except LineBotApiError as e:
+#     print('e.status_code:', e.status_code)
+#     print('e.error.message:', e.error.message)
+#     print('e.error.details:', e.error.details)
 
 
 def load_image_from_base64(base64_string):
@@ -69,6 +120,13 @@ def handle_message(event):
     print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
     print("profile: ", profile, flush=True)
+
+    if len(re.findall("สินค้า", event.message.text)) != 0:
+        reply_flex_message_options(event.reply_token)
+        return
+
+    if len(re.findall("ค้นหาด้วยชื่อ", event.message.text)) != 0:
+        reply_flex_message_find_products(event.reply_token)
 
     # line_bot_api.reply_message(
     #     event.reply_token,
@@ -104,10 +162,8 @@ def handle_message(event):
     #     quick_reply=quick_reply
     # )
     # line_bot_api.reply_message(event.reply_token, message)
-    print(flex_message_json, flush=True)
-    flex_message = FlexSendMessage.new_from_json_dict(flex_message_json)
 
-    line_bot_api.reply_message(event.reply_token, flex_message)
+    # line_bot_api.reply_message(event.reply_token, flex_message)
 
 
 @app.route('/get', methods=['GET'])
