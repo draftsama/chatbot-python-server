@@ -44,7 +44,7 @@ print("class_names --->", class_names)
 
 
 # Load the model
-with h5py.File('keras_Model.h5', 'r') as f:
+with h5py.File('/opt/render/project/src/keras_Model.h5', 'r') as f:
     model = load_model(f)
 
 model.summary()
