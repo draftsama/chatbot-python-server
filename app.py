@@ -28,9 +28,6 @@ CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 
-model_path = os.path.join(os.getcwd(), "keras_Model.h5")
-print("os.path.dirname(__file__) :", os.path.dirname(__file__))
-print("model_path :", model_path)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -40,15 +37,17 @@ handler = WebhookHandler(CHANNEL_SECRET)
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
 
+
+# Load the labels
+class_names = open("labels.txt", "r").readlines()
+print("class_names --->", class_names)
+
+
 # Load the model
 with h5py.File('keras_Model.h5', 'r') as f:
     model = load_model(f)
 
 model.summary()
-
-
-# Load the labels
-class_names = open("labels.txt", "r").readlines()
 
 
 def test():
