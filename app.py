@@ -41,7 +41,6 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 # Load the model
-model = load_model("keras_Model.h5", compile=False)
 with h5py.File('keras_Model.h5', 'r') as f:
     model = load_model(f)
 
@@ -92,6 +91,13 @@ def lineWebhook():
         abort(400)
 
     return 'OK'
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=event.message.text))
 
 
 @app.route('/get', methods=['GET'])
