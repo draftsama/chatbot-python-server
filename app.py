@@ -15,7 +15,7 @@ from io import BytesIO
 import base64
 from dotenv import load_dotenv
 import os
-
+import json
 
 # Load variables from .env file into environment
 load_dotenv()
@@ -36,7 +36,8 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-# Load the model
+with open('flex_message.json', 'r') as f:
+    flex_message_json = json.load(f)
 
 
 def load_image_from_base64(base64_string):
@@ -151,39 +152,9 @@ def handle_message(event):
     # )
     # line_bot_api.reply_message(event.reply_token, message)
 
-    bubble = BubbleContainer(
-        direction='ltr',
-        hero=ImageComponent(
-            url='https://scdn.line-apps.com/n/channel_devcenter/img/fx/01_1_cafe.png',
-            size='full',
-            aspect_ratio='20:13',
-            aspect_mode='cover',
-            action=URIAction(
-                uri='https://www.youtube.com/',
-                label='label'
-            )
-        ),
-        body=BoxComponent(
-            layout='vertical',
-            contents=[
-                TextComponent(text='Hello,'),
-                TextComponent(text='World!'),
-                SeparatorComponent(),
-                TextComponent(text='This is a Flex Message.')
-            ]
-        ),
-        footer=BoxComponent(
-            layout='vertical',
-            contents=[
-                TextComponent(text='Footer'),
-                TextComponent(text='Text')
-            ]
-        )
-    )
+    flex_message = FlexSendMessage.new_from_json_dict(flex_message_json)
 
-    message = FlexSendMessage(alt_text='Flex Message', contents=bubble)
-
-    line_bot_api.reply_message(event.reply_token, message)
+    line_bot_api.reply_message(event.reply_token, flex_message)
 
 
 @app.route('/get', methods=['GET'])
