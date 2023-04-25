@@ -15,7 +15,6 @@ from io import BytesIO
 import base64
 from dotenv import load_dotenv
 import os
-import logging
 
 
 # Load variables from .env file into environment
@@ -53,9 +52,6 @@ def lineWebhook():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    print("Request body: ", body, flush=True)
-    logging.info("Request body: ", body)
 
     # handle webhook body
     try:
@@ -69,6 +65,10 @@ def lineWebhook():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    print("Request body: ", event, flush=True)
+    profile = line_bot_api.get_profile(event.source.userId)
+    print("profile: ", profile, flush=True)
+
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
@@ -83,4 +83,4 @@ if __name__ == '__main__':
     if MODE == "development":
         app.run(host='0.0.0.0', port=PORT, debug=True)
     else:
-        serve(app, host='0.0.0.0', port=PORT, threads=1)
+        serve(app, host='0.0.0.0', port=PORT, threads=2)
