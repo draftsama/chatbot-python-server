@@ -1,3 +1,5 @@
 numpy
 flask
 waitress
+tensorflow
+line-bot-sdk
