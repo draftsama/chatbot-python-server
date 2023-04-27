@@ -43,9 +43,8 @@ def chat_gpt(text_input):
         engine="text-davinci-003",
         prompt=prompt,
         temperature=0.7,
-        max_tokens=1000,
-        n=1,
-        stop=None,
+        max_tokens=256,
+        top_p=1,
         frequency_penalty=0,
         presence_penalty=0
     )
@@ -142,9 +141,9 @@ def lineWebhook():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    print("body: ", event, flush=True)
+    # print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
-    print("profile: ", profile, flush=True)
+    # print("profile: ", profile, flush=True)
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
@@ -163,6 +162,8 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, location_message)
         return
+
+    print("input: ", event.message.text, flush=True)
 
     gptresult = chat_gpt(event.message.text)
     action = gptresult['action']
