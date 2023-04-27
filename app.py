@@ -173,6 +173,16 @@ def handle_message(event):
     product = gptresult['product']
     target = gptresult['target']
 
+    if len(re.findall("ค้นหาสถานที่", event.message.text)) != 0:
+        location_message = LocationSendMessage(
+            title='DoHome',
+            address='DoHome',
+            latitude=13.7667711,
+            longitude=100.5488918
+        )
+        line_bot_api.reply_message(event.reply_token, location_message)
+        return
+
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=str(gptresult)))
