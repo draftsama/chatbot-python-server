@@ -4,3 +4,4 @@ waitress
 line-bot-sdk
 Pillow
 python-dotenv
+openai

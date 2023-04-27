@@ -19,6 +19,8 @@ import os
 import json
 import re
 
+import openai
+
 
 # Load variables from .env file into environment
 load_dotenv()
@@ -28,6 +30,29 @@ PORT = int(os.getenv('PORT'))
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
+
+with open('trainingdata.txt', 'r') as f:
+    trainingdata = f.read()
+
+
+def chat_gpt(text_input):
+    prompt = f"[{text_input}] {trainingdata}"
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=1000,
+        n=1,
+        stop=None,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    message = response.choices[0].text.strip()
+    data = json.loads(message)
+
+    return data
 
 
 app = Flask(__name__)
@@ -121,7 +146,7 @@ def handle_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
     print("profile: ", profile, flush=True)
 
-    if len(re.findall("สินค้า", event.message.text)) != 0:
+    if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
         return
 
@@ -138,6 +163,15 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, location_message)
         return
+
+    gptresult = chat_gpt(event.message.text)
+    action = gptresult['action']
+    product = gptresult['product']
+    target = gptresult['target']
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=str(gptresult)))
 
     # line_bot_api.reply_message(
     #     event.reply_token,
