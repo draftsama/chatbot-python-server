@@ -173,7 +173,7 @@ def handle_message(event):
     product = gptresult['product']
     target = gptresult['target']
 
-    if len(re.findall("ค้นหาสถานที่", event.message.text)) != 0:
+    if len(re.findall("ค้นหาสถานที่", action)) != 0:
         location_message = LocationSendMessage(
             title='DoHome',
             address='DoHome',
