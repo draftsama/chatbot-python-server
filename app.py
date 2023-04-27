@@ -166,9 +166,8 @@ def handle_message(event):
         return
 
     print("input: ", event.message.text, flush=True)
-
     json_str = chat_gpt(event.message.text)
-    print("output: ", json_str)
+    print("output: ", json_str, flush=True)
 
     try:
         gptresult = json.loads(json_str)
