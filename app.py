@@ -54,6 +54,9 @@ def chat_gpt(text_input):
     return data
 
 
+# print(chat_gpt("ขอที่อยู่"))
+# exit()
+
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
