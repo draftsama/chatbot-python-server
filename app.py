@@ -54,6 +54,7 @@ def chat_gpt(text_input):
 
 
 # print(chat_gpt("ขอที่อยู่"))
+
 # exit()
 
 app = Flask(__name__)
@@ -166,7 +167,7 @@ def handle_message(event):
         return
 
     print("input: ", event.message.text, flush=True)
-    json_str = chat_gpt(event.message.text)
+    json_str = chat_gpt(event.message.text).split(': ')[-1]
     print("output: ", json_str, flush=True)
 
     try:
