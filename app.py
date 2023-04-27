@@ -49,9 +49,8 @@ def chat_gpt(text_input):
         presence_penalty=0
     )
     message = response.choices[0].text.strip()
-    data = json.loads(message)
 
-    return data
+    return message
 
 
 # print(chat_gpt("ขอที่อยู่"))
@@ -168,7 +167,13 @@ def handle_message(event):
 
     print("input: ", event.message.text, flush=True)
 
-    gptresult = chat_gpt(event.message.text)
+    json_str = chat_gpt(event.message.text)
+
+    try:
+        gptresult = json.loads(json_str)
+    except ValueError as e:
+        return
+
     action = gptresult['action']
     product = gptresult['product']
     target = gptresult['target']
@@ -183,6 +188,9 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, location_message)
         return
 
+    if len(re.findall("ค้นหาสินค้า", action)) != 0:
+        reply_flex_message_find_products(event.reply_token)
+        return
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=str(gptresult)))
