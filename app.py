@@ -173,6 +173,7 @@ def handle_message(event):
     try:
         gptresult = json.loads(json_str)
     except ValueError as e:
+        print("ValueError: ", e)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text="กรุณาถามใหม่อีกครั้ง"))
