@@ -183,7 +183,10 @@ def handle_message(event):
     product = gptresult['product']
     target = gptresult['target']
 
-    if len(re.findall("ค้นหาร้าน", action)) != 0 | len(re.findall("ขอที่อยู่", action)) != 0:
+    locate_keys = ["ค้นหาร้าน", "ขอที่อยู่", "อยู่แถวไหน"]
+    locate_regex_pattern = "|".join(locate_keys)
+
+    if len(re.findall(locate_regex_pattern, action)) != 0:
         location_message = LocationSendMessage(
             title='DoHome',
             address='DoHome',
