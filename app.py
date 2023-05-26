@@ -33,30 +33,6 @@ MODE = os.getenv('MODE')
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-with open('trainingdata.txt', 'r') as f:
-    trainingdata = f.read()
-
-
-def chat_gpt(text_input):
-    prompt = f"[{text_input}] {trainingdata}"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        temperature=0.7,
-        max_tokens=256,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-    message = response.choices[0].text.strip()
-
-    return "{"+message.split('{')[-1]
-
-
-# print(chat_gpt("ขอที่อยู่"))
-# exit()
-
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
@@ -64,6 +40,24 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
+
+
+def chat_gpt_reply(msg):
+    # ผู้ช่วย DoHome
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "คุณคือผู้ช่วยของ DoHome สามารถช่วยคุณได้ในหลายๆเรื่อง เช่น ค้นหาสินค้า ค้นหาร้านค้า ข้อมูลสินค้า และอื่นๆอีกมากมาย, คำตอบของคุณจะต้องมาจากความเป็นจริง"},
+            {"role": "user", "content": "คุณเป็นใคร"},
+            {"role": "assistant", "content": "DoHome สวัสดีครับ สามารถถามได้เลยครับ"},
+            {"role": "user", "content": msg},
+        ]
+    )
+    # check if the response is empty
+    if len(res.choices) == 0:
+        return "ไม่เข้าใจคำถามของคุณ"
+
+    return str(res.choices[0].message).decode('utf-8')
 
 
 flex_message_options = None
@@ -124,6 +118,12 @@ def load_image_from_base64(base64_string):
     return img
 
 
+@app.route('/api/ai_image', methods=['POST'])
+def ai_image():
+    json_data = request.get_json()
+    return jsonify(json_data)
+
+
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
     # get X-Line-Signature header value
@@ -167,40 +167,8 @@ def handle_message(event):
         return
 
     print("input: ", event.message.text, flush=True)
-    json_str = chat_gpt(event.message.text)
-    print("output: ", json_str, flush=True)
-
-    try:
-        gptresult = json.loads(json_str)
-    except ValueError as e:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="กรุณาถามใหม่อีกครั้ง"))
-        return
-
-    action = gptresult['action']
-    product = gptresult['product']
-    target = gptresult['target']
-
-    locate_keys = ["ค้นหาร้าน", "ขอที่อยู่", "อยู่แถวไหน"]
-    locate_regex_pattern = "|".join(locate_keys)
-
-    if len(re.findall(locate_regex_pattern, action)) != 0:
-        location_message = LocationSendMessage(
-            title='DoHome',
-            address='DoHome',
-            latitude=13.7667711,
-            longitude=100.5488918
-        )
-        line_bot_api.reply_message(event.reply_token, location_message)
-        return
-
-    if len(re.findall("ค้นหาสินค้า", action)) != 0:
-        reply_flex_message_find_products(event.reply_token)
-        return
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=str(gptresult)))
+    gptresult = chat_gpt_reply(event.message.text)
+    TextSendMessage(text=str(gptresult))
 
     # line_bot_api.reply_message(
     #     event.reply_token,
