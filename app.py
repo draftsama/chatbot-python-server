@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import os
 import json
 import re
-
+import codecs
 import openai
 
 
@@ -56,8 +56,9 @@ def chat_gpt_reply(msg):
     # check if the response is empty
     if len(res.choices) == 0:
         return "ไม่เข้าใจคำถามของคุณ"
+    # return the first choice
 
-    return str(res.choices[0].message).decode('utf-8')
+    return str(res.choices[0].message['content'])
 
 
 flex_message_options = None
