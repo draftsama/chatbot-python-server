@@ -171,7 +171,9 @@ def handle_message(event):
     gptresult = chat_gpt_reply(event.message.text)
     print("gpt result: ", gptresult, flush=True)
 
-    TextSendMessage(text=gptresult)
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=gptresult))
 
     # line_bot_api.reply_message(
     #     event.reply_token,
