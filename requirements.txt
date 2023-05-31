@@ -5,3 +5,4 @@ line-bot-sdk
 Pillow
 python-dotenv
 openai
+replicate

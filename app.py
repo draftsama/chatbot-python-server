@@ -8,7 +8,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, make_response
 from waitress import serve
 from PIL import Image, ImageOps
 import numpy as np
@@ -20,6 +20,7 @@ import json
 import re
 import codecs
 import openai
+import replicate
 
 
 # Load variables from .env file into environment
@@ -121,12 +122,6 @@ def load_image_from_base64(base64_string):
     return img
 
 
-@app.route('/api/ai_image', methods=['POST'])
-def ai_image():
-    json_data = request.get_json()
-    return jsonify(json_data)
-
-
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
     # get X-Line-Signature header value
@@ -207,9 +202,59 @@ def handle_message(event):
     # line_bot_api.reply_message(event.reply_token, flex_message)
 
 
-@app.route('/get', methods=['GET'])
-def hello_world():
-    return jsonify([{"id": 1, "name": "Draft"}, {"id": 2, "name": "Tester"}])
+@app.route('/api/replicate/prediction', methods=['POST'])
+def prediction():
+    json_data = request.get_json()
+
+    if json_data is None:
+        response = make_response(jsonify({"error": "required json"}))
+        response.status_code = 400
+        return response
+
+    if 'version' not in json_data:
+        response = make_response(jsonify({"error": "required version"}))
+        response.status_code = 400
+        return response
+
+    if 'model' not in json_data:
+        response = make_response(jsonify({"error": "required model"}))
+        response.status_code = 400
+        return response
+
+    model = replicate.models.get(
+        json_data['model'])
+    version = model.versions.get(
+        json_data['version'])
+
+    res = replicate.predictions.create(
+        version,
+        input=json_data['input']
+    )
+    return jsonify({
+        "id": res.id
+    })
+
+
+@app.route('/api/replicate/prediction', methods=['GET'])
+def get_prediction():
+    id = request.args.get('id')
+
+    if id is None or id == "":
+        response = make_response(jsonify({"error": "required id"}))
+        response.status_code = 400
+        return response
+
+    res = replicate.predictions.get(id)
+
+    response = make_response(jsonify({
+        "id": res.id,
+        "status": res.status,
+        "input": res.input,
+        "output": res.output,
+    }))
+    response.status_code = 200
+
+    return response
 
 
 if __name__ == '__main__':
