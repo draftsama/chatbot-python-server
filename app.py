@@ -220,16 +220,21 @@ def prediction():
         response = make_response(jsonify({"error": "required model"}))
         response.status_code = 400
         return response
+    try:
+        model = replicate.models.get(
+            json_data['model'])
+        version = model.versions.get(
+            json_data['version'])
 
-    model = replicate.models.get(
-        json_data['model'])
-    version = model.versions.get(
-        json_data['version'])
+        res = replicate.predictions.create(
+            version,
+            input=json_data['input']
+        )
+    except Exception as e:
+        response = make_response(jsonify({"error": e}))
+        response.status_code = 404
+        return response
 
-    res = replicate.predictions.create(
-        version,
-        input=json_data['input']
-    )
     return jsonify({
         "id": res.id
     })
@@ -244,7 +249,12 @@ def get_prediction():
         response.status_code = 400
         return response
 
-    res = replicate.predictions.get(id)
+    try:
+        res = replicate.predictions.get(id)
+    except Exception as e:
+        response = make_response(jsonify({"error": e}))
+        response.status_code = 404
+        return response
 
     response = make_response(jsonify({
         "id": res.id,
