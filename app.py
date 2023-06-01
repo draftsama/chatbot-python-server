@@ -257,6 +257,7 @@ def get_prediction():
     return response
 
 
+print("start server mode:", MODE, flush=True)
 if __name__ == '__main__':
     if MODE == "development":
         app.run(host='0.0.0.0', port=PORT, debug=True)
