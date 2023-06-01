@@ -207,17 +207,22 @@ def prediction():
     json_data = request.get_json()
 
     if json_data is None:
-        response = make_response(jsonify({"error": "required json"}))
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
         response.status_code = 400
         return response
 
     if 'version' not in json_data:
-        response = make_response(jsonify({"error": "required version"}))
+        response = make_response(
+            jsonify({"status": "failed", "error": "required version"}))
         response.status_code = 400
         return response
 
     if 'model' not in json_data:
-        response = make_response(jsonify({"error": "required model"}))
+        response = make_response(
+            jsonify({"status": "failed", "error": "required model"}))
         response.status_code = 400
         return response
     try:
@@ -231,11 +236,12 @@ def prediction():
             input=json_data['input']
         )
     except Exception as e:
-        response = make_response(jsonify({"error": e}))
+        response = make_response(jsonify({"status": "failed", "error": e}))
         response.status_code = 404
         return response
 
     return jsonify({
+        "status": res.status,
         "id": res.id
     })
 
@@ -245,14 +251,15 @@ def get_prediction():
     id = request.args.get('id')
 
     if id is None or id == "":
-        response = make_response(jsonify({"error": "required id"}))
+        response = make_response(
+            jsonify({"status": "failed", "error": "required id"}))
         response.status_code = 400
         return response
 
     try:
         res = replicate.predictions.get(id)
     except Exception as e:
-        response = make_response(jsonify({"error": e}))
+        response = make_response(jsonify({"status": "failed", "error": e}))
         response.status_code = 404
         return response
 
