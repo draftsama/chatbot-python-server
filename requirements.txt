@@ -6,3 +6,4 @@ Pillow
 python-dotenv
 openai
 replicate
+flask-cors

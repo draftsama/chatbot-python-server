@@ -9,6 +9,7 @@ from linebot import (
 )
 
 from flask import Flask, jsonify, request, abort, make_response
+from flask_cors import CORS
 from waitress import serve
 from PIL import Image, ImageOps
 import numpy as np
@@ -35,6 +36,8 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
 app.config['JSON_AS_ASCII'] = False
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
