@@ -22,6 +22,8 @@ import re
 import codecs
 import openai
 import replicate
+import pytz
+import datetime
 
 
 # Load variables from .env file into environment
@@ -34,6 +36,8 @@ CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+# Specify the time zone for Bangkok
+timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -277,7 +281,11 @@ def get_prediction():
     return response
 
 
-print("start server mode:", MODE, flush=True)
+# Get the current date and time in the specified time zone
+current_time = datetime.datetime.now(timezone)
+formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+
+print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
     if MODE == "development":
         app.run(host='0.0.0.0', port=PORT, debug=True)
