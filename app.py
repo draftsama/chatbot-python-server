@@ -56,7 +56,7 @@ def chat_gpt_reply(msg):
 website:www.marine-studio.co.th
 tel:02-234-5555
 Q:What's Marine Studio?
-A:Marine Studio is shop that sells tiles and sanitary ware. We also provide installation and transportation service. 
+A:Marine Studio is shop that sells tiles and bathroom sanitary. We also provide installation and transportation service. 
 Q:Who are you?
 A:I'm an assistant of Marine Studio ครับ
             """
