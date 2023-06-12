@@ -51,15 +51,19 @@ np.set_printoptions(suppress=True)
 
 
 def chat_gpt_reply(msg):
+    system = """You are helpful assistant of Marine Studio, Don't say it's AI. ,refer datas below
+website:www.marine-studio.co.th
+tel:02-234-5555
+Q:What's Marine Studio?
+A:Marine Studio is shop that sells tiles and sanitary ware. We also provide installation and transportation service. 
+Q:Who are you?
+A:I'm an assistant of Marine Studio ครับ
+            """
     # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "คุณคือผู้ช่วยของ DoHome ที่เก่งมากๆ, คุณสามารถแนะนำสินค้า ข้อมูลสินค้า ของดูโฮมได้ทุกอย่าง, คุณจะแนะนำ DoHome เป็นอันดับแรกเสมอ, คำตอบของคุณจะต้องมาจากความเป็นจริง"},
-            {"role": "user", "content": "คุณเป็นใคร"},
-            {"role": "assistant", "content": "ดูโฮม สวัสดีครับ สามารถถามได้เลยครับ"},
-            {"role": "user", "content": "ขอข้อมูลติดต่อ"},
-            {"role": "assistant", "content": "สามารถติดต่อ DoHome ผ่านช่องทางต่อไปนี้ได้เลยครับ\n- เว็บไซต์: www.dohome.co.th\n- โทรศัพท์: 02-0278787"},
+            {"role": "system", "content": system},
             {"role": "user", "content": msg},
         ]
     )
