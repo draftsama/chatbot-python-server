@@ -156,7 +156,7 @@ def lineWebhook():
 def handle_message(event):
     # print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
-    # print("profile: ", profile, flush=True)
+    print("profile: ", profile, flush=True)
 
     url = 'https://api.line.me/v2/bot/message/markAsRead'
     headers = {
