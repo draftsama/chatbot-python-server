@@ -24,6 +24,7 @@ import openai
 import replicate
 import pytz
 import datetime
+import requests
 
 
 # Load variables from .env file into environment
@@ -156,6 +157,18 @@ def handle_message(event):
     # print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
     # print("profile: ", profile, flush=True)
+
+    url = 'https://api.line.me/v2/bot/message/markAsRead'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
+    }
+    data = {
+        'chat': {
+            'userId': event.source.user_id
+        }
+    }
+    requests.post(url, headers=headers, json=data)
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
