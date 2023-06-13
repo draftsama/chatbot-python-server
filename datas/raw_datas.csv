@@ -1,0 +1,6 @@
+context,mean
+information,"Ask about product information, What is ...?, Greetings, Who are you?, What is Marine Studio?"
+recommendation,"Ask for a recommendation of a product, What is the best ...?"
+search,"Ask to find a product, tiles size 16*16, black marble tiles"
+promotion,Ask about a promotion
+none,"nonsense, meaningless, swear words, etc."

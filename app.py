@@ -25,10 +25,17 @@ import replicate
 import pytz
 import datetime
 import requests
+import pandas
+
+from oepnai_manager import openai_manager
 
 
 # Load variables from .env file into environment
 load_dotenv()
+
+
+def is_empty_string(s):
+    return not bool(s and s.strip())
 
 
 PORT = int(os.getenv('PORT'))
@@ -36,6 +43,12 @@ CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 openai.api_key = os.getenv('OPENAI_API_KEY')
+
+
+# check empty string
+if is_empty_string(os.getenv('OPENAI_API_KEY')):
+    print("OPENAI_API_KEY is empty")
+    exit()
 
 # Specify the time zone for Bangkok
 timezone = pytz.timezone('Asia/Bangkok')
@@ -51,8 +64,27 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
+def context_analysis(msg):
+    embedding_path = "./embeddings/embeddings_context.csv"
+    indexes_sort, similarities = openai_manager.get_similarity_data(
+        msg, embedding_path)
+    df = pandas.read_csv(embedding_path)
+    df = df.drop(columns=["embedding"])
+    return df.iloc[indexes_sort[0]]["context"]
+
+
+def find_product(msg):
+    embedding_path = "./embeddings/embeddings_products.csv"
+    indexes_sort, similarities = openai_manager.get_similarity_data(
+        msg, embedding_path)
+    df = pandas.read_csv(embedding_path)
+    df = df.drop(columns=["embedding"])
+    # get 3 most similar product
+    return df.iloc[indexes_sort[0:3]]
+
+
 def chat_gpt_reply(msg):
-    system = """You are helpful assistant of Marine Studio, Don't say it's AI. ,refer datas below
+    system = """You are helpful assistant of Marine Studio, Don't say youself as AI. ,refer datas below
 website:www.marine-studio.co.th
 tel:02-234-5555
 Q:What's Marine Studio?
@@ -189,12 +221,27 @@ def handle_message(event):
         return
 
     print("input: ", event.message.text, flush=True)
-    gptresult = chat_gpt_reply(event.message.text)
-    print("gpt result: ", gptresult, flush=True)
+    reciveMsg = event.message.text
+    context = context_analysis(reciveMsg)
+
+    if context == "none":
+        replyMsg = "กรุณาถามใหม่อีกครั้ง"
+    elif context == "promotion":
+        replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
+    elif context == "information":
+        replyMsg = chat_gpt_reply(reciveMsg)
+    elif context == "recommendation":
+        replyMsg = chat_gpt_reply(reciveMsg)
+    elif context == "search":
+        products = find_product(reciveMsg)
+        # products drop first column
+        replyMsg = products.to_string()
+
+    print("reply", replyMsg, flush=True)
 
     line_bot_api.reply_message(
         event.reply_token,
-        TextSendMessage(text=gptresult))
+        TextSendMessage(text=replyMsg))
 
     # line_bot_api.reply_message(
     #     event.reply_token,
@@ -301,6 +348,7 @@ def get_prediction():
 # Get the current date and time in the specified time zone
 current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':

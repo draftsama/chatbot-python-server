@@ -8,3 +8,9 @@ openai
 replicate
 flask-cors
 pytz
+tiktoken
+matplotlib
+plotly
+pandas
+scikit-learn
+scipy
