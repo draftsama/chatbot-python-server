@@ -8,7 +8,6 @@ openai
 replicate
 flask-cors
 pytz
-tiktoken==0.4.0
 matplotlib
 plotly
 pandas

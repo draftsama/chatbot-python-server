@@ -3,7 +3,7 @@ import os
 import openai
 from openai.embeddings_utils import get_embedding, cosine_similarity
 import pandas as pd
-import tiktoken
+# import tiktoken
 import numpy as np
 
 
@@ -140,9 +140,9 @@ class openai_manager:
 
         return res.choices[0].message['content']
 
-    @staticmethod
-    def num_tokens_from_string(string: str) -> int:
-        """Returns the number of tokens in a text string."""
-        encoding = tiktoken.get_encoding("cl100k_base")
-        num_tokens = len(encoding.encode(string))
-        return num_tokens
+    # @staticmethod
+    # def num_tokens_from_string(string: str) -> int:
+    #     """Returns the number of tokens in a text string."""
+    #     encoding = tiktoken.get_encoding("cl100k_base")
+    #     num_tokens = len(encoding.encode(string))
+    #     return num_tokens
