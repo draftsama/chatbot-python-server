@@ -28,8 +28,8 @@ if len(arguments) < 1:
     print("Please input command")
     exit()
 # find query in arguments "init" or "update"
-raw_data_path = "./datas/raw_datas_tiles.csv"
-raw_data_embedding_path = "./embeddings/embeddings_products.csv"
+raw_data_path = "./datas/raw_datas.csv"
+raw_data_embedding_path = "./embeddings/embeddings_context.csv"
 
 if arguments[1] == "init":
     openai_manager.create_embedding_data(raw_data_path,

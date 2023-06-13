@@ -1,6 +1,7 @@
 context,mean
-information,"Ask about product information, What is ...?, Greetings, Who are you?, What is Marine Studio?"
-recommendation,"Ask for a recommendation of a product, What is the best ...?"
-search,"Ask to find a product, tiles size 16*16, black marble tiles"
-promotion,Ask about a promotion
-none,"nonsense, meaningless, swear words, etc."
+information,"ถามข้อมูลสินค้า, What's tiles?, How to ...?, คุณเป็นใคร, Marine Studio? คืออะไร"
+greeting,"สวัสดี, hello, How are you?"
+recommendation,"Ask recommend a product ,แนะนำ, อะไรดีที่สุด, please recommend tiles for ..."
+search,"Ask to find a product, หากระเบื้องตามองค์ประกอย, "
+promotion,"ถามหาโปรโมชั่น, สินค้าลดราคาม, มีโปรไหม?, มีส่วนลดไหม?"
+none,"nonsense, words of random"

@@ -229,6 +229,8 @@ def handle_message(event):
         replyMsg = "กรุณาถามใหม่อีกครั้ง"
     elif context == "promotion":
         replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
+    elif context == "greeting":
+        replyMsg = chat_gpt_reply(reciveMsg)
     elif context == "information":
         replyMsg = chat_gpt_reply(reciveMsg)
     elif context == "recommendation":
