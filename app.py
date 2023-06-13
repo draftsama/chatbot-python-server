@@ -84,7 +84,7 @@ def find_product(msg):
 
 
 def chat_gpt_reply(msg):
-    system = """You are helpful assistant of Marine Studio, Don't say youself as AI. ,refer datas below
+    system = """You are helpful assistant of Marine Studio, Don't say It's AI. ,refer datas below
 website:www.marine-studio.co.th
 tel:02-234-5555
 Q:What's Marine Studio?
@@ -98,7 +98,8 @@ A:I'm an assistant of Marine Studio ครับ
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": msg},
-        ]
+        ],
+        temperature=0.8,
     )
     # check if the response is empty
     if len(res.choices) == 0:
