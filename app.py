@@ -276,32 +276,33 @@ def handle_message(event):
         products = find_product(reciveMsg)
         # products drop first column
         replyMsg = products.to_string()
-        # productList = products.values.tolist()
 
-        # with open('product_message.json', 'r') as f:
-        #     message = dict()
-        #     message['type'] = 'carousel'
+        with open('product_message.json', 'r') as f:
+            message = dict()
+            message['type'] = 'carousel'
 
-        #     # TODO: loop
-        #     itemTemplate = json.load(f)
-        #     for i in range(0, len(productList)):
-        #         item = itemTemplate.copy()
-        #         item['body']['contents'][0]['text'] = productList[i][0]
-        #         # add item to contents
-        #         message['contents'].append(item)
+            # TODO: loop
 
-        #     flex_message = FlexSendMessage(
-        #         alt_text="Search", contents=message)
+            itemTemplate = json.load(f)
+            contents = []
+            for i in range(0, len(products)):
+                item = itemTemplate.copy()
+                item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
+                # add item to contents
+                contents.append(item)
+            message['contents'] = contents
+            flex_message = FlexSendMessage(
+                alt_text="Search", contents=message)
 
-        #     try:
-        #         line_bot_api.reply_message(event.reply_token, flex_message)
-        #     except LineBotApiError as e:
-        #         print('e.status_code:', e.status_code)
-        #         print('e.error.message:', e.error.message)
-        #         print('e.error.details:', e.error.details)
+            try:
+                line_bot_api.reply_message(event.reply_token, flex_message)
+            except LineBotApiError as e:
+                print('e.status_code:', e.status_code)
+                print('e.error.message:', e.error.message)
+                print('e.error.details:', e.error.details)
 
-        #         # end method
-        #         return
+                # end method
+                return
 
     print("reply", replyMsg, flush=True)
 
