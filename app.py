@@ -26,6 +26,7 @@ import pytz
 import datetime
 import requests
 import pandas
+import copy
 
 from oepnai_manager import openai_manager
 
@@ -281,17 +282,15 @@ def handle_message(event):
             message = dict()
             message['type'] = 'carousel'
 
-            # TODO: loop
-
             itemTemplate = json.load(f)
             contents = []
             for i in range(0, len(products)):
-                item = itemTemplate.copy()
+                # clone itemTemplate
+                item = copy.deepcopy(itemTemplate)
                 item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
                 # add item to contents
                 contents.append(item)
 
-            print(contents, flush=True)
             message['contents'] = contents
             flex_message = FlexSendMessage(
                 alt_text="Search", contents=message)
