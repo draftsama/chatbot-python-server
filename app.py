@@ -72,6 +72,43 @@ def context_analysis(msg):
     df = df.drop(columns=["embedding"])
     return df.iloc[indexes_sort[0]]["context"]
 
+# def context_analysis(msg):
+#     system = """You are an excellent sentence analyzer who can analyze sentences in various forms. However, your responses should be in the format of JSON and should not contain explanations. The structure should be as follows:
+# {"context":"value",...}
+# The types of context can be as follows:
+# ["none", "greeting", "search","promotion", "information"]
+# Q:Recommend a tiles for bathroom
+# A:{"context":"recommend","target":"Recommend a tiles for bathroom"}
+# Q:tiles 20*30
+# A:{context":"search","target":"tiles 20*30"}
+# Q:What  is marble tiles?
+# A:{"context":"information","target":"marble tiles"}
+# Q:3s6igiu*&กด(_0
+# A:{"context":"none"}
+# Q:Recommend how to install tiles
+# A:{"context":"information","target":"Recommend how to install tiles"}
+#             """
+#     # ผู้ช่วย DoHome
+#     res = openai.ChatCompletion.create(
+#         model="gpt-3.5-turbo",
+#         messages=[
+#             {"role": "system", "content": system},
+#             {"role": "user", "content": msg},
+#         ],
+#         temperature=0.8,
+#     )
+#     # check if the response is empty
+#     if len(res.choices) == 0:
+#         return "ไม่เข้าใจคำถามของคุณ"
+#     # return the first choice
+
+#     return str(res.choices[0].message['content'])
+
+
+# content = context_analysis("กระเบื้องของลายหินอ่อน")
+# print(content)
+# exit()
+
 
 def find_product(msg):
     embedding_path = "./embeddings/embeddings_products.csv"
@@ -239,6 +276,32 @@ def handle_message(event):
         products = find_product(reciveMsg)
         # products drop first column
         replyMsg = products.to_string()
+        productList = products.values.tolist()
+
+        with open('product_message.json', 'r') as f:
+            message = dict()
+            message['type'] = 'carousel'
+
+            # TODO: loop
+            itemTemplate = json.load(f)
+            for i in range(0, len(productList)):
+                item = itemTemplate.copy()
+                item['body']['contents'][0]['text'] = productList[i][0]
+                # add item to contents
+                message['contents'].append(item)
+
+            flex_message = FlexSendMessage(
+                alt_text="Search", contents=message)
+
+            try:
+                line_bot_api.reply_message(event.reply_token, flex_message)
+            except LineBotApiError as e:
+                print('e.status_code:', e.status_code)
+                print('e.error.message:', e.error.message)
+                print('e.error.details:', e.error.details)
+
+                # end method
+                return
 
     print("reply", replyMsg, flush=True)
 
