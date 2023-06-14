@@ -56,6 +56,6 @@ if arguments[1] == "run" and len(arguments) == 3:
     products = display_data.iloc[indexes_sort[0:3]].values.tolist()
     # for loop with index
     for i in range(0, len(products)):
-        print(i, products[i])
+        print(i, products[i][1])
 
     # show the most similar document table
