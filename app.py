@@ -290,6 +290,8 @@ def handle_message(event):
                 item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
                 # add item to contents
                 contents.append(item)
+
+            print(contents, flush=True)
             message['contents'] = contents
             flex_message = FlexSendMessage(
                 alt_text="Search", contents=message)
@@ -302,7 +304,7 @@ def handle_message(event):
                 print('e.error.details:', e.error.details)
 
                 # end method
-                return
+            return
 
     print("reply", replyMsg, flush=True)
 
