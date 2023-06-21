@@ -427,9 +427,9 @@ current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
-print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
+print(f"Server is running - {formatted_time}", flush=True)
 if __name__ == '__main__':
-    if MODE == "development":
-        app.run(host='0.0.0.0', port=PORT, debug=True)
-    else:
-        serve(app, host='0.0.0.0', port=PORT, threads=2)
+    # run as https
+    app.run(ssl_context='adhoc', host='0.0.0.0', port=PORT, debug=True)
+    # run as http
+    # app.run(host='0.0.0.0', port=PORT, debug=True)
