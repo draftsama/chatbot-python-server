@@ -221,7 +221,7 @@ def lineWebhook():
 
     # get request body as text
     body = request.get_data(as_text=True)
-
+    print("body: ", body, flush=True)
     # handle webhook body
     try:
         handler.handle(body, signature)
