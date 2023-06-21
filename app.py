@@ -205,6 +205,11 @@ def load_image_from_base64(base64_string):
     return img
 
 
+@app.route('/test', methods=['GET'])
+def test():
+    return jsonify({"status": "ok"})
+
+
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
     # get X-Line-Signature header value
