@@ -143,7 +143,6 @@ A:I'm an assistant of Marine Studio ครับ
     if len(res.choices) == 0:
         return "ไม่เข้าใจคำถามของคุณ"
     # return the first choice
-
     return str(res.choices[0].message['content'])
 
 
