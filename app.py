@@ -110,7 +110,6 @@ def context_analysis(msg):
 # print(content)
 # exit()
 
-
 def find_product(msg):
     embedding_path = "./embeddings/embeddings_products.csv"
     indexes_sort, similarities = openai_manager.get_similarity_data(
