@@ -13,4 +13,4 @@ plotly
 pandas
 scikit-learn
 scipy
-unicorn
+gunicorn
