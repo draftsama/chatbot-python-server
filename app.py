@@ -205,6 +205,7 @@ def load_image_from_base64(base64_string):
 
 @app.route('/test', methods=['GET'])
 def test():
+    print("get test", flush=True)
     return jsonify({"status": "ok"})
 
 
