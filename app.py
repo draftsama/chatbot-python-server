@@ -209,6 +209,11 @@ def test():
     return jsonify({"status": "ok"})
 
 
+@app.route('/test_post', methods=['POST'])
+def test_post():
+    return jsonify({"method": "test post"})
+
+
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
     # get X-Line-Signature header value
