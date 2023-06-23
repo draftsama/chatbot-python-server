@@ -121,13 +121,17 @@ def find_product(msg):
 
 
 def chat_gpt_reply(msg):
-    system = """You are helpful assistant of Marine Studio, You are an expert in tiles and bathroom sanitary.,refer datas below
+    system = """You are helpful assistant of Marine Studio, You always tell your name., You are an expert in tiles and bathroom sanitary.,refer datas below
 website:www.marine-studio.co.th
 tel:02-234-5555
+open:every business day 7.00-19.00
+[slogan]=ร้านใกล้บ้าน ราคาถูกใจ ได้ของครบ จบในที่เดียว
+Q:Hello
+A:Hello, I'm ดุ๊กดิ๊ก, Infrom about what you want to ดุ๊กดิ๊ก.
 Q:What's Marine Studio?
-A:Marine Studio is shop that sells tiles and bathroom sanitary. We also provide installation and transportation service. 
+A:Marine Studio - The Central Hub for Decorative Materials, featuring over 2,500 items including floor and wall tiles, paint, chemicals, sanitary ware, gardening tools, along with professional installation services provided by skilled craftsmen. [slogan] 
 Q:Who are you?
-A:I'm an assistant of Marine Studio ครับ
+A:My name is ดุ๊กดิ๊ก I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
@@ -267,7 +271,7 @@ def handle_message(event):
     context = context_analysis(reciveMsg)
 
     if context == "none":
-        replyMsg = "กรุณาถามใหม่อีกครั้ง"
+        replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
     elif context == "promotion":
         replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
     elif context == "greeting":
