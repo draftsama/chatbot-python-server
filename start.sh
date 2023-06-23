@@ -10,5 +10,3 @@ export OPENAI_API_KEY=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
 # $DIR/venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 --certfile=$CERT_FILE --keyfile=$KEY_FILE app:app
 
 
-#on deploy to render server
-gunicorn -w 4 -b 0.0.0.0:5000 app:app

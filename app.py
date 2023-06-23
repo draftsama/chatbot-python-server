@@ -216,7 +216,6 @@ def lineWebhook():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    print("body: ", body, flush=True)
     # handle webhook body
     try:
         handler.handle(body, signature)
@@ -231,7 +230,7 @@ def lineWebhook():
 def handle_message(event):
     # print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
-    print("profile: ", profile, flush=True)
+    # print("profile: ", profile, flush=True)
 
     url = 'https://api.line.me/v2/bot/message/markAsRead'
     headers = {
@@ -424,4 +423,4 @@ formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 print(f"Server is running - {formatted_time}", flush=True)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
