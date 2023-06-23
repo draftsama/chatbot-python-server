@@ -282,6 +282,9 @@ def handle_message(event):
     print("input: ", event.message.text, flush=True)
 
     data = context_analysis(reciveMsg)
+    if data is None:
+        replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
+
     context = data["context"]
     print("data: ", data, flush=True)
 
