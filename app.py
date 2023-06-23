@@ -203,15 +203,10 @@ def load_image_from_base64(base64_string):
     return img
 
 
-@app.route('/test', methods=['GET'])
-def test():
-    print("get test", flush=True)
-    return jsonify({"status": "ok"})
-
-
-@app.route('/test_post', methods=['POST'])
-def test_post():
-    return jsonify({"method": "test post"})
+@app.route('/', methods=['GET'])
+def get_status():
+    # return app status
+    return '<h1>Server Running</h1>'
 
 
 @app.route('/webhook', methods=['POST'])
@@ -429,7 +424,4 @@ formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 print(f"Server is running - {formatted_time}", flush=True)
 if __name__ == '__main__':
-    # run as https
-    app.run(ssl_context='adhoc', host='0.0.0.0', port=PORT, debug=True)
-    # run as http
-    # app.run(host='0.0.0.0', port=PORT, debug=True)
+    app.run(host='0.0.0.0', debug=True)
