@@ -289,7 +289,7 @@ def handle_message(event):
 
     data = context_analysis(reciveMsg)
     if data is None:
-        context = {"context": "none"}
+        data = {"context": "none"}
 
     context = data["context"]
     print("data: ", data, flush=True)
