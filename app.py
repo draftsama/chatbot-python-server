@@ -269,17 +269,17 @@ def handle_message(event):
     print("input: ", event.message.text, flush=True)
     reciveMsg = event.message.text
     context = context_analysis(reciveMsg)
-
+    name = "ดุ๊กดิก"
     if context == "none":
         replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
     elif context == "promotion":
         replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
     elif context == "greeting":
-        replyMsg = chat_gpt_reply(reciveMsg)
+        replyMsg = f"{name}{chat_gpt_reply(reciveMsg)}"
     elif context == "information":
-        replyMsg = chat_gpt_reply(reciveMsg)
+        replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommendation":
-        replyMsg = chat_gpt_reply(reciveMsg)
+        replyMsg = f"{name}ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
     elif context == "search":
         products = find_product(reciveMsg)
         # products drop first column
