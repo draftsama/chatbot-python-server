@@ -65,50 +65,63 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-def context_analysis(msg):
-    embedding_path = "./embeddings/embeddings_context.csv"
-    indexes_sort, similarities = openai_manager.get_similarity_data(
-        msg, embedding_path)
-    df = pandas.read_csv(embedding_path)
-    df = df.drop(columns=["embedding"])
-    return df.iloc[indexes_sort[0]]["context"]
-
 # def context_analysis(msg):
-#     system = """You are an excellent sentence analyzer who can analyze sentences in various forms. However, your responses should be in the format of JSON and should not contain explanations. The structure should be as follows:
-# {"context":"value",...}
-# The types of context can be as follows:
-# ["none", "greeting", "search","promotion", "information"]
-# Q:Recommend a tiles for bathroom
-# A:{"context":"recommend","target":"Recommend a tiles for bathroom"}
-# Q:tiles 20*30
-# A:{context":"search","target":"tiles 20*30"}
-# Q:What  is marble tiles?
-# A:{"context":"information","target":"marble tiles"}
-# Q:3s6igiu*&กด(_0
-# A:{"context":"none"}
-# Q:Recommend how to install tiles
-# A:{"context":"information","target":"Recommend how to install tiles"}
-#             """
-#     # ผู้ช่วย DoHome
-#     res = openai.ChatCompletion.create(
-#         model="gpt-3.5-turbo",
-#         messages=[
-#             {"role": "system", "content": system},
-#             {"role": "user", "content": msg},
-#         ],
-#         temperature=0.8,
-#     )
-#     # check if the response is empty
-#     if len(res.choices) == 0:
-#         return "ไม่เข้าใจคำถามของคุณ"
-#     # return the first choice
+#     embedding_path = "./embeddings/embeddings_context.csv"
+#     indexes_sort, similarities = openai_manager.get_similarity_data(
+#         msg, embedding_path)
+#     df = pandas.read_csv(embedding_path)
+#     df = df.drop(columns=["embedding"])
+#     return df.iloc[indexes_sort[0]]["context"]
 
-#     return str(res.choices[0].message['content'])
+def context_analysis(msg):
+    system = """You are an excellent context analyzer who can analyze sentences in various forms, your responses must be in the format of JSON only, Don't explain
+
+The types of context can be as follows:
+["none", "greeting", "search","complaint", "information","recommend","technician","location"]
+
+Q:Recommend a tile for bathroom
+A:{"context":"recommend"}
+Q:Where is store?
+A:{context":"location"}
+Q:tile 20*30
+A:{context":"search"}
+Q:How is the marble tile
+A:{"context":"information"}
+Q:3s6igiu*&กด(_0
+A:{"context":"none"}
+Q:Recommend how to install tile
+A:{"context":"recommend"}
+            """
+    # ผู้ช่วย DoHome
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": msg},
+        ],
+        temperature=0.8,
+    )
+    # check if the response is empty
+    if len(res.choices) == 0:
+        return None
+    # return the first choice
+    msg = str(res.choices[0]['message']['content'])
+    # Find the JSON string using regular expressions
+    match = re.search(r'({.*})', msg)
+
+    json_object = None
+    if match:
+        json_object = json.loads(match.group(1))
+    else:
+        return None
+
+    return json_object
 
 
-# content = context_analysis("กระเบื้องของลายหินอ่อน")
+# content = context_analysis("แนะนำกระเบื้องห้องนอน")
 # print(content)
 # exit()
+
 
 def find_product(msg):
     embedding_path = "./embeddings/embeddings_products.csv"
@@ -268,8 +281,9 @@ def handle_message(event):
     reciveMsg = event.message.text
     print("input: ", event.message.text, flush=True)
 
-    context = context_analysis(reciveMsg)
-    print("context: ", context, flush=True)
+    data = context_analysis(reciveMsg)
+    context = data["context"]
+    print("data: ", data, flush=True)
 
     name = "ดุ๊กดิก"
     if context == "none":
@@ -286,7 +300,7 @@ def handle_message(event):
         replyMsg = f"{name} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
         replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
-    elif context == "recommendation":
+    elif context == "recommend":
         replyMsg = f"{name} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
     elif context == "search":
         products = find_product(reciveMsg)
