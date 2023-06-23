@@ -421,6 +421,9 @@ current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 MODE = os.getenv('MODE')
+# MODE is empty force it to be 'dev'
+if MODE is None:
+    MODE = 'dev'
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
