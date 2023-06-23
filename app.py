@@ -274,6 +274,8 @@ def handle_message(event):
         replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
     elif context == "promotion":
         replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
+    elif context == "complaint":
+        replyMsg = "ดุ๊กดิ๊ก ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "store":
         replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "greeting":
