@@ -274,8 +274,10 @@ def handle_message(event):
         replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
     elif context == "promotion":
         replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
+    elif context == "store":
+        replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "greeting":
-        replyMsg = f"{name}{chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{name} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
         replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommendation":
