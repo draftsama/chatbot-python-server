@@ -77,7 +77,7 @@ def context_analysis(msg):
     system = """You are an excellent context analyzer who can analyze sentences in various forms, your responses must be in the format of JSON only, Don't explain
 
 The types of context can be as follows:
-["none", "greeting", "search","complaint", "information","recommend","technician","location"]
+["none","greeting","search","complaint","information","recommend","technician","location"]
 
 Q:Recommend a tile for bathroom
 A:{"context":"recommend"}
@@ -91,6 +91,12 @@ Q:3s6igiu*&กด(_0
 A:{"context":"none"}
 Q:Recommend how to install tile
 A:{"context":"recommend"}
+Q:What is Marine Studio?
+A:{"context":"information"}
+Q: Marine Studio has how many branches?
+A:{"context":"location"}
+Q: What is you sell?
+A:{"context":"information"}
             """
     # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
