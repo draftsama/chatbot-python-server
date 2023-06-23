@@ -265,13 +265,12 @@ def handle_message(event):
         )
         line_bot_api.reply_message(event.reply_token, location_message)
         return
-
-    context = context_analysis(reciveMsg)
-
-    print("context: ", context, flush=True)
+    reciveMsg = event.message.text
     print("input: ", event.message.text, flush=True)
 
-    reciveMsg = event.message.text
+    context = context_analysis(reciveMsg)
+    print("context: ", context, flush=True)
+
     name = "ดุ๊กดิก"
     if context == "none":
         replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
