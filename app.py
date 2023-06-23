@@ -420,7 +420,11 @@ def get_prediction():
 current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
+MODE = os.getenv('MODE')
 
-print(f"Server is running - {formatted_time}", flush=True)
+print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    if MODE == "dev":
+        app.run(debug=True)
+    else:
+        serve(app, host='0.0.0.0')
