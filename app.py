@@ -272,8 +272,6 @@ def handle_message(event):
     name = "ดุ๊กดิก"
     if context == "none":
         replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
-    elif context == "promotion":
-        replyMsg = "โปรโมชั่นเดือนเรามี ซื้อ 1 แถม 1 นะครับ"
     elif context == "complaint":
         replyMsg = "ดุ๊กดิ๊ก ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "store":
