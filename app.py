@@ -277,7 +277,7 @@ def handle_message(event):
     elif context == "complaint":
         replyMsg = "ดุ๊กดิ๊ก ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "store":
-        replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "technician":
         replyMsg = f"""ดุ๊กดิ๊ก ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
 เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
@@ -285,9 +285,9 @@ def handle_message(event):
     elif context == "greeting":
         replyMsg = f"{name} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
-        replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommendation":
-        replyMsg = f"{name}ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{name} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
     elif context == "search":
         products = find_product(reciveMsg)
         # products drop first column
