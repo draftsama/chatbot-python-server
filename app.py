@@ -276,6 +276,10 @@ def handle_message(event):
         replyMsg = "ดุ๊กดิ๊ก ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "store":
         replyMsg = f"{name}ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+    elif context == "technician":
+        replyMsg = f"""ดุ๊กดิ๊ก ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
+เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
+และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
     elif context == "greeting":
         replyMsg = f"{name} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
