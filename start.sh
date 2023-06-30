@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export OPENAI_API_KEY=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
+export OPENAI_API_KEY=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
 DIR=$(dirname "$0")
 export MODE=production
 PORT=5000
