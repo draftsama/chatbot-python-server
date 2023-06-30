@@ -461,8 +461,13 @@ if MODE is None:
     MODE = 'dev'
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
+# if __name__ == '__main__':
+#     if MODE == "dev":
+#         app.run(debug=True)
+#     else:
+#         serve(app, host='0.0.0.0')
 if __name__ == '__main__':
     if MODE == "dev":
         app.run(debug=True)
     else:
-        serve(app, host='0.0.0.0')
+        app.run()
