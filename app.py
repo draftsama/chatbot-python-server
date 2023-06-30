@@ -76,7 +76,7 @@ def context_analysis(msg):
     system = """You are an excellent context analyzer who can analyze sentences in various forms, your responses must be in the format of JSON only, Don't explain
 
 The types of context can be as follows:
-["none","greeting","search","complaint","information","recommend","technician","location"]
+["none","greeting","search","complaint","information","recommend","technician","location","promotion"]
 
 Q:Recommend a tile for bathroom
 A:{"context":"recommend"}
@@ -145,11 +145,11 @@ tel:02-234-5555
 open:every day 7.00-19.00
 
 Q:Hello
-A:My name is ดุ๊กดิ๊ก, Infrom about what ครับ
+A:My name is ดอลฟิน, Infrom about what ครับ
 Q:What's มารีน ?
 A:Marine Studio - The Central Hub for Decorative Materials, featuring over 2,500 items including floor and wall tiles, paint, chemicals, sanitary ware, gardening tools, along with professional installation services provided by skilled craftsmen. 
 Q:Who are you?
-A:My name is ดุ๊กดิ๊ก I'm an assistant of Marine Studio ครับ
+A:My name is ดอลฟิน I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
@@ -310,6 +310,8 @@ def handle_message(event):
         replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommend":
         replyMsg = f"{name} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
+    elif context == "promotion":
+        replyMsg = f"ขณะนี้เรามีโปรโมชั่น 1 แถม 1"
     elif context == "search":
         products = find_product(reciveMsg)
         # products drop first column
