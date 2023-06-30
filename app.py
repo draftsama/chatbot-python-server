@@ -422,7 +422,7 @@ def prediction():
     })
 
 
-@app.route('/api/replicate/prediction', methods=['GET'])
+@app.route('/replicate/prediction', methods=['GET'])
 def get_prediction():
     id = request.args.get('id')
 
