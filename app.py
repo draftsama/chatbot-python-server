@@ -310,7 +310,14 @@ def handle_message(event):
     elif context == "recommend":
         replyMsg = f"{ASSISTANT_NAME} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
     elif context == "promotion":
-        replyMsg = f"ขณะนี้เรามีโปรโมชั่น 1 แถม 1"
+        line_bot_api.reply_message(
+            event.reply_token,
+            ImageSendMessage(
+                original_content_url='https://draft-dev.online/images/promotion.jpg',
+                preview_image_url='https://draft-dev.online/images/promotion.jpg'
+            )
+        )
+        return
     elif context == "search":
         products = find_product(reciveMsg)
         # products drop first column
