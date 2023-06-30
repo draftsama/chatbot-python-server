@@ -3,6 +3,8 @@
 export OPENAI_API_KEY=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
 DIR=$(dirname "$0")
 export MODE=production
+PORT=5000
+
 
 # Change directory to project directory
 cd $DIR 
