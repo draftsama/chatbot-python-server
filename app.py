@@ -30,7 +30,7 @@ import copy
 
 from oepnai_manager import openai_manager
 
-
+ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
 
@@ -139,17 +139,17 @@ def find_product(msg):
 
 
 def chat_gpt_reply(msg):
-    system = """You are helpful assistant of Marine Studio,  You are an expert in tiles and bathroom sanitary.,refer datas below
+    system = f"""You are helpful assistant of Marine Studio,  You are an expert in tiles and bathroom sanitary.,refer datas below
 website:www.marine-studio.co.th
 tel:02-234-5555
 open:every day 7.00-19.00
 
 Q:Hello
-A:My name is ดอลฟิน, Infrom about what ครับ
+A:My name is {ASSISTANT_NAME}, Infrom about what ครับ
 Q:What's มารีน ?
 A:Marine Studio - The Central Hub for Decorative Materials, featuring over 2,500 items including floor and wall tiles, paint, chemicals, sanitary ware, gardening tools, along with professional installation services provided by skilled craftsmen. 
 Q:Who are you?
-A:My name is ดอลฟิน I'm an assistant of Marine Studio ครับ
+A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
@@ -293,23 +293,22 @@ def handle_message(event):
     context = data["context"]
     print("data: ", data, flush=True)
 
-    name = "ดุ๊กดิก"
     if context == "none":
-        replyMsg = "ดุ๊กดิ๊ก รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
+        replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
     elif context == "complaint":
-        replyMsg = "ดุ๊กดิ๊ก ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
+        replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "location":
-        replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "technician":
-        replyMsg = f"""ดุ๊กดิ๊ก ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
+        replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
 เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
 และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
     elif context == "greeting":
-        replyMsg = f"{name} {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
-        replyMsg = f"{name} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommend":
-        replyMsg = f"{name} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
     elif context == "promotion":
         replyMsg = f"ขณะนี้เรามีโปรโมชั่น 1 แถม 1"
     elif context == "search":
