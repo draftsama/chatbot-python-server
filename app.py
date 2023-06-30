@@ -379,7 +379,7 @@ def handle_message(event):
     # line_bot_api.reply_message(event.reply_token, flex_message)
 
 
-@app.route('/api/replicate/prediction', methods=['POST'])
+@app.route('/replicate/prediction', methods=['POST'])
 def prediction():
     json_data = request.get_json()
 
