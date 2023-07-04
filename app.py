@@ -273,31 +273,44 @@ def lineWebhook():
     return 'OK'
 
 
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_text_message(event):
+    profile = line_bot_api.get_profile(event.source.user_id)
+
+    app.logger.info(f"==============================")
+    app.logger.info(f"user_name: {profile.display_name}")
+    app.logger.info(f"user_id: {event.source.user_id}")
+    app.logger.info(f"reply_token: {event.reply_token}")
+    app.logger.info(f"content_provider: {event.content_provider}")
+    app.logger.info(f"image_set: {event.image_set}")
+    app.logger.info(f"==============================")
+
+
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
+def handle_text_message(event):
     # print("body: ", event, flush=True)
     profile = line_bot_api.get_profile(event.source.user_id)
     # print("profile: ", profile, flush=True)
 
-    url = 'https://api.line.me/v2/bot/message/markAsRead'
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
-    }
-    data = {
-        'chat': {
-            'userId': event.source.user_id
-        }
-    }
+    # url = 'https://api.line.me/v2/bot/message/markAsRead'
+    # headers = {
+    #     'Content-Type': 'application/json',
+    #     'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
+    # }
+    # data = {
+    #     'chat': {
+    #         'userId': event.source.user_id
+    #     }
+    # }
 
-    requests.post(url, headers=headers, json=data)
+    # requests.post(url, headers=headers, json=data)
 
-    # Convert back to a pretty-printed JSON string
-    try:
-        pretty_json_string = json.dumps(event.__dict__, indent=4)
-        app.logger.info(f"user:\n{pretty_json_string}")
-    except Exception as e:
-        app.logger.error(f"error: {e}")
+    app.logger.info(f"==============================")
+    app.logger.info(f"user_name: {profile.display_name}")
+    app.logger.info(f"user_id: {event.source.user_id}")
+    app.logger.info(f"reply_token: {event.reply_token}")
+    app.logger.info(f"message: {event.message.text}")
+    app.logger.info(f"==============================")
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
