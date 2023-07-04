@@ -347,7 +347,6 @@ def handle_text_message(event):
         line_bot_api.reply_message(event.reply_token, location_message)
         return
     reciveMsg = event.message.text
-    app.logger.info(f"input: {event.message.text}")
 
     data = context_analysis(reciveMsg)
     if data is None:
@@ -357,7 +356,7 @@ def handle_text_message(event):
     app.logger.info(f"context: {data}")
 
     if context == "none":
-        replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
+        replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจาก{ASSISTANT_NAME}ไม่สามารเข้าใจได้ครับ"
     elif context == "complaint":
         replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "location":
