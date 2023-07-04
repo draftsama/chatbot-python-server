@@ -290,17 +290,16 @@ def handle_image_message(event):
     message_content = line_bot_api.get_message_content(event.message.id)
     file = get_binary_data(event)
     # save image
-    with open(f"images/{event.message.id}.{ext}", 'wb') as fd:
+    with open(f"images/{event.source.user_id}.{ext}", 'wb') as fd:
         fd.write(file)
     # reply image to user
 
-    # app.logger.info(f"==============================")
-    # app.logger.info(f"user_name: {profile.display_name}")
-    # app.logger.info(f"user_id: {event.source.user_id}")
-    # app.logger.info(f"reply_token: {event.reply_token}")
-    # app.logger.info(f"type: {event.message.type}")
-    # app.logger.info(f"image_set: {event.image_set}")
-    # app.logger.info(f"==============================")
+    app.logger.info(f"==============================")
+    app.logger.info(f"type: {event.message.type}")
+    app.logger.info(f"user_name: {profile.display_name}")
+    app.logger.info(f"user_id: {event.source.user_id}")
+    app.logger.info(f"reply_token: {event.reply_token}")
+    app.logger.info(f"==============================")
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -323,10 +322,10 @@ def handle_text_message(event):
     # requests.post(url, headers=headers, json=data)
 
     app.logger.info(f"==============================")
+    app.logger.info(f"type: {event.message.type}")
     app.logger.info(f"user_name: {profile.display_name}")
     app.logger.info(f"user_id: {event.source.user_id}")
     app.logger.info(f"reply_token: {event.reply_token}")
-    app.logger.info(f"type: {event.message.type}")
     app.logger.info(f"message: {event.message.text}")
     app.logger.info(f"==============================")
 
