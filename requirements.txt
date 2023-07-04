@@ -1,6 +1,5 @@
 numpy
 flask
-waitress
 line-bot-sdk
 Pillow
 python-dotenv

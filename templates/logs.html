@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Log Viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // setInterval(fetchLogs, 5000); // Fetch logs every 5 seconds
+            function fetchLogs() {
+
+                $.ajax({
+                    url: '/fetch_logs',
+                    type: 'GET',
+                    headers: {
+                        'If-None-Match': $('#log-content').data('etag')
+                    },
+                    success: function (data, textStatus, xhr) {
+                        if (xhr.status === 304) {
+                            return;  // No changes, don't update the page
+                        }
+                        $('#log-content').text(data);
+                        $('#log-content').data('etag', xhr.getResponseHeader('ETag'));
+                    },
+                    error: function (error) {
+                        console.log('Error fetching logs:', error);
+                    }
+                });
+            }
+            $('#fetch-logs').on('click', function () {
+                fetchLogs();
+            });
+            $('#clear-logs').on('click', function () {
+                $.ajax({
+                    url: '/clear',
+                    type: 'POST',
+                    success: function () {
+                        $('#log-content').text('Logs cleared.');
+                    },
+                    error: function (error) {
+                        console.log('Error clearing logs:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <button id="fetch-logs">Fetch Logs</button>
+    <button id="clear-logs">Clear Logs</button>
+    <pre id="log-content">{{ logs }}</pre>
+</body>
+
+</html>

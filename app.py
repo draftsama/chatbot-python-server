@@ -8,9 +8,8 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 
-from flask import Flask, jsonify, request, abort, make_response
+from flask import Flask, jsonify, request, abort, make_response, render_template
 from flask_cors import CORS
-from waitress import serve
 from PIL import Image, ImageOps
 import numpy as np
 from io import BytesIO
@@ -27,6 +26,8 @@ import datetime
 import requests
 import pandas
 import copy
+import logging
+import hashlib
 
 from oepnai_manager import openai_manager
 
@@ -62,6 +63,22 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
+
+# check app.log file is exists or not then delete it
+if os.path.exists("app.log"):
+    os.remove("app.log")
+
+
+# Configure logging to write to both console and file
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),  # Output to file
+        logging.StreamHandler()  # Output to console
+    ]
+)
+# logging.getLogger().setLevel(logging.INFO
 
 
 # def context_analysis(msg):
@@ -180,9 +197,9 @@ def reply_flex_message_options(reply):
     try:
         line_bot_api.reply_message(reply, flex_message_options)
     except LineBotApiError as e:
-        print('e.status_code:', e.status_code)
-        print('e.error.message:', e.error.message)
-        print('e.error.details:', e.error.details)
+        logging.error(f"code : {e.status_code}")
+        logging.error(f"code : {e.error.message}")
+        logging.error(f"code : {e.error.details}")
 
 
 flex_message_find_products = None
@@ -199,9 +216,9 @@ def reply_flex_message_find_products(reply):
     try:
         line_bot_api.reply_message(reply, flex_message_find_products)
     except LineBotApiError as e:
-        print('e.status_code:', e.status_code)
-        print('e.error.message:', e.error.message)
-        print('e.error.details:', e.error.details)
+        logging.error(f"code : {e.status_code}")
+        logging.error(f"code : {e.error.message}")
+        logging.error(f"code : {e.error.details}")
 
 
 # message = dict()
@@ -242,7 +259,8 @@ def lineWebhook():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        print("Invalid signature. Please check your channel access token/channel secret.")
+        logging.error(
+            "Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
 
     return 'OK'
@@ -264,7 +282,10 @@ def handle_message(event):
             'userId': event.source.user_id
         }
     }
+
     requests.post(url, headers=headers, json=data)
+
+    logging.info(f"user:\n{event.source}")
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
@@ -284,14 +305,14 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, location_message)
         return
     reciveMsg = event.message.text
-    print("input: ", event.message.text, flush=True)
+    logging.info(f"input: {event.message.text}")
 
     data = context_analysis(reciveMsg)
     if data is None:
         data = {"context": "none"}
 
     context = data["context"]
-    print("data: ", data, flush=True)
+    logging.info(f"context: {data}")
 
     if context == "none":
         replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
@@ -343,14 +364,14 @@ def handle_message(event):
             try:
                 line_bot_api.reply_message(event.reply_token, flex_message)
             except LineBotApiError as e:
-                print('e.status_code:', e.status_code)
-                print('e.error.message:', e.error.message)
-                print('e.error.details:', e.error.details)
+                logging.error(f"code : {e.status_code}")
+                logging.error(f"code : {e.error.message}")
+                logging.error(f"code : {e.error.details}")
 
                 # end method
             return
 
-    print("reply", replyMsg, flush=True)
+    logging.info(f"reply : {replyMsg}")
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -457,6 +478,39 @@ def get_prediction():
 
     return response
 
+# Log
+
+
+@app.route('/fetch_logs')
+def fetch_logs():
+    with open('app.log', 'r') as f:
+        logs = f.read()
+    logs_hash = hashlib.md5(logs.encode()).hexdigest()
+
+    if request.headers.get('If-None-Match') == logs_hash:
+        return '', 304  # Return empty response if logs haven't changed
+    else:
+        response = app.make_response(logs)
+        response.headers['ETag'] = logs_hash
+        return response
+
+
+@app.route('/logs')
+def view_logs():
+    with open('app.log', 'r') as f:
+        logs = f.read()
+    return render_template('logs.html', logs=logs)
+
+
+@app.route('/clear', methods=['POST'])
+def clear_logs():
+    try:
+        with open('app.log', 'w') as f:
+            f.write('')
+        return jsonify(success=True)
+    except Exception as e:
+        return jsonify(success=False, error=str(e))
+
 
 # Get the current date and time in the specified time zone
 current_time = datetime.datetime.now(timezone)
@@ -468,11 +522,6 @@ if MODE is None:
     MODE = 'dev'
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
-# if __name__ == '__main__':
-#     if MODE == "dev":
-#         app.run(debug=True)
-#     else:
-#         serve(app, host='0.0.0.0')
 if __name__ == '__main__':
     if MODE == "dev":
         app.run(debug=True)
