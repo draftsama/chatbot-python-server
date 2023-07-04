@@ -8,10 +8,6 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 
-from linebot.v3.messaging import (
-    Configuration,
-)
-
 
 from flask import Flask, jsonify, request, abort, make_response, render_template
 from flask_cors import CORS
@@ -57,9 +53,7 @@ CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
-configuration = Configuration(
-    access_token=CHANNEL_ACCESS_TOKEN
-)
+
 # check empty string
 if is_empty_string(os.getenv('OPENAI_API_KEY')):
     print("OPENAI_API_KEY is empty")
