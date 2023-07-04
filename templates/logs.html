@@ -6,11 +6,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
+            var api_base = ''
+            var mode = $('#mode').text();
+            if (mode === 'production')
+                api_base = '/api'
+
             setInterval(fetchLogs, 5000); // Fetch logs every 5 seconds
             function fetchLogs() {
 
+                // get value from html by id
+
                 $.ajax({
-                    url: '/fetch_logs',
+                    url: api_base + '/fetch_logs',
                     type: 'GET',
                     headers: {
                         'If-None-Match': $('#log-content').data('etag')
@@ -32,7 +39,7 @@
             });
             $('#clear-logs').on('click', function () {
                 $.ajax({
-                    url: '/clear',
+                    url: api_base + '/clear',
                     type: 'POST',
                     success: function () {
                         $('#log-content').text('Logs cleared.');
@@ -50,6 +57,7 @@
     <button id="fetch-logs">Fetch Logs</button>
     <button id="clear-logs">Clear Logs</button>
     <pre id="log-content">{{ logs }}</pre>
+    <pre id="mode">{{ mode }}</pre>
 </body>
 
 </html>

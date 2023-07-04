@@ -31,6 +31,13 @@ import hashlib
 
 from oepnai_manager import openai_manager
 
+
+MODE = os.getenv('MODE')
+# MODE is empty force it to be 'dev'
+if MODE is None:
+    MODE = 'dev'
+
+
 ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
@@ -501,7 +508,7 @@ def fetch_logs():
 def view_logs():
     with open('app.log', 'r') as f:
         logs = f.read()
-    return render_template('logs.html', logs=logs)
+    return render_template('logs.html', logs=logs, mode=MODE)
 
 
 @app.route('/clear', methods=['POST'])
@@ -518,10 +525,6 @@ def clear_logs():
 current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-MODE = os.getenv('MODE')
-# MODE is empty force it to be 'dev'
-if MODE is None:
-    MODE = 'dev'
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
