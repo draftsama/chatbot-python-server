@@ -78,7 +78,6 @@ logging.basicConfig(
         logging.StreamHandler()  # Output to console
     ]
 )
-# logging.getLogger().setLevel(logging.INFO
 
 
 # def context_analysis(msg):
@@ -197,9 +196,9 @@ def reply_flex_message_options(reply):
     try:
         line_bot_api.reply_message(reply, flex_message_options)
     except LineBotApiError as e:
-        logging.error(f"code : {e.status_code}")
-        logging.error(f"code : {e.error.message}")
-        logging.error(f"code : {e.error.details}")
+        app.logger.error(f"code : {e.status_code}")
+        app.logger.error(f"code : {e.error.message}")
+        app.logger.error(f"code : {e.error.details}")
 
 
 flex_message_find_products = None
@@ -216,9 +215,9 @@ def reply_flex_message_find_products(reply):
     try:
         line_bot_api.reply_message(reply, flex_message_find_products)
     except LineBotApiError as e:
-        logging.error(f"code : {e.status_code}")
-        logging.error(f"code : {e.error.message}")
-        logging.error(f"code : {e.error.details}")
+        app.logger.error(f"code : {e.status_code}")
+        app.logger.error(f"code : {e.error.message}")
+        app.logger.error(f"code : {e.error.details}")
 
 
 # message = dict()
@@ -241,10 +240,13 @@ def load_image_from_base64(base64_string):
     img = Image.open(BytesIO(img_data))
     return img
 
+# =================== ROUTE ===================
+
 
 @app.route('/', methods=['GET'])
 def get_status():
     # return app status
+    app.logger.info("Test")
     return '<h1>Server Running</h1>'
 
 
@@ -259,7 +261,7 @@ def lineWebhook():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        logging.error(
+        app.logger.error(
             "Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
 
@@ -285,7 +287,7 @@ def handle_message(event):
 
     requests.post(url, headers=headers, json=data)
 
-    logging.info(f"user:\n{event.source}")
+    app.logger.info(f"user:\n{event.source}")
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
@@ -305,14 +307,14 @@ def handle_message(event):
         line_bot_api.reply_message(event.reply_token, location_message)
         return
     reciveMsg = event.message.text
-    logging.info(f"input: {event.message.text}")
+    app.logger.info(f"input: {event.message.text}")
 
     data = context_analysis(reciveMsg)
     if data is None:
         data = {"context": "none"}
 
     context = data["context"]
-    logging.info(f"context: {data}")
+    app.logger.info(f"context: {data}")
 
     if context == "none":
         replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจากดุ๊กดิ๊กไม่สามารเข้าใจได้ครับ"
@@ -364,14 +366,14 @@ def handle_message(event):
             try:
                 line_bot_api.reply_message(event.reply_token, flex_message)
             except LineBotApiError as e:
-                logging.error(f"code : {e.status_code}")
-                logging.error(f"code : {e.error.message}")
-                logging.error(f"code : {e.error.details}")
+                app.logger.error(f"code : {e.status_code}")
+                app.logger.error(f"code : {e.error.message}")
+                app.logger.error(f"code : {e.error.details}")
 
                 # end method
             return
 
-    logging.info(f"reply : {replyMsg}")
+    app.logger.info(f"reply : {replyMsg}")
 
     line_bot_api.reply_message(
         event.reply_token,
@@ -523,6 +525,7 @@ if MODE is None:
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
+
     if MODE == "dev":
         app.run(debug=True)
     else:
