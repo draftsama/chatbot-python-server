@@ -259,7 +259,6 @@ def get_status():
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
 
-    app.logger.info("Receive webhook from LINE")
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -291,6 +290,12 @@ def handle_image_message(event):
     ext = 'jpg'
     message_content = line_bot_api.get_message_content(event.message.id)
     file = get_binary_data(event)
+    # convert to base64
+    base64_string = base64.b64encode(file)
+    # write to base64.txt
+    with open("base64.txt", "wb") as fh:
+        fh.write(base64_string)
+
     # save image
     with open(f"images/{event.source.user_id}.{ext}", 'wb') as fd:
         fd.write(file)
