@@ -9,7 +9,7 @@ from linebot import (
 )
 
 
-from flask import Flask, jsonify, request, abort, make_response, render_template
+from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
 from flask_cors import CORS
 from PIL import Image, ImageOps
 import numpy as np
@@ -520,10 +520,15 @@ def get_prediction():
     response.status_code = 200
 
     return response
+# create route for get image
+
+
+@app.route('/get_image/<path:filename>', methods=['GET'])
+def get_image(filename):
+    return send_from_directory('images', filename)
+
 
 # Log
-
-
 @app.route('/fetch_logs')
 def fetch_logs():
     with open('app.log', 'r') as f:
