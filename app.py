@@ -258,6 +258,8 @@ def get_status():
 
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
+
+    app.logger.info("Receive webhook from LINE")
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
