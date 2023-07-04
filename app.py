@@ -274,12 +274,25 @@ def lineWebhook():
     return 'OK'
 
 
+def get_binary_data(event) -> str:
+    content = line_bot_api.get_message_content(event.message.id)
+    file = b""
+    for chunk in content.iter_content():
+        file += chunk
+
+    return file
+
+
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
     profile = line_bot_api.get_profile(event.source.user_id)
-    # get image url
+    ext = 'jpg'
     message_content = line_bot_api.get_message_content(event.message.id)
-    app.logger.info(f"content: {message_content}")
+    file = get_binary_data(event)
+    # save image
+    with open(f"images/{event.message.id}.{ext}", 'wb') as fd:
+        fd.write(file)
+    # reply image to user
 
     # app.logger.info(f"==============================")
     # app.logger.info(f"user_name: {profile.display_name}")
