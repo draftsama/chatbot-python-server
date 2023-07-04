@@ -72,8 +72,6 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 # check app.log file is exists or not then delete it
-if os.path.exists("app.log"):
-    os.remove("app.log")
 
 
 # Configure logging to write to both console and file
