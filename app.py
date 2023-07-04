@@ -291,12 +291,10 @@ def handle_message(event):
     }
 
     requests.post(url, headers=headers, json=data)
-    t = type(event)
-    app.logger.info(f"type of event:{t}")
 
     # Convert back to a pretty-printed JSON string
-    # pretty_json_string = json.dumps(event, indent=4)
-    app.logger.info(f"user:\n{event}")
+    pretty_json_string = json.dumps(event, indent=4)
+    app.logger.info(f"user:\n{pretty_json_string}")
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
