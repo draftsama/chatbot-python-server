@@ -523,7 +523,7 @@ def get_prediction():
 # create route for get image
 
 
-@app.route('/get_image/<path:filename>', methods=['GET'])
+@app.route('/images/<path:filename>', methods=['GET'])
 def get_image(filename):
     return send_from_directory('images', filename)
 
