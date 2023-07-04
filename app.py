@@ -247,7 +247,7 @@ def load_image_from_base64(base64_string):
 def get_status():
     # return app status
     app.logger.info("Test")
-    return '<h1>Server Running</h1>'
+    return '<h1>Test</h1>'
 
 
 @app.route('/webhook', methods=['POST'])
