@@ -287,7 +287,7 @@ def handle_message(event):
 
     requests.post(url, headers=headers, json=data)
 
-    app.logger.info(f"user:\n{event.source}")
+    app.logger.info(f"user:\n{event}")
 
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
