@@ -96,9 +96,15 @@ logging.basicConfig(
 def gpt_calculator(msg):
     system = """You are an excellent Tile Calculator, you must think step by step, keep it short and easy to understand, your must using to following datas
 
-
-In 1 box:
+in 1 box
 - tile 60x60 cm = 4 pieces 
+
+Q:room 3x4 m, How many to use box of tiles size 60x60cm?
+A:- First, calculate the area of the room, which is 3x4 sq.m. = 12 sq.m. Then, calculate the area of the tiles, which is 60x60 = 3600 sq.cm.
+- Convert the units to match the room by dividing 3600 by 10000, which equals 0.36 sq.m.
+- Next step, divide the room area by the tile area to find the area of tiles needed for this room. 12/0.36 = 33.33 tiles.
+-Since each box of 60x60 tiles contains 4 tiles, we can calculate the number of boxes needed by dividing 33.33 by 4, which equals 8.333. We then round up the remainder.
+In conclusion, a total of 9 boxes will be needed.
             """
 # ผู้ช่วย DoHome
     res = openai.ChatCompletion.create(
