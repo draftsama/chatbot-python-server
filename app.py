@@ -94,8 +94,8 @@ logging.basicConfig(
 #     df = df.drop(columns=["embedding"])
 #     return df.iloc[indexes_sort[0]]["context"]
 def gpt_calculator(msg):
+    app.logger.info("gpt_calculator")
     system = """You are an excellent Tile Calculator, you must think step by step, keep it short and easy to understand, your must using to following datas
-
 in 1 box
 - tile 60x60 cm = 4 pieces 
 
@@ -105,18 +105,26 @@ A:- First, calculate the area of the room, which is 3x4 sq.m. = 12 sq.m. Then, c
 - Next step, divide the room area by the tile area to find the area of tiles needed for this room. 12/0.36 = 33.33 tiles.
 -Since each box of 60x60 tiles contains 4 tiles, we can calculate the number of boxes needed by dividing 33.33 by 4, which equals 8.333. We then round up the remainder.
 In conclusion, a total of 9 boxes will be needed.
-            """
-# ผู้ช่วย DoHome
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": msg},
-        ],
-        temperature=0.8,
-        max_tokens=2048
+          """
 
-    )
+    try:
+        res = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": msg},
+            ],
+            temperature=0.8,
+            max_tokens=2048
+
+        )
+
+    except Exception as e:
+        app.logger.error(f"code : {e.status_code}")
+        app.logger.error(f"code : {e.error.message}")
+        app.logger.error(f"code : {e.error.details}")
+        return "ไม่เข้าใจคำถามของคุณ"
+
     # check if the response is empty
     if len(res.choices) == 0:
         return "ไม่เข้าใจคำถามของคุณ"
