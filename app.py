@@ -93,12 +93,33 @@ logging.basicConfig(
 #     df = pandas.read_csv(embedding_path)
 #     df = df.drop(columns=["embedding"])
 #     return df.iloc[indexes_sort[0]]["context"]
+def gpt_calculator(msg):
+    system = """You are an excellent Tile Calculator, you must think step by step , your must using to following datas
+ 
+in 1 box
+- tile 60x60 cm = 4 pieces 
+            """
+# ผู้ช่วย DoHome
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": msg},
+        ],
+        temperature=0.8,
+    )
+    # check if the response is empty
+    if len(res.choices) == 0:
+        return "ไม่เข้าใจคำถามของคุณ"
+    # return the first choice
+    return str(res.choices[0].message['content'])
+
 
 def context_analysis(msg):
     system = """You are an excellent context analyzer who can analyze sentences in various forms, your responses must be in the format of JSON only, Don't explain
 
 The types of context can be as follows:
-["none","greeting","search","complaint","information","recommend","technician","location","promotion"]
+["none","greeting","search","complaint","information","recommend","technician","location","promotion","calculate"]
 
 Q:Recommend a tile for bathroom
 A:{"context":"recommend"}
@@ -378,6 +399,8 @@ def handle_text_message(event):
         replyMsg = f"{ASSISTANT_NAME} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
     elif context == "recommend":
         replyMsg = f"{ASSISTANT_NAME} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
+    elif context == "calculate":
+        replyMsg = gpt_calculator(reciveMsg)
     elif context == "promotion":
         line_bot_api.reply_message(
             event.reply_token,
