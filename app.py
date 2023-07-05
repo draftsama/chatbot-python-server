@@ -94,7 +94,7 @@ logging.basicConfig(
 #     df = df.drop(columns=["embedding"])
 #     return df.iloc[indexes_sort[0]]["context"]
 def gpt_calculator(msg):
-    system = """You are an excellent Tile Calculator, you must think step by step, answer concisely, your must using to following datas
+    system = """You are an excellent Tile Calculator, you must think step by step, keep it short and easy to understand, your must using to following datas
 
 
 In 1 box:
@@ -108,7 +108,7 @@ In 1 box:
             {"role": "user", "content": msg},
         ],
         temperature=0.8,
-        max_tokens=1024
+        max_tokens=2048
 
     )
     # check if the response is empty
