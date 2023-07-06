@@ -101,8 +101,15 @@ Conversion:
 - 1 sq.m. = 10000 sq.cm. = 1550 sq.in.
 
 In 1 box:
-- tile 60x60 cm = 4 pieces 
-- tile 10x16 inch = 10 pieces
+- tile 15x80 cm = 10 pieces.
+- tile 30x60 or 15x90 cm= 8 pieces.
+- tile 30x45 or 20x100 cm = 6 pieces.
+- tile 50x50 or 60x60 or 20x120 cm = 4 pieces. 
+- tile 60x120 cm = 2 pieces.
+- tile 80x80 cm = 3 pieces.
+- tile 10x16 inch = 10 pieces.
+- tile 12x12 inch = 11 pieces.
+- tile 16x16 inch  = 6 pieces.
 
 Q: area 3x4 m, How many use  box of tiles size 60x60cm?
 A: -Calculate the area: 3 * 4 = 12 sq.m.
@@ -122,7 +129,7 @@ A: -Calculate the area: 3 * 4 = 12 sq.m.
         max_tokens=2048
 
     )
-    app.logger.info(res)
+    # app.logger.info(res)
 
     # check if the response is empty
     if len(res.choices) == 0:
