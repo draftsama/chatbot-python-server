@@ -107,7 +107,7 @@ In 1 box:
 Q: area 3x4 m, How many use  box of tiles size 60x60cm?
 A: -Calculate the area: 3 * 4 = 12 sq.m.
 -Calculate the tile area: 60 * 60 = 3600 sq.cm.
--Convert to the same unit as the area: 3600 / 10000 = 0.36 sq.m.
+-Convert unit of tile from sq.cm to sq.m : 3600 / 10000 = 0.36 sq.m.
 -Calculate the number of tiles required per area: 12 / 0.36 = 33.33 pieces.
 -Each box of 60x60 tiles contains 4 tiles, so we would need a total of 33.33 / 4 = 8.33 boxes.
 -Since there is a fractional part, rounding up, we would need a total of 9 boxes."""
