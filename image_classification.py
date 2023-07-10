@@ -3,12 +3,13 @@ import numpy as np
 from PIL import Image, ImageOps  # Install pillow instead of PIL
 import base64
 from io import BytesIO
-
+import os
 # class image classification
 
 
 class ImageClassifucation:
     def __init__(self, model_path: str, label_path: str):
+        os.environ['KMP_DUPLICATE_LIB_OK'] = 'TRUE'
 
         # Load the model
         self.model = load_model(model_path, compile=False)
