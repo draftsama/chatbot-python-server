@@ -13,4 +13,3 @@ pandas
 scikit-learn
 scipy
 gunicorn
-tensorflow
