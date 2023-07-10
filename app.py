@@ -29,7 +29,6 @@ import pandas
 import copy
 import logging
 import hashlib
-from image_classification import ImageClassifucation
 
 from oepnai_manager import openai_manager
 
@@ -74,7 +73,6 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 # check app.log file is exists or not then delete it
-ic = ImageClassifucation("./models/keras_model.h5", "./models/labels.txt")
 
 # Configure logging to write to both console and file
 logging.basicConfig(
@@ -345,18 +343,12 @@ def handle_image_message(event):
     with open(f"images/{event.source.user_id}.{ext}", 'wb') as fd:
         fd.write(file)
     # reply image to user
-
     app.logger.info(f"==============================")
     app.logger.info(f"type: {event.message.type}")
     app.logger.info(f"user_name: {profile.display_name}")
     app.logger.info(f"user_id: {event.source.user_id}")
     app.logger.info(f"reply_token: {event.reply_token}")
     app.logger.info(f"==============================")
-    result = ic.predict(base64_string)
-    json_result = json.dumps(result, indent=4)
-    app.logger.info(f"result: {json_result}")
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=json_result))
 
 
 @handler.add(MessageEvent, message=TextMessage)
