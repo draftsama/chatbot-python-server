@@ -13,4 +13,4 @@ pandas
 scikit-learn
 scipy
 gunicorn
-Pillow
+tensorflow
