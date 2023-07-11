@@ -353,9 +353,14 @@ def handle_image_message(event):
     app.logger.info(f"reply_token: {event.reply_token}")
     app.logger.info(f"==============================")
 
-    result = ic.predict(base64_string)
+    result = ic.predict(base64_string, 5)
+    t = ""
+    # get class name
+    for i in result:
+        t += i["class"] + "\n"
+
     line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=result[0]["class"]))
+        event.reply_token, TextSendMessage(text=t))
 
 
 @handler.add(MessageEvent, message=TextMessage)
