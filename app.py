@@ -31,7 +31,7 @@ import logging
 import hashlib
 
 from oepnai_manager import openai_manager
-
+from image_classification import ImageClassifucation
 
 MODE = os.getenv('MODE')
 # MODE is empty force it to be 'dev'
@@ -71,6 +71,9 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
+
+
+ic = ImageClassifucation("./model/keras_model.h5", "./model/labels.txt")
 
 # check app.log file is exists or not then delete it
 
@@ -349,6 +352,12 @@ def handle_image_message(event):
     app.logger.info(f"user_id: {event.source.user_id}")
     app.logger.info(f"reply_token: {event.reply_token}")
     app.logger.info(f"==============================")
+
+    result = ic.predict(base64_string)
+    json_string = json.dumps(result, indent=4)
+    app.logger.info(f"result: {json_string}")
+    line_bot_api.reply_message(
+        event.reply_token, TextSendMessage(text=json_string))
 
 
 @handler.add(MessageEvent, message=TextMessage)
