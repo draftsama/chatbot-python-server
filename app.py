@@ -354,10 +354,8 @@ def handle_image_message(event):
     app.logger.info(f"==============================")
 
     result = ic.predict(base64_string)
-    json_string = json.dumps(result, indent=4)
-    app.logger.info(f"result: {json_string}")
     line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=json_string))
+        event.reply_token, TextSendMessage(text=result[0]["class"]))
 
 
 @handler.add(MessageEvent, message=TextMessage)
