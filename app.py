@@ -29,7 +29,7 @@ import pandas
 import copy
 import logging
 import hashlib
-
+from aes import AES
 from oepnai_manager import openai_manager
 from image_classification import ImageClassifucation
 
@@ -51,13 +51,14 @@ def is_empty_string(s):
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
-openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 # check empty string
-if is_empty_string(os.getenv('OPENAI_API_KEY')):
+OPENAI_API_KEY_ENCRYPTED = os.getenv('OPENAI_API_KEY_ENCRYPTED')
+if is_empty_string(OPENAI_API_KEY_ENCRYPTED):
     print("OPENAI_API_KEY is empty")
     exit()
+openai.api_key = AES.decrypt(OPENAI_API_KEY_ENCRYPTED)
 
 # Specify the time zone for Bangkok
 timezone = pytz.timezone('Asia/Bangkok')
