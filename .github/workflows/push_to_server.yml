@@ -15,7 +15,7 @@ jobs:
         run: |
           # get and echo environment secert "OPENAI_API_KEY
           echo "secret: ${{ secrets.OPENAI_API_KEY }}"
-          echo "test: ${{ env.TEST }}"
+          echo "test: ${{ vars.TEST }}"
 
 
 
