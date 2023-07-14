@@ -15,10 +15,8 @@ jobs:
 
       - name: Echo Environment Variables
         run: |
-          $echo ${{ secrets.OPENAI_API_KEY }}
-          $echo ${{ secrets['OPENAI_API_KEY'] }}
-          $echo ${{ env.TEST }}
-          $echo ${{ env['TEST'] }}
+          $echo ${{secrets.OPENAI_API_KEY}}
+          $echo ${{env.TEST}}
 
 
 
