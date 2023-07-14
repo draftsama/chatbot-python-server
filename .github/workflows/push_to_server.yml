@@ -10,13 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-
-
       - name: Echo Environment Variables
         run: |
-          api = {{secrets.OPENAI_API_KEY}}
-          echo $api
+          echo ${{secrets.OPENAI_API_KEY}}
+          echo ${{evn.TEST}}
 
 
 
