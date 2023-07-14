@@ -8,20 +8,12 @@ on:
 jobs:
   push_to_origin:
     environment: DEPLOY
-    env:
-      OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
-      #get env TEST
-      TEST: ${{github.env.TEST}}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-
+      - uses: actions/checkout@v3
       - name: Get Environment Variables
         run: |
-          echo "API: $API"
+          echo "OPENAI_API_KEY: $OPENAI_API_KEY"
           echo "TEST: $TEST"
   
 
