@@ -13,7 +13,7 @@ jobs:
       - name: Echo Environment Variables
         run: |
           echo ${{secrets.OPENAI_API_KEY}}
-          echo ${{evn.TEST}}
+          echo ${{env.TEST}}
 
 
 
