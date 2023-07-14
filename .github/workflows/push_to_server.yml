@@ -18,7 +18,8 @@ jobs:
       - name: Export Environment Variables
         run: |
           echo 'tttttttttt'
-          echo $OPENAI_API_KEY
-          echo $TEST
+          echo ${{ github.OPENAI_API_KEY }}
+          echo "${{ github.TEST }}"
+          echo ${{ github.TEST }}
 
     
