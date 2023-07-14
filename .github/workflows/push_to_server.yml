@@ -13,13 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-   
+      - name: Load environment variables from github.env
+        run: |
+          cat $GITHUB_ENV
+          source $GITHUB_ENV
 
       - name: Export Environment Variables
         run: |
-          echo 'tttttttttt'
-          echo ${{ github.OPENAI_API_KEY }}
-          echo "${{ github.TEST }}"
-          echo ${{ github.TEST }}
+          echo $OPENAI_API_KEY
+          echo $TEST
+
 
     
