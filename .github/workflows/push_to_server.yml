@@ -9,7 +9,8 @@ jobs:
   push_to_origin:
     environment: DEPLOY
     env:
-      API: ${{secrets.OPENAI_API_KEY}}
+      OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
+      TEST: ${{secrets.TEST}}
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +21,7 @@ jobs:
       - name: Get Environment Variables
         run: |
           echo "API: $API"
+          echo "TEST: $TEST"
   
 
 
