@@ -73,7 +73,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-ic = ImageClassifucation("./models/keras_model.h5", "./models/labels.txt")
+ic = ImageClassifucation("./models/model.keras", "./models/labels.txt")
 
 # check app.log file is exists or not then delete it
 

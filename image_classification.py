@@ -1,3 +1,4 @@
+import tensorflow as tf
 from keras.models import load_model  # TensorFlow is required for Keras to work
 import numpy as np
 from PIL import Image, ImageOps  # Install pillow instead of PIL
@@ -5,60 +6,48 @@ import base64
 from io import BytesIO
 
 # class image classification
+
+
 class ImageClassifucation:
-    def __init__(self, model_path:str, label_path:str):
+    def __init__(self, model_path: str, label_path: str, image_size: int = 256):
 
         # Load the model
         self.model = load_model(model_path, compile=False)
         # Load the labels
         self.class_names = open(label_path, "r").readlines()
+        self.image_size = image_size
         # Disable scientific notation for clarity
         np.set_printoptions(suppress=True)
-      
-    def predict(self, image_base64:str,count:int =1):
-        
 
-        #base64 to image
-  
+    def predict(self, image_base64: str, count: int = 1):
+
+        # base64 to image
+
         # Decode the base64 string to bytes
         image_bytes = base64.b64decode(image_base64)
-
         # Open the image using PIL
         image = Image.open(BytesIO(image_bytes))
-        size = (224, 224)
+
+        # Resize the image to a 256x256 with the same strategy as in TM2:
+        size = (self.image_size, self.image_size)
         image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
-        # turn the image into a numpy array
-        image_array = np.asarray(image)
 
-        # Normalize the image
-        normalized_image_array = (image_array.astype(np.float32) / 127.5) - 1
+        img_array = tf.keras.utils.img_to_array(image)
+        img_array = tf.expand_dims(img_array, 0)  # Create a batch
+        predictions = self.model.predict(img_array)
+
+        softmax = tf.nn.softmax(predictions[0])
+        scores = softmax.numpy()
+
+        # get indexes
+        indexes = np.argsort(softmax)[-count:][::-1]
+
+        results = []
+        for i in indexes:
+            class_name = self.class_names[i].split(" ")[1].strip()
+            score = str(scores[i])
+            results.append({"class": class_name, "score": score})
+
+        return results
+
        
-        # Create the array of the right shape to feed into the keras model
-        # The 'length' or number of images you can put into the array is
-        # determined by the first position in the shape tuple, in this case 1
-        data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
-
-        # Load the image into the array
-        data[0] = normalized_image_array
-        # Predicts the model
-        prediction = self.model.predict(data)
-        
-        top_score_indexes = np.argsort(prediction[0])[-count:][::-1]
-
-        # for i in range(count):
-        #     print(f"Class {i+1}: {self.class_names[top_score_indexes[i]][2:]}",end="")
-        #     print(f"Confidence Score:{str(prediction[0][top_score_indexes[i]])} \n")
-        
-        #return list of dict
-        result = []
-        for i in range(count):
-            #class name
-            c = self.class_names[top_score_indexes[i]][2:]
-            #remove \n
-            c = c.replace("\n","")            
-            s = str(prediction[0][top_score_indexes[i]])
-            result.append({"class":c,"score":s})            
-        return result
-
-        
-        
