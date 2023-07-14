@@ -10,7 +10,8 @@ jobs:
     environment: DEPLOY
     env:
       OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
-      TEST: ${{secrets.TEST}}
+      #get env TEST
+      TEST: ${{github.env.TEST}}
     runs-on: ubuntu-latest
 
     steps:
