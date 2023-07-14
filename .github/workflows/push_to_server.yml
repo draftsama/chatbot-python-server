@@ -1,0 +1,23 @@
+name: Push to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  push_to_origin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+   
+
+      - name: Export Environment Variables
+        run: |
+          echo $OPENAI_API_KEY
+
+
+    
