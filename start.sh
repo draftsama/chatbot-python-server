@@ -1,9 +1,9 @@
 #!/bin/sh
 
 DIR=$(dirname "$0")
+
 export MODE=production
 export PORT=3000
-export CUDA_VISIBLE_DEVICES="" 
 
 # Change directory to project directory
 cd $DIR 

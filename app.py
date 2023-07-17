@@ -589,8 +589,94 @@ def get_prediction():
 def get_image(filename):
     return send_from_directory('images', filename)
 
+# create route for upload image
+
+
+@app.route('/test', methods=['POST'])
+def post_test():
+    # return app status
+    response = make_response(jsonify({
+        "status": "test"
+    }))
+
+    return response
+
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+
+    json_data = request.get_json()
+    if json_data is None:
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
+        response.status_code = 400
+        return response
+
+    if 'image' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required image base64"}))
+        response.status_code = 400
+        return response
+
+    if 'name' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required name of image"}))
+        response.status_code = 400
+        return response
+
+    # save image
+    image_data = json_data['image']
+    image_data = image_data.split(',')[1]
+    image_data = bytes(image_data, encoding="ascii")
+    image_data = base64.b64decode(image_data)
+    image = Image.open(BytesIO(image_data))
+    image.save(os.path.join('images', json_data['name']))
+    response = make_response(jsonify({
+        "status": "scuccessfully",
+        "url": f"{request.url_root}images/{json_data['name']}"
+    }))
+
+    return response
+
+# delete image
+
+
+@app.route('/delete_image', methods=['POST'])
+def del_image():
+    json_data = request.get_json()
+    if json_data is None:
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
+        response.status_code = 400
+        return response
+
+    if 'name' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required name of image"}))
+        response.status_code = 400
+        return response
+
+    # check image in folder
+    if os.path.exists(os.path.join('images', json_data['name'])):
+        os.remove(os.path.join('images', json_data['name']))
+        response = make_response(jsonify({
+            "status": "scuccessfully",
+        }))
+        return response
+    else:
+        response = make_response(
+            jsonify({"status": "failed", "error": "image not found"}))
+        response.status_code = 400
+        return response
+
 
 # Log
+
+
 @app.route('/fetch_logs')
 def fetch_logs():
     with open('app.log', 'r') as f:
