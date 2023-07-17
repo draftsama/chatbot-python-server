@@ -634,8 +634,8 @@ def upload_image():
     image = Image.open(BytesIO(image_data))
     image.save(os.path.join('images', json_data['name']))
     response = make_response(jsonify({
-        "status": "scuccessfully",
-        "url": f"{request.url_root}images/{json_data['name']}"
+        "status": "success",
+        "message": "upload image successfully"
     }))
 
     return response
@@ -664,7 +664,9 @@ def del_image():
     if os.path.exists(os.path.join('images', json_data['name'])):
         os.remove(os.path.join('images', json_data['name']))
         response = make_response(jsonify({
-            "status": "scuccessfully",
+            "status": "success",
+            "message": "image deleted successfully"
+
         }))
         return response
     else:
