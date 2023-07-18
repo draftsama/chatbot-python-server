@@ -589,6 +589,16 @@ def get_prediction():
 def get_image(filename):
     return send_from_directory('images', filename)
 
+# check image
+
+
+@app.route('/check_image/<path:filename>', methods=['GET'])
+def check_image(filename):
+    if os.path.isfile('images/' + filename):
+        return jsonify({"status": "success"})
+    else:
+        return jsonify({"status": "failed"})
+
 # create route for upload image
 
 
