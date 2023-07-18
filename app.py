@@ -1,37 +1,33 @@
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
+from image_classification import ImageClassifucation
+from oepnai_manager import openai_manager
+from aes import AES
+import hashlib
+import logging
+import copy
+import pandas
+import datetime
+import pytz
+import replicate
+import openai
+import re
+import json
+import os
+from dotenv import load_dotenv
+import base64
+from io import BytesIO
+import numpy as np
+from PIL import Image, ImageOps
+from flask_cors import CORS
+from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
+from linebot import (
+    LineBotApi, WebhookHandler
 )
 from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
 )
-from linebot import (
-    LineBotApi, WebhookHandler
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
-
-
-from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
-from flask_cors import CORS
-from PIL import Image, ImageOps
-import numpy as np
-from io import BytesIO
-import base64
-from dotenv import load_dotenv
-import os
-import json
-import re
-import codecs
-import openai
-import replicate
-import pytz
-import datetime
-import requests
-import pandas
-import copy
-import logging
-import hashlib
-from aes import AES
-from oepnai_manager import openai_manager
-from image_classification import ImageClassifucation
 
 MODE = os.getenv('MODE')
 # MODE is empty force it to be 'dev'
@@ -51,7 +47,6 @@ def is_empty_string(s):
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
-
 
 # check empty string
 OPENAI_API_KEY_ENCRYPTED = os.getenv('OPENAI_API_KEY_ENCRYPTED')
@@ -726,11 +721,12 @@ def clear_logs():
 current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
+print("Server is starting up...", flush=True)
 
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
 
     if MODE == "dev":
-        app.run(debug=True)
+        app.run(debug=True, port=3000)
     else:
         app.run()

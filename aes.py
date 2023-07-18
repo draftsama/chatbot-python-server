@@ -47,14 +47,21 @@ class AES:
 # Example usage
 # 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
 
-if (len(sys.argv) < 3):
-    print("Please input command")
-    exit()
+#when run this file as main
+# python aes.py -e "Hello, world!"
+# python aes.py -d "gA
 
-order = sys.argv[1]
-text = sys.argv[2]
-if (order == '-e' or order == '--encrypt'):
-    byte_string = AES.encrypt(text)
-    print(byte_string)
-elif (order == '-d' or order == '--decrypt'):
-    print(AES.decrypt(text))
+if __name__ == "__main__":
+    if (len(sys.argv) < 3):
+        print("Please input command")
+        exit()
+
+    order = sys.argv[1]
+    text = sys.argv[2]
+    if (order == '-e' or order == '--encrypt'):
+        byte_string = AES.encrypt(text)
+        print(byte_string)
+    elif (order == '-d' or order == '--decrypt'):
+        print(AES.decrypt(text))
+
+
