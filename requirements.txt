@@ -11,6 +11,8 @@ matplotlib
 plotly
 pandas
 scikit-learn
+psycopg2
+sqlalchemy
 scipy
 gunicorn
 tensorflow

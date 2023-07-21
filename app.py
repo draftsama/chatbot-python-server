@@ -47,7 +47,7 @@ def is_empty_string(s):
 CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
-
+IMAGE_SIZE = int(os.getenv('IMAGE_SIZE'))
 # check empty string
 OPENAI_API_KEY_ENCRYPTED = os.getenv('OPENAI_API_KEY_ENCRYPTED')
 if is_empty_string(OPENAI_API_KEY_ENCRYPTED):
@@ -69,7 +69,7 @@ handler = WebhookHandler(CHANNEL_SECRET)
 np.set_printoptions(suppress=True)
 
 
-ic = ImageClassifucation("./models/model.keras", "./models/labels.txt")
+ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
 # check app.log file is exists or not then delete it
 
@@ -335,8 +335,8 @@ def handle_image_message(event):
     # convert to base64
     base64_string = base64.b64encode(file)
     # write to base64.txt
-    with open("base64.txt", "wb") as fh:
-        fh.write(base64_string)
+    # with open("base64.txt", "wb") as fh:
+    #     fh.write(base64_string)
 
     # save image
     with open(f"images/{event.source.user_id}.{ext}", 'wb') as fd:

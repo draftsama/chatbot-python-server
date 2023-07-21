@@ -31,7 +31,7 @@ def crop_and_resize(soruce: Image, resize: int):
     return soruce.crop((left, top, right, bottom)).resize((resize, resize))
 
 
-image_size = 256
+image_size = 224
 mode_path = os.path.join('models', 'model.keras')
 class_names_path = os.path.join('models', 'labels.txt')
 
