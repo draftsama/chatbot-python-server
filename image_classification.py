@@ -25,8 +25,11 @@ class ImageClassifucation:
 
         # Decode the base64 string to bytes
         image_bytes = base64.b64decode(image_base64)
-        # Open the image using PIL
+
         image = Image.open(BytesIO(image_bytes))
+
+        # Convertto RGB
+        image = image.convert('RGB')
 
         # Resize the image to a 256x256 with the same strategy as in TM2:
         size = (self.image_size, self.image_size)
@@ -36,11 +39,9 @@ class ImageClassifucation:
         img_array = tf.expand_dims(img_array, 0)  # Create a batch
         predictions = self.model.predict(img_array)
 
-        softmax = tf.nn.softmax(predictions[0])
-        scores = softmax.numpy()
-
+        scores = predictions[0]
         # get indexes
-        indexes = np.argsort(softmax)[-count:][::-1]
+        indexes = np.argsort(scores)[-count:][::-1]
 
         results = []
         for i in indexes:
@@ -49,5 +50,3 @@ class ImageClassifucation:
             results.append({"class": class_name, "score": score})
 
         return results
-
-       
