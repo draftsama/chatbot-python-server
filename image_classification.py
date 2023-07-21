@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image, ImageOps  # Install pillow instead of PIL
 import base64
 from io import BytesIO
-import uuid
+# import uuid
 import os
 # class image classification
 
@@ -26,27 +26,27 @@ class ImageClassifucation:
 
         # Decode the base64 string to bytes
         image_bytes = base64.b64decode(image_base64)
+
         image = Image.open(BytesIO(image_bytes))
         
         # Resize the image to a 256x256 with the same strategy as in TM2:
         size = (self.image_size, self.image_size)
+        
         image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
         
         # Convertto RGB
         image = image.convert('RGB')
 
         #get unique name
-        unique_name = f"{str(uuid.uuid4())}.jpg"
-        image.save(unique_name)
-        #close image
-        image.close()
+        # unique_name = f"{str(uuid.uuid4())}.jpg"
+        # image.save(unique_name)
+      
         
         #load image
-        new_image = Image.open(unique_name)
+        # new_image = Image.open(unique_name)
 
-    
-        
-        img_array = tf.keras.utils.img_to_array(new_image)
+
+        img_array = tf.keras.utils.img_to_array(image)
         img_array = tf.expand_dims(img_array, 0)  # Create a batch
         predictions = self.model.predict(img_array)
 
@@ -61,9 +61,10 @@ class ImageClassifucation:
             results.append({"class": class_name, "score": score})
 
         #delete image
-        os.remove(unique_name)
+        # os.remove(unique_name)
         #clean up
-        new_image.close()
+        image.close()
+        # new_image.close()
         img_array = None
         
         return results
