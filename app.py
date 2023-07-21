@@ -350,6 +350,10 @@ def handle_image_message(event):
     app.logger.info(f"==============================")
 
     result = ic.predict(base64_string, 5)
+    
+    #list to json string
+    app.logger.info(f"{json.dumps(result,indent=4)}")
+    
     t = ""
     # get class name
     for i in result:
