@@ -28,6 +28,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
+from database import DatabaseConnect
 
 MODE = os.getenv('MODE')
 # MODE is empty force it to be 'dev'
@@ -363,6 +364,10 @@ def handle_image_message(event):
     #     event.reply_token, TextSendMessage(text=t))
     
     
+ 
+    
+    # connect to postgresql database
+ 
     with open('product_message.json', 'r') as f:
             message = dict()
             message['type'] = 'carousel'
@@ -372,7 +377,14 @@ def handle_image_message(event):
             for i in range(0, len(result)):
                 # clone itemTemplate
                 item = copy.deepcopy(itemTemplate)
-                item['body']['contents'][0]['text'] = result[i]['class']
+                sku = result[i]['class']
+                query = f"SELECT * FROM tiles WHERE sku = {sku}"
+                df = DatabaseConnect.get_data(query) 
+                if len(df) == 0:
+                    continue
+                
+                text = f"{df.iloc[0]['sku']} - {df.iloc[0]['product_name']}"
+                item['body']['contents'][0]['text'] = text
                 # add item to contents
                 contents.append(item)
 

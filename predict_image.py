@@ -14,22 +14,6 @@ from PIL import Image, ImageOps
 arg = sys.argv[1]
 
 
-def crop_and_resize(soruce: Image, resize: int):
-    width, height = soruce.size
-    size = min(width, height)
-    if width > height:
-        left = (width - size) // 2
-        top = 0
-        right = left + size
-        bottom = size
-    else:
-        left = 0
-        top = (height - size) // 2
-        right = size
-        bottom = top + size
-
-    return soruce.crop((left, top, right, bottom)).resize((resize, resize))
-
 
 image_size = 224
 mode_path = os.path.join('models', 'model.keras')
