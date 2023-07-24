@@ -354,13 +354,41 @@ def handle_image_message(event):
     #list to json string
     app.logger.info(f"{json.dumps(result,indent=4)}")
     
-    t = ""
-    # get class name
-    for i in result:
-        t += i["class"] + "\n"
+    # t = ""
+    # # get class name
+    # for i in result:
+    #     t += i["class"] + "\n"
 
-    line_bot_api.reply_message(
-        event.reply_token, TextSendMessage(text=t))
+    # line_bot_api.reply_message(
+    #     event.reply_token, TextSendMessage(text=t))
+    
+    
+    with open('product_message.json', 'r') as f:
+            message = dict()
+            message['type'] = 'carousel'
+
+            itemTemplate = json.load(f)
+            contents = []
+            for i in range(0, len(result)):
+                # clone itemTemplate
+                item = copy.deepcopy(itemTemplate)
+                item['body']['contents'][0]['text'] = result['class']
+                # add item to contents
+                contents.append(item)
+
+            message['contents'] = contents
+            flex_message = FlexSendMessage(
+                alt_text="Search", contents=message)
+
+            try:
+                line_bot_api.reply_message(event.reply_token, flex_message)
+            except LineBotApiError as e:
+                app.logger.error(f"code : {e.status_code}")
+                app.logger.error(f"code : {e.error.message}")
+                app.logger.error(f"code : {e.error.details}")
+
+                # end method
+            
 
 
 @handler.add(MessageEvent, message=TextMessage)
