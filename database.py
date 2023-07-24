@@ -8,7 +8,8 @@ import sys
 class DatabaseConnect:
     HOST = "localhost"
     DATABASE = "marine_db"
-    USER = "postgres"
+    USER = "ubuntu"
+    PASSWORD = "ubuntu"
     TILE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUKmtWleDEeUOIUxm0y-mKf7q91DOaWtC2NO3bUYGoDyuS8tS9nRVsfk339lbN_g/pub?gid=1689578933&single=true&output=csv"
 
     @staticmethod
@@ -34,7 +35,8 @@ class DatabaseConnect:
             conn = psycopg2.connect(
                 host=DatabaseConnect.HOST,
                 database=DatabaseConnect.DATABASE,
-                user=DatabaseConnect.USER)
+                user=DatabaseConnect.USER,
+                password=DatabaseConnect.PASSWORD)
 
             # check existing table
             cursor = conn.cursor()
@@ -96,7 +98,8 @@ class DatabaseConnect:
             conn = psycopg2.connect(
                 host=DatabaseConnect.HOST,
                 database=DatabaseConnect.DATABASE,
-                user=DatabaseConnect.USER)
+                user=DatabaseConnect.USER,
+                password=DatabaseConnect.PASSWORD)
 
             engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
 
