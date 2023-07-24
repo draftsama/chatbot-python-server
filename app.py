@@ -372,7 +372,7 @@ def handle_image_message(event):
             for i in range(0, len(result)):
                 # clone itemTemplate
                 item = copy.deepcopy(itemTemplate)
-                item['body']['contents'][0]['text'] = result['class']
+                item['body']['contents'][0]['text'] = result[i]['class']
                 # add item to contents
                 contents.append(item)
 
