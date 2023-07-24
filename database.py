@@ -69,7 +69,7 @@ class DatabaseConnect:
             # Use urlopen to read the CSV data.
             response = urlopen(DatabaseConnect.TILE_CSV_URL)
 
-            df = pd.read_csv(response)
+            df = pd.read_csv(response, usecols=column_names)
 
             # df = df.head(10)
 
