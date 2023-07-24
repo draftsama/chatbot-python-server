@@ -1,3 +1,5 @@
+import ssl
+from urllib.request import urlopen
 import pandas as pd
 import json
 import psycopg2
@@ -62,9 +64,12 @@ class DatabaseConnect:
 
             # convert tuple to list
             column_names = [i[0] for i in column_names]
+            # Disable SSL certificate verification
+            ssl._create_default_https_context = ssl._create_default_https_context = ssl._create_unverified_context
+            # Use urlopen to read the CSV data.
+            response = urlopen(DatabaseConnect.TILE_CSV_URL)
 
-            df = pd.read_csv(DatabaseConnect.TILE_CSV_URL,
-                            usecols=column_names)
+            df = pd.read_csv(response)
 
             # df = df.head(10)
 
@@ -73,12 +78,11 @@ class DatabaseConnect:
 
             # dump dataframe to postgresql database table
             df.to_sql(table_name, engine, if_exists='replace', index=False)
-
             # concat all column to text_search if value Nan or empty string replace to ''
 
             text_search = df['product_name'] + ' ' + df['tile_size'] + \
                 ' ' + df['type'] + ' ' + df['material'] + ' ' + df['surface']
-
+        
             
 
         except (Exception, psycopg2.DatabaseError) as error:
