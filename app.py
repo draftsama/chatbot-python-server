@@ -379,15 +379,23 @@ def handle_image_message(event):
                 item = copy.deepcopy(itemTemplate)
                 sku = result[i]['class']
                 query = f"SELECT * FROM tiles WHERE sku = {sku}"
+                
+                
                 df = DatabaseConnect.get_data(query) 
                 if len(df) == 0:
                     continue
                 
+                card_image_url =f"https://mkt-app.dohome.co.th/images/cards/{sku}.jpg"
+                
                 text = f"{df.iloc[0]['sku']} - {df.iloc[0]['product_name']}"
+                item['hero']['url'] = card_image_url
                 item['body']['contents'][0]['text'] = text
                 # add item to contents
                 contents.append(item)
-
+           
+            if len(contents) == 0:
+                return
+                
             message['contents'] = contents
             flex_message = FlexSendMessage(
                 alt_text="Search", contents=message)
