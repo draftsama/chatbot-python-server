@@ -291,14 +291,6 @@ def load_image_from_base64(base64_string):
 
 # =================== ROUTE ===================
 
-
-@app.route('/', methods=['GET'])
-def get_status():
-    # return app status
-    app.logger.info("Test")
-    return '<h1>Test</h1>'
-
-
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
 
@@ -317,6 +309,36 @@ def lineWebhook():
 
     return 'OK'
 
+@app.route('/image_search', methods=['POST'])
+def image_search_api():
+    json_data = request.get_json()
+    max = 5
+    #check if image_base64 is in json_data
+    if 'image_base64' not in json_data:
+        return make_response(jsonify({'error': 'image_base64 not found'}), 400)
+    
+    if 'max' in json_data:
+        max = json_data['max']
+        
+    
+    base64_string = json_data['image_base64']
+    result = ic.predict(base64_string, max)
+    
+    #get data from postgres
+    res = []
+    for i in range(0, len(result)):
+        sku = result[i]['class']
+        query = f"SELECT * FROM tiles WHERE sku = {sku}"
+        df = DatabaseConnect.get_data(query) 
+        if len(df) == 0:
+            continue 
+        res.append(df.iloc[0].to_dict())
+    
+    return make_response(jsonify(res), 200) 
+
+
+  
+# =================== HANDLER ===================
 
 def get_binary_data(event) -> str:
     content = line_bot_api.get_message_content(event.message.id)
