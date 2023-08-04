@@ -1,3 +1,4 @@
+import re
 import ssl
 from urllib.request import urlopen
 import pandas as pd
@@ -53,26 +54,45 @@ class DatabaseConnect:
                 conn.commit()
             # get all column names without create_at
 
-            get_columns_query = """
-        SELECT column_name
-        FROM information_schema.columns
-        WHERE table_name = 'tiles' AND column_name != 'create_at' AND column_name != 'text_search';
-    """
+            
+            column_names =['sku','product_name','tile_size','type','material','surface','random','product_note','price_per_box','price_per_sqm']
 
-            cursor.execute(get_columns_query)
-            column_names = cursor.fetchall()
-
-            # convert tuple to list
-            column_names = [i[0] for i in column_names]
-            # Disable SSL certificate verification
             ssl._create_default_https_context = ssl._create_default_https_context = ssl._create_unverified_context
             # Use urlopen to read the CSV data.
             response = urlopen(DatabaseConnect.TILE_CSV_URL)
 
             df = pd.read_csv(response, usecols=column_names)
 
-            # df = df.head(10)
 
+            
+            # add random_count column
+            df['random_count'] = 0
+            #mapping random to random_count if random use regex to find number type in text then get that number assign to random_count else assign 0
+            df['random_count'] = df['random'].str.extract('(\d+)', expand=False).fillna(0).astype(int)  
+           
+           #add unit_per_box column and sqm column
+            df['unit_per_box'] = 0
+            df['sqm'] = 0
+             
+            #get value from product note
+            #example value: "บรรจุกล่องละ 4 แผ่นปูได้ 1.44 ตรม."
+            for index, row in df.iterrows():
+                product_note = row['product_note']
+                #use regex to find all int and float type in text assign to array
+                numbers = re.findall(r"[-+]?\d*\.\d+|\d+", product_note)
+                #assign value to unit_per_box and sqm column
+                df.at[index, 'unit_per_box'] = numbers[0]
+                df.at[index, 'sqm'] = numbers[1]
+    
+                
+               
+
+                
+         
+            
+            #drop random and product_note column
+            df = df.drop(['random','product_note'], axis=1)
+         
             # replace data into table
             engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
 
@@ -90,7 +110,6 @@ class DatabaseConnect:
 
         if conn is not None:
             conn.close()
-            print('Database connection closed.')
 
     @staticmethod
     def get_data(query):
