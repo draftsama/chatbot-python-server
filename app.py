@@ -324,18 +324,42 @@ def image_search_api():
     base64_string = json_data['image_base64']
     result = ic.predict(base64_string, max)
     
-    #get data from postgres
-    res = []
-    for i in range(0, len(result)):
-        sku = result[i]['class']
-        query = f"SELECT * FROM tiles WHERE sku = {sku}"
-        df = DatabaseConnect.get_data(query) 
-        if len(df) == 0:
-            continue 
-        res.append(df.iloc[0].to_dict())
-    
-    return make_response(jsonify(res), 200) 
+    skus = [r['class'] for r in result]    
+     # Create the comma-separated string of sku values for the IN clause
+    sku_in_clause = ", ".join(skus)
 
+    # Create the CASE statement for ORDER BY
+    case_statement = "\n".join([f"WHEN {sku} THEN {index + 1}" for index, sku in enumerate(skus)])
+    order_by_clause = f"ORDER BY CASE sku\n{case_statement}\nELSE {len(skus) + 1}\nEND;"
+
+    # Combine the SQL command
+    sql_command = f"SELECT *\nFROM tiles\nWHERE sku IN ({sku_in_clause})\n{order_by_clause}"
+    df = DatabaseConnect.get_data(sql_command) 
+    
+    return make_response(jsonify(df.to_dict(orient='records')), 200)
+
+
+@app.route('/get_products', methods=['POST'])
+def get_products():
+    json_data = request.get_json()
+    if 'skus' not in json_data:
+       return make_response(jsonify({'error': 'skus be must empty'}), 400)
+   
+    skus = json_data['skus']
+    sku_in_clause = ", ".join(skus)
+    
+     # Create the CASE statement for ORDER BY
+    case_statement = "\n".join([f"WHEN {sku} THEN {index + 1}" for index, sku in enumerate(skus)])
+    order_by_clause = f"ORDER BY CASE sku\n{case_statement}\nELSE {len(skus) + 1}\nEND;"
+
+    # Combine the SQL command
+    sql_command = f"SELECT *\nFROM tiles\nWHERE sku IN ({sku_in_clause})\n{order_by_clause}"
+    df = DatabaseConnect.get_data(sql_command) 
+    
+    return make_response(jsonify(df.to_dict(orient='records')), 200)
+
+
+    
 
   
 # =================== HANDLER ===================
