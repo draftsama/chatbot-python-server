@@ -50,11 +50,11 @@ CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 IMAGE_SIZE = int(os.getenv('IMAGE_SIZE'))
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-if is_empty_string(OPENAI_API_KEY):
-    print("OPENAI_API_KEY is empty")
-    exit()
-openai.api_key = OPENAI_API_KEY
+# OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+# if is_empty_string(OPENAI_API_KEY):
+#     print("OPENAI_API_KEY is empty")
+#     exit()
+# openai.api_key = OPENAI_API_KEY
 
 # Specify the time zone for Bangkok
 timezone = pytz.timezone('Asia/Bangkok')
