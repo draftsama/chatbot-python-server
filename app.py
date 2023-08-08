@@ -146,9 +146,11 @@ The types of context can be as follows:
 Q:Recommend a tile for bathroom
 A:{"context":"recommend"}
 Q:Where is store?
-A:{context":"location"}
+A:{"context":"location"}
 Q:tile 20*30
-A:{context":"search"}
+A:{"context":"search","keyword":"tile 20*30"}
+Q:please help me find marble tile 60*60
+A:{"context":"search","keyword":"marble tile 60*60"}
 Q:How is the marble tile
 A:{"context":"information"}
 Q:3s6igiu*&กด(_0
@@ -508,6 +510,8 @@ def handle_text_message(event):
         data = {"context": "none"}
 
     context = data["context"]
+ 
+    
     app.logger.info(f"context: {data}")
 
     if context == "none":
@@ -515,7 +519,7 @@ def handle_text_message(event):
     elif context == "complaint":
         replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "location":
-        replyMsg = f"{ASSISTANT_NAME} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
     elif context == "technician":
         replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
 เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
@@ -523,9 +527,9 @@ def handle_text_message(event):
     elif context == "greeting":
         replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
     elif context == "information":
-        replyMsg = f"{ASSISTANT_NAME} ขอแจ้งให้ทราบว่า {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
     elif context == "recommend":
-        replyMsg = f"{ASSISTANT_NAME} ขอแนะนำ {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
     elif context == "calculate":
         replyMsg = gpt_calculator(reciveMsg)
     elif context == "promotion":
@@ -538,9 +542,14 @@ def handle_text_message(event):
         )
         return
     elif context == "search":
-        products = find_product(reciveMsg)
-        # products drop first column
-        replyMsg = products.to_string()
+        
+        keyword = reciveMsg
+        #check key in data
+        if "keyword" in data:
+            keyword = data["keyword"]
+        
+        products = find_product(keyword)
+      
 
         with open('product_message.json', 'r') as f:
             message = dict()
