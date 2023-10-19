@@ -292,6 +292,11 @@ def load_image_from_base64(base64_string):
     return img
 
 # =================== ROUTE ===================
+@app.route('/test_post', methods=['POST'])
+def test_post():
+    #get json data and return it
+    json_data = request.get_json()
+    return make_response(jsonify(json_data), 200)
 
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():

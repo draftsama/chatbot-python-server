@@ -85,10 +85,6 @@ class DatabaseConnect:
                 df.at[index, 'sqm'] = numbers[1]
     
                 
-               
-
-                
-         
             
             #drop random and product_note column
             df = df.drop(['random','product_note'], axis=1)
