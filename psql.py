@@ -87,7 +87,6 @@ class PSQLConnect:
 
     def insert_data(self,table:str,json_data:list):
         
-        
         try:
             if type(json_data) != list:
                 raise Exception('Data must be a list')
@@ -201,47 +200,48 @@ class PSQLConnect:
             if conn is not None:
                 conn.close()
         
-    def delete_data(self,table:str,primary_value:str,primary_key:str="id"):
+    def delete_data(self,table:str,key_values:list,delete_key:str):
         #primary_key is empty
-        if primary_key == "" or primary_key == None:
-            primary_key = "id"
+        if delete_key == "" or delete_key == None:
+            raise Exception('Delete key not found')
             
-            conn = psycopg2.connect(
-                host=self.host,
-                database=self.database,
-                user=self.user,
-                password=self.password)
-        
-            cur = conn.cursor()
             
-            try:
-                query = f"SELECT * FROM {table} WHERE {primary_key} = {primary_value}"
-                cur.execute(query)
-                data = cur.fetchall()
+        conn = psycopg2.connect(
+            host=self.host,
+            database=self.database,
+            user=self.user,
+            password=self.password)
+    
+        cur = conn.cursor()
+        try:
+            values = ','.join(str(key_value) for key_value in key_values)
+            
+            query = f"DELETE FROM {table} WHERE {delete_key} IN ({values})"
+            
+            print(values)
+
+            cur.execute(query)
+            conn.commit()
+            cur.close()
+            conn.close()
+            return True
+            
+        except (Exception, psycopg2.DatabaseError) as error:
+            print("Error : ", error)
+            cur.close()
+            conn.close()
+            return False
                 
-                if data == []:
-                    raise Exception('Data not found')
-                
-                query = f"DELETE FROM {table} WHERE {primary_key} = {primary_value}"
-                cur.execute(query)
-                conn.commit()
-                cur.close()
+        finally:
+            if conn is not None:
                 conn.close()
-                
-            except (Exception, psycopg2.DatabaseError) as error:
-                print("Error : ", error)
-                cur.close()
-                conn.close()
-                    
-            finally:
-                if conn is not None:
-                    conn.close()
 
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
 # psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-# successed =  psql.insert_data('chatbot_keyword',[{'text':'สวัสดีครับ','dialog_id':1},{'text':'ดีค่ะ','dialog_id':1}])
+# successed =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':3},{'text':'312','dialog_id':3}])
 # data = psql.get_data('chatbot_dialog')
+# successed = psql.delete_data('chatbot_keyword',[2,3],delete_key="dialog_id")
 
 # print(successed)
 

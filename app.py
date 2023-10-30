@@ -887,7 +887,6 @@ def insert_data_to_database():
     #             "name": "test2"
     #         }]
     # }
-   
     
     if json_data is None:
         return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
@@ -908,7 +907,42 @@ def insert_data_to_database():
     else:
         return make_response(jsonify({"status": "failed"}), 400)
 
+@app.route('/db/delete_data', methods=['POST'])
+def delete_data_from_database():
+    json_data = request.get_json()
 
+    #json format
+    # {
+    #     "table": "chatbot_dialog",
+    #     "delete_key": "id",
+    #     "key_values": [1,2,3]
+    # }
+    
+    if json_data is None:
+        return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
+    
+    if 'table' not in json_data:
+       return make_response(jsonify({'error': 'table be must empty'}), 400)
+   
+    if 'delete_key' not in json_data:
+         return make_response(jsonify({'error': 'delete_key be must empty'}), 400)
+     
+    if 'key_values' not in json_data:
+        return make_response(jsonify({'error': 'key_values be must empty'}), 400)
+    
+    table = json_data['table']
+    delete_key = json_data['delete_key']
+    key_values = json_data['key_values']
+    is_sucess = psql_connect.delete_data(table,key_values,delete_key)
+    if is_sucess:
+        return make_response(jsonify({"status": "success"}), 200)
+    else:
+        return make_response(jsonify({"status": "failed"}), 400)
+    
+        
+    
+    
+   
   
 
 
