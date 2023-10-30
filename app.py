@@ -867,11 +867,10 @@ def get_data_from_database():
     if 'query' in json_data:
         query = json_data['query']
     
-    datas = psql_connect.get_data(table,query)
-    df = pd.DataFrame(datas)
-    json = df.to_json(orient='records')
+    json_data = psql_connect.get_data(table,query)
+
     #list to json string
-    return make_response(json, 200)
+    return make_response(jsonify(json_data), 200)
     
   
 

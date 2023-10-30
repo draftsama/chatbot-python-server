@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np 
 import psycopg2
+import datetime
 
 
 # HOST = "localhost"
@@ -54,16 +55,27 @@ class PSQLConnect:
         try:
             query = f"SELECT * FROM {table} {query}"
             
-            
-            print(query)
-            
             cur.execute(query)
-            data = cur.fetchall()
+            records = cur.fetchall()
+            #get column 
+            columns = [desc[0] for desc in cur.description]
+            
+            #convert to json
+            datas = []
+            for record in records:
+                data = {}
+                for i in range(len(columns)):
+                    if isinstance(record[i], datetime.datetime):
+                        data[columns[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
+                    else:
+                        data[columns[i]] = record[i]
+                        
+                datas.append(data)
             
             cur.close()
             conn.close()
             
-            return data
+            return datas
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             conn.close()
@@ -213,13 +225,10 @@ class PSQLConnect:
 
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
-psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 # psql.insert_data('chatbot_dialog',{'name':'Test','age':20})
-data = psql.get_data('chatbot_dialog')
-#to dataframe 
-df = pd.DataFrame(data)
-json = df.to_json(orient='records')
+# data = psql.get_data('chatbot_dialog')
 
-print(json)
-    
+# print(data)
+
     
