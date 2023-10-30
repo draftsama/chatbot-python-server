@@ -29,6 +29,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
 from database import DatabaseConnect
+from psql import PSQLConnect
+
 
 MODE = os.getenv('MODE')
 # MODE is empty force it to be 'dev'
@@ -56,6 +58,16 @@ if is_empty_string(OPENAI_API_KEY_ENCRYPTED):
     exit()
 openai.api_key = AES.decrypt(OPENAI_API_KEY_ENCRYPTED)
 
+DATABASE_HOST = os.getenv('DATABASE_HOST')
+DATABASE_NAME = os.getenv('DATABASE_NAME')
+DATABASE_USER = os.getenv('DATABASE_USER')
+DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+
+
+
+
+    
+
 # Specify the time zone for Bangkok
 timezone = pytz.timezone('Asia/Bangkok')
 
@@ -65,13 +77,6 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['JSON_AS_ASCII'] = False
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
-
-# Disable scientific notation for clarity
-np.set_printoptions(suppress=True)
-
-
-ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
-
 # check app.log file is exists or not then delete it
 
 # Configure logging to write to both console and file
@@ -83,6 +88,18 @@ logging.basicConfig(
         logging.StreamHandler()  # Output to console
     ]
 )
+# Disable scientific notation for clarity
+np.set_printoptions(suppress=True)
+
+
+ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
+
+psql_connect = PSQLConnect(DATABASE_HOST,DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD)
+
+if not psql_connect.test_connection():
+    app.logger.info("Can't connect to database")
+    
+
 
 
 # def context_analysis(msg):
@@ -827,6 +844,37 @@ def clear_logs():
     except Exception as e:
         app.logger.error(e)
         return jsonify(success=False, error=str(e))
+
+
+@app.route('/db/get_data', methods=['POST'])
+def get_data_from_database():
+    json_data = request.get_json()
+    if json_data is None:
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
+        response.status_code = 400
+        return response
+
+    if 'table' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required table"}))
+        response.status_code = 400
+        return response
+    table = json_data['table']
+    query = ""
+    if 'query' in json_data:
+        query = json_data['query']
+    
+    datas = psql_connect.get_data(table,query)
+    
+    #list to json string
+    return make_response(jsonify(datas), 200)
+    
+  
+
+  
 
 
 # Get the current date and time in the specified time zone

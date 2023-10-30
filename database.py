@@ -133,6 +133,31 @@ class DatabaseConnect:
             print('Database connection closed.')
 
         return dataframe
+    
+    @staticmethod
+    def insert_data(table, data):
+        conn = None
+        # connect to postgresql database
+        try:
+            conn = psycopg2.connect(
+                host=DatabaseConnect.HOST,
+                database=DatabaseConnect.DATABASE,
+                user=DatabaseConnect.USER,
+                password=DatabaseConnect.PASSWORD)
+
+            engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
+
+            # get all column names without create_at if not exists reture None
+            data.to_sql(table, engine, if_exists='append', index=False)
+            
+            
+
+        except (Exception) as error:
+            print("Error : ", error)
+
+        if conn is not None:
+            conn.close()
+            print('Database connection closed.')
 
 
 args = sys.argv
