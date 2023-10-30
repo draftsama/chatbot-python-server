@@ -872,7 +872,31 @@ def get_data_from_database():
     #list to json string
     return make_response(jsonify(json_data), 200)
     
-  
+@app.route('/db/insert_data', methods=['POST'])
+def insert_data_to_database():
+    json_data = request.get_json()
+   
+    return make_response(jsonify({"type": type(json_data)}), 200)
+    
+    
+    if json_data is None:
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
+        response.status_code = 400
+        return response
+
+    if 'table' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required table"}))
+        response.status_code = 400
+        return response
+    table = json_data['table']
+    data = json_data['data']
+    psql_connect.insert_data(table,data)
+    return make_response(jsonify({"status": "success"}), 200)
+
 
   
 

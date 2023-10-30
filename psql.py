@@ -85,11 +85,12 @@ class PSQLConnect:
                 conn.close()
         
 
-    def insert_data(self,table:str,json_data:dict):
-
-        if type(json_data) != dict:
+    def insert_data(self,table:str,json_data:list):
+        
+        if type(json_data) != list:
             raise Exception('Data must be a dictionary')
         
+        exit()
         conn = psycopg2.connect(
             host=self.host,
             database=self.database,
@@ -225,8 +226,8 @@ class PSQLConnect:
 
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
-# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-# psql.insert_data('chatbot_dialog',{'name':'Test','age':20})
+psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+psql.insert_data('chatbot_keyword',[{'text':'สวัสดี','dialog_id':1},{'text':'ดีจ้า','dialog_id':1}])
 # data = psql.get_data('chatbot_dialog')
 
 # print(data)
