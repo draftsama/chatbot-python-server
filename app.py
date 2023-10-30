@@ -4,7 +4,7 @@ from aes import AES
 import hashlib
 import logging
 import copy
-import pandas
+import pandas as pd
 import datetime
 import pytz
 import replicate
@@ -216,7 +216,7 @@ def find_product(msg):
     embedding_path = "./embeddings/embeddings_products.csv"
     indexes_sort, similarities = openai_manager.get_similarity_data(
         msg, embedding_path)
-    df = pandas.read_csv(embedding_path)
+    df = pd.read_csv(embedding_path)
     df = df.drop(columns=["embedding"])
     # get 3 most similar product
     return df.iloc[indexes_sort[0:3]]
@@ -868,9 +868,10 @@ def get_data_from_database():
         query = json_data['query']
     
     datas = psql_connect.get_data(table,query)
-    
+    df = pd.DataFrame(datas)
+    json = df.to_json(orient='records')
     #list to json string
-    return make_response(jsonify(datas), 200)
+    return make_response(json, 200)
     
   
 

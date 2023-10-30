@@ -39,7 +39,7 @@ class PSQLConnect:
                 conn.close()
        
     
-    def get_data(self,table:str,query:str):
+    def get_data(self,table:str,query:str=""):
         if query == None:
            query = ""
        
@@ -213,9 +213,13 @@ class PSQLConnect:
 
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
-# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 # psql.insert_data('chatbot_dialog',{'name':'Test','age':20})
-# data = psql.get_data('chatbot_dialog','WHERE name = \'Test\' LIMIT 1')
-# print(data)
+data = psql.get_data('chatbot_dialog')
+#to dataframe 
+df = pd.DataFrame(data)
+json = df.to_json(orient='records')
+
+print(json)
     
     
