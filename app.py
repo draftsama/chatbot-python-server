@@ -907,6 +907,52 @@ def insert_data_to_database():
     else:
         return make_response(jsonify({"status": "failed"}), 400)
 
+@app.route('/db/update_data', methods=['POST'])
+def update_data_to_database():
+    json_data = request.get_json()
+    
+    #json format
+    # {
+    #     "table": "chatbot_dialog",
+    #     "update_key": "id",
+    #     "datas":[
+    #         {
+    #             "id": 1,
+    #             "name": "test1"
+    #         },
+    #         {
+    #             "id": 2,
+    #             "name": "test2"
+    #         }
+    #     ]
+    # }
+    
+    if json_data is None:
+        return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
+
+    if 'table' not in json_data:
+         return make_response(jsonify({'error': 'table be must empty'}), 400)
+     
+    if 'update_key' not in json_data:
+            return make_response(jsonify({'error': 'update_key be must empty'}), 400)
+        
+    if 'datas' not in json_data:
+        return make_response(jsonify({'error': 'datas be must empty'}), 400)
+    
+    table = json_data['table']
+    update_key = json_data['update_key']
+    datas = json_data['datas']
+    
+    is_sucess = psql_connect.update_data(table,datas,update_key)
+    
+    if is_sucess:
+        return make_response(jsonify({"status": "success"}), 200)
+    else:
+        return make_response(jsonify({"status": "failed"}), 400)
+    
+    
+
+
 @app.route('/db/delete_data', methods=['POST'])
 def delete_data_from_database():
     json_data = request.get_json()
