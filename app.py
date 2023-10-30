@@ -902,8 +902,11 @@ def insert_data_to_database():
    
     table = json_data['table']
     datas = json_data['datas']
-    psql_connect.insert_data(table,datas)
-    return make_response(jsonify({"status": "success"}), 200)
+    is_sucess = psql_connect.insert_data(table,datas)
+    if is_sucess:
+        return make_response(jsonify({"status": "success"}), 200)
+    else:
+        return make_response(jsonify({"status": "failed"}), 400)
 
 
   
