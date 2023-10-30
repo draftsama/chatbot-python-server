@@ -90,7 +90,6 @@ class PSQLConnect:
         if type(json_data) != list:
             raise Exception('Data must be a dictionary')
         
-        exit()
         conn = psycopg2.connect(
             host=self.host,
             database=self.database,

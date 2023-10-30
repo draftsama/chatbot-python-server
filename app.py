@@ -875,8 +875,10 @@ def get_data_from_database():
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():
     json_data = request.get_json()
-   
-    return make_response(jsonify({"type": type(json_data)}), 200)
+    app.logger.info(json_data)
+    app.logger.info(type(json_data))
+
+    return make_response(jsonify(json_data), 200)
     
     
     if json_data is None:
