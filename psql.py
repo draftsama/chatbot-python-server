@@ -226,8 +226,8 @@ class PSQLConnect:
 
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
-psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-psql.insert_data('chatbot_keyword',[{'text':'สวัสดี','dialog_id':1},{'text':'ดีจ้า','dialog_id':1}])
+# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+# psql.insert_data('chatbot_keyword',[{'text':'สวัสดี','dialog_id':1},{'text':'ดีจ้า','dialog_id':1}])
 # data = psql.get_data('chatbot_dialog')
 
 # print(data)
