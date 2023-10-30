@@ -875,28 +875,34 @@ def get_data_from_database():
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():
     json_data = request.get_json()
-    app.logger.info(json_data)
-    app.logger.info(type(json_data))
 
-    return make_response(jsonify(json_data), 200)
-    
+    #json format
+    # {
+    #     "table": "chatbot_dialog",
+    #     "datas": 
+    #         [{
+    #             "name": "test1"
+    #         },
+    #           {
+    #             "name": "test2"
+    #         }]
+    # }
+   
     
     if json_data is None:
-        response = make_response(jsonify({
-            "status": "failed",
-            "error": "required json"
-        }))
-        response.status_code = 400
-        return response
+        return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
+    
 
     if 'table' not in json_data:
-        response = make_response(
-            jsonify({"status": "failed", "error": "required table"}))
-        response.status_code = 400
-        return response
+       return make_response(jsonify({'error': 'table be must empty'}), 400)
+   
+    if 'datas' not in json_data:
+       return make_response(jsonify({'error': 'datas be must empty'}), 400)
+   
+   
     table = json_data['table']
-    data = json_data['data']
-    psql_connect.insert_data(table,data)
+    datas = json_data['datas']
+    psql_connect.insert_data(table,datas)
     return make_response(jsonify({"status": "success"}), 200)
 
 

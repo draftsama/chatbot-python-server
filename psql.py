@@ -87,19 +87,18 @@ class PSQLConnect:
 
     def insert_data(self,table:str,json_data:list):
         
-        if type(json_data) != list:
-            raise Exception('Data must be a dictionary')
-        
-        conn = psycopg2.connect(
-            host=self.host,
-            database=self.database,
-            user=self.user,
-            password=self.password)
-
-        cur = conn.cursor()
         
         try:
-            
+            if type(json_data) != list:
+                raise Exception('Data must be a list')
+        
+            conn = psycopg2.connect(
+                host=self.host,
+                database=self.database,
+                user=self.user,
+                password=self.password)
+
+            cur = conn.cursor()
             #get all column names without create_at and id
             query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT IN ('id','create_at');"
             cur.execute(query)
@@ -109,21 +108,36 @@ class PSQLConnect:
             if column_names == []:
                 raise Exception('Table not found')
             
-            #get values and keys from json_datas equal to column_names remove other keys and values
-            values = ','.join( f"'{str(json_data[column_name])}'" for column_name in column_names)
-            keys = ','.join(str(column_name) for column_name in column_names)
-
-            query = f"INSERT INTO {table} ({keys}) VALUES ({values})"
+            #check column_names in json_data
+            for data in json_data:
+                for column_name in column_names:
+                    if column_name not in data.keys():
+                        raise Exception(f'Column name {column_name} not found')
+                    
+            #get all column names
+            column_names = ','.join(column_names)
+            
+            #get all values
+            values = []
+            for data in json_data:
+                value = ','.join(f"'{str(data[column_name])}'" for column_name in data.keys())
+                values.append(f"({value})")
+                
+            values = ','.join(values)
+            
+            query = f"INSERT INTO {table} ({column_names}) VALUES {values}"
             
             cur.execute(query)
             conn.commit()
             cur.close()
             conn.close()
+            return True
+            
             
         except (Exception, psycopg2.DatabaseError) as error:
-            print("Error : ", error)
             cur.close()
             conn.close()
+            return False
                 
         finally:
             if conn is not None:
@@ -226,9 +240,9 @@ class PSQLConnect:
 # update_data('chatbot_dialog',{'id':5,'name':'1231sqd','age':20})
 # delete_data('chatbot_dialog',4)
 # psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-# psql.insert_data('chatbot_keyword',[{'text':'สวัสดี','dialog_id':1},{'text':'ดีจ้า','dialog_id':1}])
+# successed =  psql.insert_data('chatbot_keyword',[{'text':'สวัสดีครับ','dialog_id':1},{'text':'ดีค่ะ','dialog_id':1}])
 # data = psql.get_data('chatbot_dialog')
 
-# print(data)
+# print(successed)
 
     
