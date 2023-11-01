@@ -184,22 +184,29 @@ class PSQLConnect:
 
         cur = conn.cursor()
         
+         #get all column names without create_at and id
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT IN ('id','create_at');"
+        cur.execute(query)
         
-        #check table exists
+        column_names = cur.fetchall()
+        column_names = [column_name[0] for column_name in column_names]
+        if column_names == []:
+            raise Exception('Table not found')
+        
+
         try:
 
-            
-            for datas in json_data:
-                if primary_key not in datas.keys():
-                    raise Exception(f'Primary key {primary_key} not found')
+            #update data
+            for data in json_data:
+                #check column_names in json_data
+ 
+                #get all values
+                values = ','.join(f"{column_name} = '{str(data[column_name])}'" for column_name in column_names if column_name != primary_key)
                 
-                set_values=','.join(f"{column_name}='{datas[column_name]}'" for column_name in datas.keys() if column_name != primary_key)
+                query = f"UPDATE {table} SET {values} WHERE {primary_key} = {data[primary_key]}"
                 # print(query)
-                query = f"UPDATE {table} SET {set_values} WHERE {primary_key}={datas[primary_key]}"
-
                 cur.execute(query)
-            
-            
+   
             conn.commit()
             cur.close()
             conn.close()
@@ -255,10 +262,13 @@ class PSQLConnect:
 # psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 
 # psql.update_data(
-#     'chatbot_keyword',
+#     'chatbot_answer',
 #     [
-#         {'id':3,'text':'test1','dialog_id':2},
-#         {'id':4,'text':'test2','dialog_id':2}])
+#         {"create_at": "2023-10-30 17:06:50",
+#             "dialog_id": 1,
+#             "id": 1,
+#             "text": "Hello",
+#             "action_status": "update"}])
 
 # results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6},{'text':'312','dialog_id':8}])
 # data = psql.get_data('chatbot_dialog')
