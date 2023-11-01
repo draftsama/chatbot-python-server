@@ -104,19 +104,17 @@ class PSQLConnect:
             
             column_names = cur.fetchall()
             column_names = [column_name[0] for column_name in column_names]
+
             if column_names == []:
                 raise Exception('Table not found')
             
-               
-                    
-            #get all column names
-            column_names = ','.join(column_names)
-            
+      
             #get all values
             for data in json_data:
                 
                 #get contains key column_names in json_data into keys
-                keys = [key for key in data.keys() if key in column_names]                
+                keys = [key for key in data.keys() if key in column_names]   
+                             
                 value = ','.join(f"'{str(data[column_name])}'" for column_name in keys)
                 
                 keys = ','.join(keys)
@@ -129,7 +127,7 @@ class PSQLConnect:
             
             #get data after insert
             query = f"SELECT * FROM {table} ORDER BY id DESC LIMIT {len(json_data)}"
-            print(query)
+            # print(query)
             cur.execute(query)
             records = cur.fetchall()
             
@@ -256,21 +254,36 @@ class PSQLConnect:
                 conn.close()
 
 # delete_data('chatbot_dialog',4)
-# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 
 # psql.update_data(
 #     'chatbot_answer',
 #     [
-#         {"create_at": "2023-10-30 17:06:50",
-#             "dialog_id": 1,
-#             "id": 1,
-#             "text": "Hello",
-#             "action_status": "update"}])
+#         {
+#     "id": -1,
+#     "uuid": "a87c2b23-5756-4b35-866d-ab557a49ab6e",
+#     "text": "test",
+#     "dialog_id": 1,
+#     "created_at": "",
+#     "action_status": "insert"
+#   }])
+results = psql.insert_data(
+    'chatbot_keyword',
+    [
+        {
+    "id": -1,
+    "uuid": "a87c2b23-5756-4b35-866d-ab557a49ab6e",
+    "text": "test",
+    "dialog_id": 1,
+    "created_at": "",
+    "action_status": "insert"
+  }])
+
 
 # results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6,'age':300},{'text':'312','dialog_id':8}])
 # data = psql.get_data('chatbot_dialog')
 # successed = psql.delete_data('chatbot_keyword',[2,3],delete_key="dialog_id")
 
-# print(results)
+print(results)
 
     
