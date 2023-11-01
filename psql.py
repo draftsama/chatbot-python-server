@@ -124,19 +124,42 @@ class PSQLConnect:
                 
             values = ','.join(values)
             
+            
             query = f"INSERT INTO {table} ({column_names}) VALUES {values}"
             
             cur.execute(query)
             conn.commit()
+       
+            
+            #get data after insert
+            query = f"SELECT * FROM {table} ORDER BY id DESC LIMIT {len(values)}"
+            
+            cur.execute(query)
+            records = cur.fetchall()
+            
+            #get column
+            columns = [desc[0] for desc in cur.description]
+
+            #convert to json
+            result_datas = []
+            for record in records:
+                data = {}
+                for i in range(len(columns)):
+                    if isinstance(record[i], datetime.datetime):
+                        data[columns[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
+                    else:
+                        data[columns[i]] = record[i]
+                        
+                result_datas.append(data)
+            
             cur.close()
             conn.close()
-            return True
-            
+            return result_datas
             
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             conn.close()
-            return False
+            return []
                 
         finally:
             if conn is not None:
