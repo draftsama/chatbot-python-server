@@ -252,13 +252,18 @@ class PSQLConnect:
                 conn.close()
 
 # delete_data('chatbot_dialog',4)
-psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-# psql.update_data('chatbot_keyword',[{'id':3,'text':'test1','dialog_id':2},{'id':4,'text':'test2','dialog_id':2}])
+# psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 
-results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6},{'text':'312','dialog_id':8}])
+# psql.update_data(
+#     'chatbot_keyword',
+#     [
+#         {'id':3,'text':'test1','dialog_id':2},
+#         {'id':4,'text':'test2','dialog_id':2}])
+
+# results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6},{'text':'312','dialog_id':8}])
 # data = psql.get_data('chatbot_dialog')
 # successed = psql.delete_data('chatbot_keyword',[2,3],delete_key="dialog_id")
 
-print(results)
+# print(results)
 
     

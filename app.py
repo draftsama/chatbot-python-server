@@ -929,21 +929,19 @@ def update_data_to_database():
     #         }
     #     ]
     # }
-    
+    update_key = "id"
     if json_data is None:
         return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
 
     if 'table' not in json_data:
          return make_response(jsonify({'error': 'table be must empty'}), 400)
-     
-    if 'update_key' not in json_data:
-            return make_response(jsonify({'error': 'update_key be must empty'}), 400)
-        
+    if 'update_key' in json_data:
+        update_key  = json_data['update_key']
+    
     if 'datas' not in json_data:
         return make_response(jsonify({'error': 'datas be must empty'}), 400)
     
     table = json_data['table']
-    update_key = json_data['update_key']
     datas = json_data['datas']
     
     is_sucess = psql_connect.update_data(table,datas,update_key)
