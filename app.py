@@ -867,10 +867,10 @@ def get_data_from_database():
     if 'query' in json_data:
         query = json_data['query']
     
-    json_data = psql_connect.get_data(table,query)
+    results = psql_connect.get_data(table,query)
 
     #list to json string
-    return make_response(jsonify(json_data), 200)
+    return make_response(jsonify({"status": "success","datas":results}), 200)
     
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():
