@@ -107,26 +107,23 @@ class PSQLConnect:
             if column_names == []:
                 raise Exception('Table not found')
             
-            #check column_names in json_data
-            for data in json_data:
-                for column_name in column_names:
-                    if column_name not in data.keys():
-                        raise Exception(f'Column name {column_name} not found')
+               
                     
             #get all column names
             column_names = ','.join(column_names)
             
             #get all values
-            values = []
             for data in json_data:
-                value = ','.join(f"'{str(data[column_name])}'" for column_name in data.keys())
-                values.append(f"({value})")
                 
-            values = ','.join(values)
+                #get contains key column_names in json_data into keys
+                keys = [key for key in data.keys() if key in column_names]                
+                value = ','.join(f"'{str(data[column_name])}'" for column_name in keys)
+                
+                keys = ','.join(keys)
+                query = f"INSERT INTO {table} ({keys}) VALUES ({value})"
+                cur.execute(query)
+                print(query)
             
-            
-            query = f"INSERT INTO {table} ({column_names}) VALUES {values}"
-            cur.execute(query)
             conn.commit()
        
             
@@ -270,7 +267,7 @@ class PSQLConnect:
 #             "text": "Hello",
 #             "action_status": "update"}])
 
-# results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6},{'text':'312','dialog_id':8}])
+# results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6,'age':300},{'text':'312','dialog_id':8}])
 # data = psql.get_data('chatbot_dialog')
 # successed = psql.delete_data('chatbot_keyword',[2,3],delete_key="dialog_id")
 
