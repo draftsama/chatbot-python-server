@@ -1,3 +1,4 @@
+import time
 import urllib3
 from image_classification import ImageClassifucation
 from oepnai_manager import openai_manager
@@ -329,7 +330,7 @@ def lineWebhook():
 
     # get request body as text
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    # app.logger.info("Request body: " + body)
 
     # handle webhook body
     try:
@@ -511,7 +512,7 @@ def handle_text_message(event):
         app.logger.info(f"reply_token: {event.reply_token}")
         app.logger.info(f"message: {event.message.text}")
         app.logger.info(f"==============================")
-
+    
         # receiveMsg = correct(event.message.text)
         receiveMsg = event.message.text
         #Check the message equals to keyword
@@ -565,7 +566,15 @@ def handle_text_message(event):
            
             return
             
-      
+        #TODO TEST
+        time.sleep(5)
+        line_bot_api.reply_message_with_http_info
+        (
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text="555555")]
+            )
+        )
   
 
         if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
@@ -660,17 +669,15 @@ def handle_text_message(event):
                 )
                 return
 
-        with ApiClient(configuration) as api_client:
-            app.logger.info(f"reply ====> : {replyMsg}")
-
-            line_bot_api = MessagingApi(api_client)
-            line_bot_api.reply_message_with_http_info
-            (
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text="dsadsadsahgjhagkdjyhsgakdyjsa")]
-                )
+       
+        app.logger.info(f"reply : {replyMsg}")
+        line_bot_api.reply_message_with_http_info
+        (
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=replyMsg)]
             )
+        )
 
         
 
