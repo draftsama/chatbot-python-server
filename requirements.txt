@@ -18,3 +18,4 @@ gunicorn
 tensorflow
 cryptography
 certifi
+gevent

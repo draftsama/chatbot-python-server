@@ -298,7 +298,7 @@ A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
             {"role": "user", "content": msg},
         ],
         temperature=0.8,
-        max_tokens=1024,
+
     )
     
     # check if the response is empty
