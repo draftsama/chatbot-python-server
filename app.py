@@ -612,15 +612,6 @@ def handle_text_message(event):
             replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
         elif context == "recommend":
             replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-            app.logger.info(f"reply : {replyMsg}")
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=replyMsg)]
-                )
-            )
-
-            return
         elif context == "calculate":
             replyMsg = gpt_calculator(receiveMsg)
         elif context == "promotion":
@@ -668,12 +659,9 @@ def handle_text_message(event):
                     messages=[flex_message]
                 )
                 )
-                
-                    # end method
                 return
 
-        app.logger.info(f"reply : {replyMsg}")
-
+        app.logger.info(f"reply ====> : {replyMsg}")
         line_bot_api.reply_message_with_http_info
         (
             ReplyMessageRequest(
