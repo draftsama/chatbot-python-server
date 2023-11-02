@@ -499,6 +499,10 @@ def handle_image_message(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
+
+
+    
+    
     
     with ApiClient(configuration) as api_client:
         
@@ -666,7 +670,7 @@ def handle_text_message(event):
         (
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=replyMsg)]
+                messages=[TextMessage(text="dsadskaj กหๆฟกหฟ")]
             )
         )
 
