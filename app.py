@@ -23,6 +23,7 @@ from flask import Flask, jsonify, request, abort, make_response, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 from argparse import ArgumentParser
 import errno
+import ssl
 
 from linebot.v3 import (
     WebhookHandler
@@ -134,6 +135,8 @@ def make_static_tmp_dir():
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
 
+app.logger.info(ssl.get_default_verify_paths())
+ssl._create_default_https_context = ssl._create_unverified_context
 
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
