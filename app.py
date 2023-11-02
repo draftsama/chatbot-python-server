@@ -425,7 +425,7 @@ def get_binary_data(content) -> str:
     return file
 
 
-@handler.add(MessageEvent, message=ImageMessage)
+@handler.add(MessageEvent, message=ImageMessageContent)
 def handle_image_message(event):
      with ApiClient(configuration) as api_client:
         line_bot_blob_api = MessagingApiBlob(api_client)
@@ -515,7 +515,7 @@ def handle_image_message(event):
             
 
 
-@handler.add(MessageEvent, message=TextMessage)
+@handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     with ApiClient(configuration) as api_client:
         # print("body: ", event, flush=True)
