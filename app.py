@@ -20,6 +20,10 @@ import numpy as np
 from PIL import Image, ImageOps
 from flask_cors import CORS
 from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
+from werkzeug.middleware.proxy_fix import ProxyFix
+from argparse import ArgumentParser
+import errno
+
 from linebot.v3 import (
     WebhookHandler
 )
@@ -35,9 +39,9 @@ from linebot.v3.messaging import (
     ImageMessage,
     FlexMessage,
     LocationMessage,
-    MessagingApiBlob
+    MessagingApiBlob,
+    ApiException
     
-
 )
 from linebot.v3.webhooks import (
     MessageEvent,
@@ -96,6 +100,8 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
+
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['JSON_AS_ASCII'] = False
@@ -113,6 +119,18 @@ logging.basicConfig(
         logging.StreamHandler()  # Output to console
     ]
 )
+
+
+# function for create tmp dir for download content
+def make_static_tmp_dir():
+    try:
+        os.makedirs(static_tmp_path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(static_tmp_path):
+            pass
+        else:
+            raise
+
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
 
@@ -346,17 +364,19 @@ def test_post():
 @app.route('/webhook', methods=['POST'])
 def lineWebhook():
 
-    # get X-Line-Signature header value
+     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
     # get request body as text
     body = request.get_data(as_text=True)
+    app.logger.info("Request body: " + body)
+
     # handle webhook body
     try:
         handler.handle(body, signature)
+    except ApiException as e:
+        app.logger.warn("Got exception from LINE Messaging API: %s\n" % e.body)
     except InvalidSignatureError:
-        app.logger.error(
-            "Invalid signature. Please check your channel access token/channel secret.")
         abort(400)
 
     return 'OK'
@@ -1080,7 +1100,16 @@ print("Server is starting up...", flush=True)
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
 
-    if MODE == "dev":
-        app.run(debug=True, port=3000)
-    else:
-        app.run()
+   
+        
+    arg_parser = ArgumentParser(
+        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
+    )
+    arg_parser.add_argument('-p', '--port', type=int, default=8000, help='port')
+    arg_parser.add_argument('-d', '--debug', default=False, help='debug')
+    options = arg_parser.parse_args()
+
+    # create tmp dir for download content
+    make_static_tmp_dir()
+
+    app.run(debug=True, port=3000)
