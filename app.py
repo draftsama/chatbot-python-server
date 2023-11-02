@@ -11,6 +11,7 @@ import replicate
 import openai
 import re
 import json
+import tempfile
 import os
 from dotenv import load_dotenv
 import base64
@@ -19,17 +20,34 @@ import numpy as np
 from PIL import Image, ImageOps
 from flask_cors import CORS
 from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
-from linebot import (
-    LineBotApi
+from linebot.v3 import (
+    WebhookHandler
 )
-from linebot.exceptions import (
-    InvalidSignatureError, LineBotApiError
+from linebot.v3.exceptions import (
+    InvalidSignatureError
 )
-from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
+from linebot.v3.messaging import (
+    Configuration,
+    ApiClient,
+    MessagingApi,
+    ReplyMessageRequest,
+    TextMessage,
+    ImageMessage,
+    FlexMessage,
+    LocationMessage,
+    MessagingApiBlob
+    
+
+)
+from linebot.v3.webhooks import (
+    MessageEvent,
+    TextMessageContent,
+    ImageMessageContent
+    
+    
 )
 
-from linebot.v3.webhook import WebhookHandler
+
 
 from database import DatabaseConnect
 from psql import PSQLConnect
@@ -70,6 +88,7 @@ DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
 
 
 
+static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
     
 
@@ -80,7 +99,8 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['JSON_AS_ASCII'] = False
-line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+
+configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 # check app.log file is exists or not then delete it
 
@@ -262,37 +282,39 @@ with open('flex_message_options.json', 'r') as f:
     message = dict()
     message['type'] = 'carousel'
     message['contents'] = [json.load(f)]
-    flex_message_options = FlexSendMessage(
+    flex_message_options = FlexMessage(
         alt_text="Test", contents=message)
 
 
 def reply_flex_message_options(reply):
-    try:
-        line_bot_api.reply_message(reply, flex_message_options)
-    except LineBotApiError as e:
-        app.logger.error(f"code : {e.status_code}")
-        app.logger.error(f"code : {e.error.message}")
-        app.logger.error(f"code : {e.error.details}")
+    
+    # bubble_string = """{ type:"bubble", ... }"""
+    # message = FlexMessage(alt_text="hello", contents=FlexContainer.from_json(bubble_string))
+    # line_bot_api.reply_message(
+    #     ReplyMessageRequest(
+    #         reply_token=event.reply_token,
+    #         messages=[message]
+    #     )
+    # )
+    
+    pass
+   
+    # line_bot_api.reply_message(reply, flex_message_options)
+   
 
 
 flex_message_find_products = None
 with open('product_message.json', 'r') as f:
-    message = dict()
-    message['type'] = 'carousel'
+    content = dict()
+    content['type'] = 'carousel'
     i = json.load(f)
-    message['contents'] = [i, i, i]
-    flex_message_find_products = FlexSendMessage(
-        alt_text="Test", contents=message)
+    content['contents'] = [i, i, i]
+    flex_message = FlexMessage(alt_text="Test", contents=content)
+
 
 
 def reply_flex_message_find_products(reply):
-    try:
-        line_bot_api.reply_message(reply, flex_message_find_products)
-    except LineBotApiError as e:
-        app.logger.error(f"code : {e.status_code}")
-        app.logger.error(f"code : {e.error.message}")
-        app.logger.error(f"code : {e.error.details}")
-
+   pass
 
 # message = dict()
 # message['type'] = 'carousel'
@@ -394,8 +416,8 @@ def get_products():
   
 # =================== HANDLER ===================
 
-def get_binary_data(event) -> str:
-    content = line_bot_api.get_message_content(event.message.id)
+def get_binary_data(content) -> str:
+   
     file = b""
     for chunk in content.iter_content():
         file += chunk
@@ -405,255 +427,291 @@ def get_binary_data(event) -> str:
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image_message(event):
-    profile = line_bot_api.get_profile(event.source.user_id)
-    ext = 'jpg'
-    message_content = line_bot_api.get_message_content(event.message.id)
-    file = get_binary_data(event)
-    # convert to base64
-    base64_string = base64.b64encode(file)
-    # write to base64.txt
-    # with open("base64.txt", "wb") as fh:
-    #     fh.write(base64_string)
-
-    # save image
-    with open(f"images/{event.source.user_id}.{ext}", 'wb') as fd:
-        fd.write(file)
-    # reply image to user
-    app.logger.info(f"==============================")
-    app.logger.info(f"type: {event.message.type}")
-    app.logger.info(f"user_name: {profile.display_name}")
-    app.logger.info(f"user_id: {event.source.user_id}")
-    app.logger.info(f"reply_token: {event.reply_token}")
-    app.logger.info(f"==============================")
-
-    result = ic.predict(base64_string, 5)
+     with ApiClient(configuration) as api_client:
+        line_bot_blob_api = MessagingApiBlob(api_client)
+        line_bot_api = MessagingApi(api_client)
+        profile = line_bot_api.get_profile(event.source.user_id)
+       
+       
+        ext = 'jpg'
     
-    #list to json string
-    app.logger.info(f"{json.dumps(result,indent=4)}")
-    
-    # t = ""
-    # # get class name
-    # for i in result:
-    #     t += i["class"] + "\n"
+        file_binary = line_bot_blob_api.get_message_content(message_id=event.message.id)
+        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+                tf.write(file_binary)
+                tempfile_path = tf.name
+       
+        dist_path = tempfile_path + '.' + ext
+        dist_name = os.path.basename(dist_path)
+        os.rename(tempfile_path, dist_path)
+        
+        # convert to base64
+        base64_string = base64.b64encode(file_binary).decode('utf-8')
+        # write to base64.txt
+        # save image
+   
+        # reply image to user
+        app.logger.info(f"==============================")
+        app.logger.info(f"type: {event.message.type}")
+        app.logger.info(f"user_name: {profile.display_name}")
+        app.logger.info(f"user_id: {event.source.user_id}")
+        app.logger.info(f"reply_token: {event.reply_token}")
+        app.logger.info(f"==============================")
 
-    # line_bot_api.reply_message(
-    #     event.reply_token, TextSendMessage(text=t))
-    
-    
- 
-    
-    # connect to postgresql database
- 
-    with open('product_message.json', 'r') as f:
-            message = dict()
-            message['type'] = 'carousel'
+        result = ic.predict(base64_string, 5)
+        
+        #list to json string
+        app.logger.info(f"{json.dumps(result,indent=4)}")
+        
+        # t = ""
+        # # get class name
+        # for i in result:
+        #     t += i["class"] + "\n"
 
-            itemTemplate = json.load(f)
-            contents = []
-            for i in range(0, len(result)):
-                # clone itemTemplate
-                item = copy.deepcopy(itemTemplate)
-                sku = result[i]['class']
-                query = f"SELECT * FROM tiles WHERE sku = {sku}"
-                
-                
-                df = DatabaseConnect.get_data(query) 
-                if len(df) == 0:
-                    continue
-                
-                card_image_url =f"https://mkt-app.dohome.co.th/images/cards/{sku}.jpg"
-                
-                text = f"{df.iloc[0]['sku']} - {df.iloc[0]['product_name']}"
-                item['hero']['url'] = card_image_url
-                item['body']['contents'][0]['text'] = text
-                # add item to contents
-                contents.append(item)
-           
-            if len(contents) == 0:
-                return
-                
-            message['contents'] = contents
-            flex_message = FlexSendMessage(
-                alt_text="Search", contents=message)
+        # line_bot_api.reply_message(
+        #     event.reply_token, TextSendMessage(text=t))
+        
+        
+    
+        
+        # connect to postgresql database
+    
+        with open('product_message.json', 'r') as f:
+                message = dict()
+                message['type'] = 'carousel'
 
-            try:
+                itemTemplate = json.load(f)
+                contents = []
+                for i in range(0, len(result)):
+                    # clone itemTemplate
+                    item = copy.deepcopy(itemTemplate)
+                    sku = result[i]['class']
+                    query = f"SELECT * FROM tiles WHERE sku = {sku}"
+                    
+                    
+                    df = DatabaseConnect.get_data(query) 
+                    if len(df) == 0:
+                        continue
+                    
+                    card_image_url =f"https://mkt-app.dohome.co.th/images/cards/{sku}.jpg"
+                    
+                    text = f"{df.iloc[0]['sku']} - {df.iloc[0]['product_name']}"
+                    item['hero']['url'] = card_image_url
+                    item['body']['contents'][0]['text'] = text
+                    # add item to contents
+                    contents.append(item)
+            
+                if len(contents) == 0:
+                    return
+                    
+                message['contents'] = contents
+                flex_message = FlexMessage(
+                    alt_text="Search", contents=message)
+
+                
                 line_bot_api.reply_message(event.reply_token, flex_message)
-            except LineBotApiError as e:
-                app.logger.error(f"code : {e.status_code}")
-                app.logger.error(f"code : {e.error.message}")
-                app.logger.error(f"code : {e.error.details}")
+                
 
-                # end method
+                    # end method
             
 
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_text_message(event):
-    # print("body: ", event, flush=True)
-    profile = line_bot_api.get_profile(event.source.user_id)
-    # print("profile: ", profile, flush=True)
+    with ApiClient(configuration) as api_client:
+        # print("body: ", event, flush=True)
+        line_bot_api = MessagingApi(api_client)
+        profile = line_bot_api.get_profile(event.source.user_id)
+        # print("profile: ", profile, flush=True)
 
-    # url = 'https://api.line.me/v2/bot/message/markAsRead'
-    # headers = {
-    #     'Content-Type': 'application/json',
-    #     'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
-    # }
-    # data = {
-    #     'chat': {
-    #         'userId': event.source.user_id
-    #     }
-    # }
+        # url = 'https://api.line.me/v2/bot/message/markAsRead'
+        # headers = {
+        #     'Content-Type': 'application/json',
+        #     'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
+        # }
+        # data = {
+        #     'chat': {
+        #         'userId': event.source.user_id
+        #     }
+        # }
 
-    # requests.post(url, headers=headers, json=data)
+        # requests.post(url, headers=headers, json=data)
 
-    app.logger.info(f"==============================")
-    app.logger.info(f"type: {event.message.type}")
-    app.logger.info(f"user_name: {profile.display_name}")
-    app.logger.info(f"user_id: {event.source.user_id}")
-    app.logger.info(f"reply_token: {event.reply_token}")
-    app.logger.info(f"message: {event.message.text}")
-    app.logger.info(f"==============================")
+        app.logger.info(f"==============================")
+        app.logger.info(f"type: {event.message.type}")
+        app.logger.info(f"user_name: {profile.display_name}")
+        app.logger.info(f"user_id: {event.source.user_id}")
+        app.logger.info(f"reply_token: {event.reply_token}")
+        app.logger.info(f"message: {event.message.text}")
+        app.logger.info(f"==============================")
 
-    # receiveMsg = correct(event.message.text)
-    receiveMsg = event.message.text
-    #Check the message equals to keyword
-    replyMsg = word_detect.keyword_detect(receiveMsg)
-    if replyMsg is not None:
-        app.logger.info(f"reply : {replyMsg}")
+        # receiveMsg = correct(event.message.text)
+        receiveMsg = event.message.text
+        #Check the message equals to keyword
+        replyMsg = word_detect.keyword_detect(receiveMsg)
+        if replyMsg is not None:
+            app.logger.info(f"reply : {replyMsg}")
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=replyMsg))
-        return
-        
-    
-    if len(re.findall("ค้นหาสินค้า", receiveMsg)) != 0:
-        reply_flex_message_options(event.reply_token)
-        return
-
-    if len(re.findall("ค้นหาจากแคตตาล็อก", receiveMsg)) != 0:
-        reply_flex_message_find_products(event.reply_token)
-        return
-
-    if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
-        location_message = LocationSendMessage(
-            title='DoHome',
-            address='DoHome',
-            latitude=13.7667711,
-            longitude=100.5488918
-        )
-        line_bot_api.reply_message(event.reply_token, location_message)
-        return
-
-    
-    #GPT
-    data = context_analysis(receiveMsg)
-    if data is None:
-        data = {"context": "none"}
-
-    context = data["context"]
- 
-    
-    app.logger.info(f"context: {data}")
-
-    if context == "none":
-        replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจาก{ASSISTANT_NAME}ไม่สามารเข้าใจได้ครับ"
-    elif context == "complaint":
-        replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
-    elif context == "location":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-    elif context == "technician":
-        replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
-เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
-และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
-    elif context == "greeting":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-    elif context == "information":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-    elif context == "recommend":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-    elif context == "calculate":
-        replyMsg = gpt_calculator(receiveMsg)
-    elif context == "promotion":
-        line_bot_api.reply_message(
-            event.reply_token,
-            ImageSendMessage(
-                original_content_url='https://draft-dev.online/images/promotion.jpg',
-                preview_image_url='https://draft-dev.online/images/promotion.jpg'
+            line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=replyMsg)]
             )
         )
-        return
-    elif context == "search":
+           
+            return
+            
         
-        keyword = receiveMsg
-        #check key in data
-        if "keyword" in data:
-            keyword = data["keyword"]
-        
-        products = find_product(keyword)
-      
-
-        with open('product_message.json', 'r') as f:
-            message = dict()
-            message['type'] = 'carousel'
-
-            itemTemplate = json.load(f)
-            contents = []
-            for i in range(0, len(products)):
-                # clone itemTemplate
-                item = copy.deepcopy(itemTemplate)
-                item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
-                # add item to contents
-                contents.append(item)
-
-            message['contents'] = contents
-            flex_message = FlexSendMessage(
-                alt_text="Search", contents=message)
-
-            try:
-                line_bot_api.reply_message(event.reply_token, flex_message)
-            except LineBotApiError as e:
-                app.logger.error(f"code : {e.status_code}")
-                app.logger.error(f"code : {e.error.message}")
-                app.logger.error(f"code : {e.error.details}")
-
-                # end method
+        if len(re.findall("ค้นหาสินค้า", receiveMsg)) != 0:
+            reply_flex_message_options(event.reply_token)
             return
 
-    app.logger.info(f"reply : {replyMsg}")
+  
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=replyMsg))
+        if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
+            
+            location_message = LocationMessage(
+                title='DoHome',
+                address='DoHome',
+                latitude=13.7667711,
+                longitude=100.5488918
+            )
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[location_message]
+                )
+            )
+            return
 
-    # line_bot_api.reply_message(
-    #     event.reply_token,
-    #     TextSendMessage(text="@"+profile.display_name))
+        
+        #GPT
+        data = context_analysis(receiveMsg)
+        if data is None:
+            data = {"context": "none"}
 
-    # quick_reply_items = [
-    #     QuickReplyButton(
-    #         action=MessageAction(
-    #             label='Yes',
-    #             text='Yes'
-    #         )
-    #     ),
-    #     QuickReplyButton(
-    #         action=MessageAction(
-    #             label='No',
-    #             text='No',
-    #         )
-    #     )
-    # ]
+        context = data["context"]
+    
+        
+        app.logger.info(f"context: {data}")
 
-    # quick_reply = QuickReply(items=quick_reply_items)
+        if context == "none":
+            replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจาก{ASSISTANT_NAME}ไม่สามารเข้าใจได้ครับ"
+        elif context == "complaint":
+            replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
+        elif context == "location":
+            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
+        elif context == "technician":
+            replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
+    เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
+    และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
+        elif context == "greeting":
+            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
+        elif context == "information":
+            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
+        elif context == "recommend":
+            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
+        elif context == "calculate":
+            replyMsg = gpt_calculator(receiveMsg)
+        elif context == "promotion":
+            # line_bot_api.reply_message(
+            #     event.reply_token,
+            #     ImageSendMessage(
+            #         original_content_url='https://draft-dev.online/images/promotion.jpg',
+            #         preview_image_url='https://draft-dev.online/images/promotion.jpg'
+            #     )
+            # )
+            #  line_bot_api.reply_message_with_http_info(
+            # ReplyMessageRequest(
+            #     reply_token=event.reply_token,
+            #     messages=[TextMessage(text=replyMsg)]
+            # )
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[ImageMessage(
+                        original_content_url='https://draft-dev.online/images/promotion.jpg',
+                        preview_image_url='https://draft-dev.online/images/promotion.jpg'
+                    )]
+                )
+            )
+            
+            return
+        elif context == "search":
+            
+            keyword = receiveMsg
+            #check key in data
+            if "keyword" in data:
+                keyword = data["keyword"]
+            
+            products = find_product(keyword)
+        
 
-    # message = TextSendMessage(
-    #     text='Do you like LINE bot SDK?',
-    #     quick_reply=quick_reply
-    # )
-    # line_bot_api.reply_message(event.reply_token, message)
+            with open('product_message.json', 'r') as f:
+                message = dict()
+                message['type'] = 'carousel'
 
-    # line_bot_api.reply_message(event.reply_token, flex_message)
+                itemTemplate = json.load(f)
+                contents = []
+                for i in range(0, len(products)):
+                    # clone itemTemplate
+                    item = copy.deepcopy(itemTemplate)
+                    item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
+                    # add item to contents
+                    contents.append(item)
+
+                message['contents'] = contents
+                flex_message = FlexMessage(
+                    alt_text="Search", contents=message)
+
+               
+                line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[flex_message]
+                )
+                )
+                
+                    # end method
+                return
+
+        app.logger.info(f"reply : {replyMsg}")
+
+        line_bot_api.reply_message_with_http_info
+        (
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=replyMsg)]
+            )
+        )
+
+        # line_bot_api.reply_message(
+        #     event.reply_token,
+        #     TextSendMessage(text="@"+profile.display_name))
+
+        # quick_reply_items = [
+        #     QuickReplyButton(
+        #         action=MessageAction(
+        #             label='Yes',
+        #             text='Yes'
+        #         )
+        #     ),
+        #     QuickReplyButton(
+        #         action=MessageAction(
+        #             label='No',
+        #             text='No',
+        #         )
+        #     )
+        # ]
+
+        # quick_reply = QuickReply(items=quick_reply_items)
+
+        # message = TextSendMessage(
+        #     text='Do you like LINE bot SDK?',
+        #     quick_reply=quick_reply
+        # )
+        # line_bot_api.reply_message(event.reply_token, message)
+
+        # line_bot_api.reply_message(event.reply_token, flex_message)
 
 
 @app.route('/replicate/prediction', methods=['POST'])
