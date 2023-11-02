@@ -70,6 +70,7 @@ ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
 
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def is_empty_string(s):
     return not bool(s and s.strip())
@@ -136,7 +137,7 @@ def make_static_tmp_dir():
 np.set_printoptions(suppress=True)
 
 app.logger.info(f"SSL ==============> {ssl.get_default_verify_paths()}")
-# ssl._create_default_https_context = ssl._create_unverified_context
+app.logger.info(f"ssl._create_default_https_contex ==============> {ssl._create_default_https_contex()}")
 
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
