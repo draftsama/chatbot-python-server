@@ -137,7 +137,6 @@ def make_static_tmp_dir():
 np.set_printoptions(suppress=True)
 
 app.logger.info(f"SSL ==============> {ssl.get_default_verify_paths()}")
-app.logger.info(f"ssl._create_default_https_contex ==============> {ssl._create_default_https_contex()}")
 
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
