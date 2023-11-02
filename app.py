@@ -291,21 +291,19 @@ Q:Who are you?
 A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
-    app.logger.info(f"msg: {msg}")
-    app.logger.info(f"openai: {openai.api_key}")
     res = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": msg},
-            ],
-            temperature=0.8,
-        )
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": msg},
+        ],
+        temperature=0.8,
+        max_tokens=1024,
+    )
     
     # check if the response is empty
     if len(res.choices) == 0:
         return "ไม่เข้าใจคำถามของคุณ"
-    app.logger.info(f"res.choices: {res.choices}")
     # return the first choice
     return str(res.choices[0].message['content'])
 
