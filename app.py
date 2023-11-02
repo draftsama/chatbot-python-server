@@ -582,8 +582,8 @@ def handle_text_message(event):
                         action=MessageAction(label=option, text=option)))
                 
                 quick_reply = QuickReply(items=quickReplayItems)
-            app.logger.info(f"options : {options}")
-            app.logger.info(f"quick_reply : {quick_reply}")
+            # app.logger.info(f"options : {options}")
+            # app.logger.info(f"quick_reply : {quick_reply}")
 
             # QuickReply(items=[
             #              QuickReplyItem(

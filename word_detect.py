@@ -16,7 +16,7 @@ class WordDetect:
         keywords = self.database.get_data('chatbot_keyword')
      
         if keywords is None or len(keywords) == 0:
-          return None,[]
+          return None,None
       #check text is equals to keyword.text
         df_keywords = pd.DataFrame(keywords, columns=['id','text','dialog_id'])
 
@@ -29,12 +29,12 @@ class WordDetect:
             answers = self.database.get_data('chatbot_answer', f"WHERE id = {dialog_id} LIMIT 1")
    
             if answers is None or len(answers) == 0:
-                return None,[]
+                return None,None
             
             df_answers = pd.DataFrame(answers, columns=['id','text'])
             
             options = self.database.get_data('chatbot_dialog_option', f"WHERE dialog_id = {dialog_id}")
-            result_options = []
+            result_options = None
             if options is not None and len(options) > 0:
                 df_options = pd.DataFrame(options, columns=['id','text'])
                 result_options = df_options['text'].to_list()
