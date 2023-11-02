@@ -4,6 +4,7 @@ DIR=$(dirname "$0")
 
 export MODE=production
 export PORT=3000
+export SSL_CERT_DIR=/etc/ssl/certs
 
 # Change directory to project directory
 cd $DIR 

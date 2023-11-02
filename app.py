@@ -71,8 +71,8 @@ ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
 
-os.environ['SSL_CERT_DIR'] = "/etc/ssl/certs"
 ssl._create_default_https_context = ssl._create_unverified_context
+
 
 def is_empty_string(s):
     return not bool(s and s.strip())
@@ -127,6 +127,7 @@ logging.basicConfig(
 
 # function for create tmp dir for download content
 def make_static_tmp_dir():
+    app.logger.info("make_static_tmp_dir")
     try:
         os.makedirs(static_tmp_path)
     except OSError as exc:
@@ -138,7 +139,6 @@ def make_static_tmp_dir():
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
 
-app.logger.info(f"SSL ==============> {ssl.get_default_verify_paths()}")
 
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
@@ -1077,7 +1077,6 @@ current_time = datetime.datetime.now(timezone)
 formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
 print("Server is starting up...", flush=True)
-
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
 
