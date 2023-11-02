@@ -34,7 +34,7 @@ from linebot.v3.webhook import WebhookHandler
 from database import DatabaseConnect
 from psql import PSQLConnect
 from word_detect import WordDetect
-from pythainlp.spell import correct
+# from pythainlp.spell import correct
 
 
 MODE = os.getenv('MODE')
@@ -514,8 +514,8 @@ def handle_text_message(event):
     app.logger.info(f"message: {event.message.text}")
     app.logger.info(f"==============================")
 
-    receiveMsg = correct(event.message.text)
-    
+    # receiveMsg = correct(event.message.text)
+    receiveMsg = event.message.text
     #Check the message equals to keyword
     replyMsg = word_detect.keyword_detect(receiveMsg)
     if replyMsg is not None:
