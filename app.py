@@ -602,10 +602,9 @@ def handle_text_message(event):
                 reply_token=event.reply_token,
                 messages=[TextMessage(
                     text=replyMsg,
-                    quick_reply=quick_reply  )]
+                    quick_reply=quick_reply)]
 
-            )
-        )
+            ))
            
             return
             
