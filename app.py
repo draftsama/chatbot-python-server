@@ -277,8 +277,7 @@ def find_product(msg):
 
 
 def chat_gpt_reply(msg):
-    return "5555"
-    
+
     system = f"""You are helpful assistant of Marine Studio,  You are an expert in tiles and bathroom sanitary.,refer datas below
 website:www.marine-studio.co.th
 tel:02-234-5555
@@ -292,7 +291,8 @@ Q:Who are you?
 A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
-    
+    app.logger.info(f"msg: {msg}")
+    app.logger.info(f"openai: {openai.api_key}")
     res = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
