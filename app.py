@@ -125,16 +125,7 @@ logging.basicConfig(
 )
 
 
-# function for create tmp dir for download content
-def make_static_tmp_dir():
-    app.logger.info("make_static_tmp_dir")
-    try:
-        os.makedirs(static_tmp_path)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(static_tmp_path):
-            pass
-        else:
-            raise
+
 
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
@@ -459,7 +450,11 @@ def handle_image_message(event):
        
        
         ext = 'jpg'
-    
+
+        #check if static_tmp_path directory is exists or not
+        if not os.path.isdir(static_tmp_path):
+            os.mkdir(static_tmp_path)
+        
         file_binary = line_bot_blob_api.get_message_content(message_id=event.message.id)
         with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
                 tf.write(file_binary)
@@ -469,6 +464,7 @@ def handle_image_message(event):
         dist_name = os.path.basename(dist_path)
         os.rename(tempfile_path, dist_path)
         
+        app.logger.info(f"save image to {dist_path}")
         # convert to base64
         base64_string = base64.b64encode(file_binary).decode('utf-8')
         # write to base64.txt
@@ -487,17 +483,7 @@ def handle_image_message(event):
         #list to json string
         app.logger.info(f"{json.dumps(result,indent=4)}")
         
-        # t = ""
-        # # get class name
-        # for i in result:
-        #     t += i["class"] + "\n"
-
-        # line_bot_api.reply_message(
-        #     event.reply_token, TextSendMessage(text=t))
-        
-        
-    
-        
+      
         # connect to postgresql database
     
         with open('product_message.json', 'r') as f:
@@ -533,7 +519,11 @@ def handle_image_message(event):
                     alt_text="Search", contents=message)
 
                 
-                line_bot_api.reply_message(event.reply_token, flex_message)
+                line_bot_api.reply_message_with_http_info(
+                    ReplyMessageRequest(
+                        reply_token=event.reply_token,
+                        messages=[flex_message]
+                    ))
                 
 
                     # end method
@@ -1089,7 +1079,5 @@ if __name__ == '__main__':
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    # create tmp dir for download content
-    make_static_tmp_dir()
 
     app.run(debug=True, port=3000)
