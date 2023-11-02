@@ -30,6 +30,7 @@ from linebot.models import (
 )
 from database import DatabaseConnect
 from psql import PSQLConnect
+from word_detect import WordDetect
 
 
 MODE = os.getenv('MODE')
@@ -95,6 +96,7 @@ np.set_printoptions(suppress=True)
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
 psql_connect = PSQLConnect(DATABASE_HOST,DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD)
+word_detect = WordDetect(psql_connect)
 
 if not psql_connect.test_connection():
     app.logger.info("Can't connect to database")
@@ -508,6 +510,18 @@ def handle_text_message(event):
     app.logger.info(f"message: {event.message.text}")
     app.logger.info(f"==============================")
 
+    
+    #Check the message equals to keyword
+    replyMsg = word_detect.keyword_detect(event.message.text)
+    if replyMsg is not None:
+        app.logger.info(f"reply : {replyMsg}")
+
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=replyMsg))
+        return
+        
+    
     if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
         reply_flex_message_options(event.reply_token)
         return
