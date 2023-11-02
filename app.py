@@ -43,7 +43,16 @@ from linebot.v3.messaging import (
     LocationMessage,
     MessagingApiBlob,
     ApiException,
-    FlexContainer
+    FlexContainer,
+    QuickReply,
+    QuickReplyItem,
+    PostbackAction,
+    MessageAction,
+    DatetimePickerAction,
+    CameraAction,
+    CameraRollAction,
+    LocationAction,
+    
     
 )
 from linebot.v3.webhooks import (
@@ -457,15 +466,14 @@ def handle_image_message(event):
             os.mkdir(static_tmp_path)
         
         file_binary = line_bot_blob_api.get_message_content(message_id=event.message.id)
-        with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-                tf.write(file_binary)
-                tempfile_path = tf.name
+        # with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
+        #         tf.write(file_binary)
+        #         tempfile_path = tf.name
        
-        dist_path = tempfile_path + '.' + ext
-        dist_name = os.path.basename(dist_path)
-        os.rename(tempfile_path, dist_path)
+        # dist_path = tempfile_path + '.' + ext
+        # dist_name = os.path.basename(dist_path)
+        # os.rename(tempfile_path, dist_path)
         
-        app.logger.info(f"save image to {dist_path}")
         # convert to base64
         base64_string = base64.b64encode(file_binary).decode('utf-8')
         # write to base64.txt
@@ -480,6 +488,10 @@ def handle_image_message(event):
         app.logger.info(f"==============================")
 
         result = ic.predict(base64_string, 5)
+        
+        #clear ram
+        del file_binary
+        del base64_string
         
         #list to json string
         app.logger.info(f"{json.dumps(result,indent=4)}")
@@ -537,23 +549,8 @@ def handle_text_message(event):
     app.logger.info(f"event.message.text ====> {event.message.text}")
     with ApiClient(configuration) as api_client:
         
-        # print("body: ", event, flush=True)
         line_bot_api = MessagingApi(api_client)
         profile = line_bot_api.get_profile(event.source.user_id)
-        # print("profile: ", profile, flush=True)
-
-        # url = 'https://api.line.me/v2/bot/message/markAsRead'
-        # headers = {
-        #     'Content-Type': 'application/json',
-        #     'Authorization': 'Bearer {CHANNEL_ACCESS_TOKEN}'
-        # }
-        # data = {
-        #     'chat': {
-        #         'userId': event.source.user_id
-        #     }
-        # }
-
-        # requests.post(url, headers=headers, json=data)
 
         app.logger.info(f"==============================")
         app.logger.info(f"type: {event.message.type}")
@@ -573,7 +570,30 @@ def handle_text_message(event):
             line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=replyMsg)]
+                messages=[TextMessage(
+                    text=replyMsg,
+                    quick_reply=QuickReply(items=[
+                         QuickReplyItem(
+                                    action=PostbackAction(label="label1", data="data1")),
+                                QuickReplyItem(
+                                    action=MessageAction(label="label2", text="text2")
+                                ),
+                                QuickReplyItem(
+                                    action=DatetimePickerAction(label="label3",
+                                                                data="data3",
+                                                                mode="date")
+                                ),
+                                QuickReplyItem(
+                                    action=CameraAction(label="label4")
+                                ),
+                                QuickReplyItem(
+                                    action=CameraRollAction(label="label5")
+                                ),
+                                QuickReplyItem(
+                                    action=LocationAction(label="label6")
+                                ),
+                    ]))]
+
             )
         )
            
