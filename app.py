@@ -1,3 +1,4 @@
+import urllib3
 from image_classification import ImageClassifucation
 from oepnai_manager import openai_manager
 from aes import AES
@@ -70,7 +71,8 @@ ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
 
-os.environ['REQUESTS_CA_BUNDLE'] = "/etc/ssl/certs/ca-certificates.crt"
+os.environ['SSL_CERT_DIR'] = "/etc/ssl/certs"
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def is_empty_string(s):
     return not bool(s and s.strip())
