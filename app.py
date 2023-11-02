@@ -668,21 +668,11 @@ def handle_text_message(event):
             replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
         elif context == "recommend":
             replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
+            app.logger.info(f"reply recommend : {replyMsg}")
+
         elif context == "calculate":
             replyMsg = gpt_calculator(receiveMsg)
         elif context == "promotion":
-            # line_bot_api.reply_message(
-            #     event.reply_token,
-            #     ImageSendMessage(
-            #         original_content_url='https://draft-dev.online/images/promotion.jpg',
-            #         preview_image_url='https://draft-dev.online/images/promotion.jpg'
-            #     )
-            # )
-            #  line_bot_api.reply_message_with_http_info(
-            # ReplyMessageRequest(
-            #     reply_token=event.reply_token,
-            #     messages=[TextMessage(text=replyMsg)]
-            # )
             line_bot_api.reply_message_with_http_info(
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
