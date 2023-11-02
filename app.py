@@ -537,7 +537,10 @@ def handle_image_message(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
+    text = event.message.text
+    app.logger.info(f"event.message.text ====> {event.message.text}")
     with ApiClient(configuration) as api_client:
+        
         # print("body: ", event, flush=True)
         line_bot_api = MessagingApi(api_client)
         profile = line_bot_api.get_profile(event.source.user_id)
@@ -704,34 +707,7 @@ def handle_text_message(event):
             )
         )
 
-        # line_bot_api.reply_message(
-        #     event.reply_token,
-        #     TextSendMessage(text="@"+profile.display_name))
-
-        # quick_reply_items = [
-        #     QuickReplyButton(
-        #         action=MessageAction(
-        #             label='Yes',
-        #             text='Yes'
-        #         )
-        #     ),
-        #     QuickReplyButton(
-        #         action=MessageAction(
-        #             label='No',
-        #             text='No',
-        #         )
-        #     )
-        # ]
-
-        # quick_reply = QuickReply(items=quick_reply_items)
-
-        # message = TextSendMessage(
-        #     text='Do you like LINE bot SDK?',
-        #     quick_reply=quick_reply
-        # )
-        # line_bot_api.reply_message(event.reply_token, message)
-
-        # line_bot_api.reply_message(event.reply_token, flex_message)
+        
 
 
 @app.route('/replicate/prediction', methods=['POST'])
