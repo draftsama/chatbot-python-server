@@ -564,7 +564,9 @@ def handle_text_message(event):
         receiveMsg = event.message.text
         #Check the message equals to keyword
         replyMsg = word_detect.keyword_detect(receiveMsg)
-        if replyMsg is not None:
+        
+        
+        if receiveMsg is not None:
             app.logger.info(f"reply : {replyMsg}")
 
             line_bot_api.reply_message_with_http_info(
