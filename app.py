@@ -63,6 +63,12 @@ from linebot.v3.webhooks import (
     
 )
 
+#TODO FIX ISUSSE LINE SDK V3 : SSL CERTIFICATE_VERIFY_FAILED
+#$ sudo update-ca-certificates --fresh
+#$ export SSL_CERT_DIR=/etc/ssl/certs
+
+#---------------------------------------------
+
 
 
 from database import DatabaseConnect
@@ -567,7 +573,7 @@ def handle_text_message(event):
         
         if replyMsg is not None:
             app.logger.info(f"reply : {replyMsg}")
-
+            quick_reply = None
             if options is not None:
                 quickReplayItems = []
                 for option in options:
