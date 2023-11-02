@@ -135,8 +135,8 @@ def make_static_tmp_dir():
 # Disable scientific notation for clarity
 np.set_printoptions(suppress=True)
 
-app.logger.info(ssl.get_default_verify_paths())
-ssl._create_default_https_context = ssl._create_unverified_context
+app.logger.info(f"SSL ==============> {ssl.get_default_verify_paths()}")
+# ssl._create_default_https_context = ssl._create_unverified_context
 
 ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
