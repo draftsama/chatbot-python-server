@@ -554,37 +554,23 @@ def handle_text_message(event):
             #                         action=LocationAction(label="label6")
             #                     ),
             #         ])
-            
-            line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(
-                    text=replyMsg,
-                    quick_reply=quick_reply)]
+            try:
+                line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(
+                        text=replyMsg,
+                        quick_reply=quick_reply)]
 
-            ))
+                ))
+            except Exception as e:
+                app.logger.info(f"error reply")
+                app.logger.info(e)
            
             return
             
-        #TODO TEST
-        app.logger.info(f"start sleep 5 sec")
-        time.sleep(5)
-        app.logger.info(f"end sleep 5 sec")
-        try:
-            line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text="555555")]
-                )
-            )
-        except Exception as e:
-            app.logger.info(f"error reply")
-            app.logger.info(e)
-        
-        app.logger.info(f"end reply")
 
-        
-        return
+      
   
 
         if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
@@ -681,14 +667,21 @@ def handle_text_message(event):
 
        
         app.logger.info(f"reply : {replyMsg}")
-        line_bot_api.reply_message_with_http_info
-        (
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=replyMsg)]
+        try:
+            line_bot_api.reply_message_with_http_info
+            (
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text=replyMsg)]
+                )
             )
-        )
+        except Exception as e:
+            app.logger.info(f"error reply")
+            app.logger.info(e)
+        
 
+        
+        return
         
 
 
