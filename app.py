@@ -668,7 +668,7 @@ def handle_text_message(event):
        
         app.logger.info(f"reply : {replyMsg}")
         try:
-            line_bot_api.reply_message_with_http_info
+            line_bot_api.reply_message
             (
                 ReplyMessageRequest(
                     reply_token=event.reply_token,
