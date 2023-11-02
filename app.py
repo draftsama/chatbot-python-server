@@ -499,11 +499,6 @@ def handle_image_message(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
-
-
-    
-    
-    
     with ApiClient(configuration) as api_client:
         
         line_bot_api = MessagingApi(api_client)
@@ -665,14 +660,17 @@ def handle_text_message(event):
                 )
                 return
 
-        app.logger.info(f"reply ====> : {replyMsg}")
-        line_bot_api.reply_message_with_http_info
-        (
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text="dsadsadsahgjhagkdjyhsgakdyjsa")]
+        with ApiClient(configuration) as api_client:
+            app.logger.info(f"reply ====> : {replyMsg}")
+
+            line_bot_api = MessagingApi(api_client)
+            line_bot_api.reply_message_with_http_info
+            (
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text="dsadsadsahgjhagkdjyhsgakdyjsa")]
+                )
             )
-        )
 
         
 
