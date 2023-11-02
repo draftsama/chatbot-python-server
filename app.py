@@ -570,13 +570,17 @@ def handle_text_message(event):
         app.logger.info(f"start sleep 5 sec")
         time.sleep(5)
         app.logger.info(f"end sleep 5 sec")
-        line_bot_api.reply_message_with_http_info
-        (
+        try:
+            line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text="555555")]
+                )
             )
-        )
+        except Exception as e:
+            app.logger.info(f"error reply")
+            app.logger.info(e)
+        
         app.logger.info(f"end reply")
 
         
