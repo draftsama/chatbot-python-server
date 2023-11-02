@@ -545,8 +545,7 @@ def handle_image_message(event):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
-    text = event.message.text
-    app.logger.info(f"event.message.text ====> {event.message.text}")
+    
     with ApiClient(configuration) as api_client:
         
         line_bot_api = MessagingApi(api_client)
@@ -563,40 +562,47 @@ def handle_text_message(event):
         # receiveMsg = correct(event.message.text)
         receiveMsg = event.message.text
         #Check the message equals to keyword
-        replyMsg = word_detect.keyword_detect(receiveMsg)
+        replyMsg,options = word_detect.keyword_detect(receiveMsg)
         
-        #test
-        replyMsg = receiveMsg
         
         if replyMsg is not None:
             app.logger.info(f"reply : {replyMsg}")
 
+            if options is not None:
+                quickReplayItems = []
+                for option in options:
+                    quickReplayItems.append(QuickReplyItem(
+                        action=MessageAction(label=option, text=option)))
+                
+                quick_reply = QuickReply(items=quickReplayItems)
+            # QuickReply(items=[
+            #              QuickReplyItem(
+            #                         action=PostbackAction(label="label1", data="data1")),
+            #                     QuickReplyItem(
+            #                         action=MessageAction(label="label2", text="text2")
+            #                     ),
+            #                     QuickReplyItem(
+            #                         action=DatetimePickerAction(label="label3",
+            #                                                     data="data3",
+            #                                                     mode="date")
+            #                     ),
+            #                     QuickReplyItem(
+            #                         action=CameraAction(label="label4")
+            #                     ),
+            #                     QuickReplyItem(
+            #                         action=CameraRollAction(label="label5")
+            #                     ),
+            #                     QuickReplyItem(
+            #                         action=LocationAction(label="label6")
+            #                     ),
+            #         ])
+            
             line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(
                     text=replyMsg,
-                    quick_reply=QuickReply(items=[
-                         QuickReplyItem(
-                                    action=PostbackAction(label="label1", data="data1")),
-                                QuickReplyItem(
-                                    action=MessageAction(label="label2", text="text2")
-                                ),
-                                QuickReplyItem(
-                                    action=DatetimePickerAction(label="label3",
-                                                                data="data3",
-                                                                mode="date")
-                                ),
-                                QuickReplyItem(
-                                    action=CameraAction(label="label4")
-                                ),
-                                QuickReplyItem(
-                                    action=CameraRollAction(label="label5")
-                                ),
-                                QuickReplyItem(
-                                    action=LocationAction(label="label6")
-                                ),
-                    ]))]
+                    quick_reply=quick_reply  )]
 
             )
         )

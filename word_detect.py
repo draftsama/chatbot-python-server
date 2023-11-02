@@ -29,19 +29,27 @@ class WordDetect:
             
             df_answers = pd.DataFrame(answers, columns=['id','text'])
             
-            return df_answers['text'][0]
+            options = self.database.get_data('chatbot_dialog_option', f"WHERE dialog_id = {dialog_id}")
+            
+            if options is None or len(options) == 0:
+                df_options = None
+            else:
+                df_options = pd.DataFrame(options, columns=['id','text'])
+            
+            return df_answers['text'][0],df_options['text'].to_list()
                
     
 
 # db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
-# #get time run
+# # #get time run
 
 # start_time = datetime.datetime.now()
 # wd = WordDetect(db)
-# reply = wd.keyword_detect("ดีจ้า")
+# reply,options = wd.keyword_detect("ดีจ้า")
 # end_time = datetime.datetime.now()
 
 # #report time as milisecond
 # ms = (end_time - start_time).total_seconds() * 1000
 # print(f"Time: {ms} ms")
 # print(reply)
+# print(options)
