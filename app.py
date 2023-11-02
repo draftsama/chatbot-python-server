@@ -670,7 +670,7 @@ def handle_text_message(event):
         (
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=replyMsg)]
+                messages=[TextMessage(text="dsadsadsahgjhagkdjyhsgakdyjsa")]
             )
         )
 
