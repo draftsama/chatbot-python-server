@@ -31,6 +31,7 @@ from linebot.models import (
 from database import DatabaseConnect
 from psql import PSQLConnect
 from word_detect import WordDetect
+from pythainlp.spell import correct
 
 
 MODE = os.getenv('MODE')
@@ -510,9 +511,10 @@ def handle_text_message(event):
     app.logger.info(f"message: {event.message.text}")
     app.logger.info(f"==============================")
 
+    receiveMsg = correct(event.message.text)
     
     #Check the message equals to keyword
-    replyMsg = word_detect.keyword_detect(event.message.text)
+    replyMsg = word_detect.keyword_detect(receiveMsg)
     if replyMsg is not None:
         app.logger.info(f"reply : {replyMsg}")
 
@@ -522,15 +524,15 @@ def handle_text_message(event):
         return
         
     
-    if len(re.findall("ค้นหาสินค้า", event.message.text)) != 0:
+    if len(re.findall("ค้นหาสินค้า", receiveMsg)) != 0:
         reply_flex_message_options(event.reply_token)
         return
 
-    if len(re.findall("ค้นหาจากแคตตาล็อก", event.message.text)) != 0:
+    if len(re.findall("ค้นหาจากแคตตาล็อก", receiveMsg)) != 0:
         reply_flex_message_find_products(event.reply_token)
         return
 
-    if len(re.findall("ค้นหาร้านค้า", event.message.text)) != 0:
+    if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
         location_message = LocationSendMessage(
             title='DoHome',
             address='DoHome',
@@ -539,9 +541,10 @@ def handle_text_message(event):
         )
         line_bot_api.reply_message(event.reply_token, location_message)
         return
-    reciveMsg = event.message.text
 
-    data = context_analysis(reciveMsg)
+    
+    #GPT
+    data = context_analysis(receiveMsg)
     if data is None:
         data = {"context": "none"}
 
@@ -555,19 +558,19 @@ def handle_text_message(event):
     elif context == "complaint":
         replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
     elif context == "location":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
     elif context == "technician":
         replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
 เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
 และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
     elif context == "greeting":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
     elif context == "information":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
     elif context == "recommend":
-        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(reciveMsg)}"
+        replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
     elif context == "calculate":
-        replyMsg = gpt_calculator(reciveMsg)
+        replyMsg = gpt_calculator(receiveMsg)
     elif context == "promotion":
         line_bot_api.reply_message(
             event.reply_token,
@@ -579,7 +582,7 @@ def handle_text_message(event):
         return
     elif context == "search":
         
-        keyword = reciveMsg
+        keyword = receiveMsg
         #check key in data
         if "keyword" in data:
             keyword = data["keyword"]

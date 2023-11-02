@@ -45,7 +45,3 @@ class WordDetect:
 # ms = (end_time - start_time).total_seconds() * 1000
 # print(f"Time: {ms} ms")
 # print(reply)
-
-      
-      
-    

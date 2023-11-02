@@ -17,3 +17,4 @@ scipy
 gunicorn
 tensorflow
 cryptography
+pythainlp
