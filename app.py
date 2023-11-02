@@ -573,6 +573,7 @@ def handle_text_message(event):
         
         if replyMsg is not None:
             app.logger.info(f"reply : {replyMsg}")
+            
             quick_reply = None
             if options is not None:
                 quickReplayItems = []
@@ -581,6 +582,9 @@ def handle_text_message(event):
                         action=MessageAction(label=option, text=option)))
                 
                 quick_reply = QuickReply(items=quickReplayItems)
+            app.logger.info(f"options : {options}")
+            app.logger.info(f"quick_reply : {quick_reply}")
+
             # QuickReply(items=[
             #              QuickReplyItem(
             #                         action=PostbackAction(label="label1", data="data1")),
