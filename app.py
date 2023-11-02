@@ -20,7 +20,7 @@ from PIL import Image, ImageOps
 from flask_cors import CORS
 from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
 from linebot import (
-    LineBotApi, WebhookHandler
+    LineBotApi
 )
 from linebot.exceptions import (
     InvalidSignatureError, LineBotApiError
@@ -28,6 +28,9 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, ImageMessage, ImageSendMessage, LocationSendMessage, QuickReply, QuickReplyButton, FlexSendMessage, BubbleContainer, ImageComponent, BoxComponent, TextComponent, SeparatorComponent, TemplateSendMessage, CarouselTemplate, CarouselColumn, MessageAction, URIAction
 )
+
+from linebot.v3.webhook import WebhookHandler
+
 from database import DatabaseConnect
 from psql import PSQLConnect
 from word_detect import WordDetect
