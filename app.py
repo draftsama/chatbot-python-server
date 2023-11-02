@@ -103,6 +103,7 @@ OPENAI_API_KEY_ENCRYPTED = os.getenv('OPENAI_API_KEY_ENCRYPTED')
 if is_empty_string(OPENAI_API_KEY_ENCRYPTED):
     print("OPENAI_API_KEY is empty")
     exit()
+    
 openai.api_key = AES.decrypt(OPENAI_API_KEY_ENCRYPTED)
 
 DATABASE_HOST = os.getenv('DATABASE_HOST')
@@ -120,10 +121,7 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
-
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
-
 app.config['JSON_AS_ASCII'] = False
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
@@ -292,73 +290,23 @@ Q:Who are you?
 A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
             """
     # ผู้ช่วย DoHome
+    
     res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": msg},
-        ],
-        temperature=0.8,
-    )
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": msg},
+            ],
+            temperature=0.8,
+        )
+    
     # check if the response is empty
     if len(res.choices) == 0:
         return "ไม่เข้าใจคำถามของคุณ"
+    app.logger.info(f"res.choices: {res.choices}")
     # return the first choice
     return str(res.choices[0].message['content'])
 
-
-flex_message_options = None
-with open('flex_message_options.json', 'r') as f:
-    message = dict()
-    message['type'] = 'carousel'
-    message['contents'] = [json.load(f)]
-    flex_message_options = FlexMessage(
-        alt_text="Test", contents=message)
-
-
-def reply_flex_message_options(reply):
-    
-    # bubble_string = """{ type:"bubble", ... }"""
-    # message = FlexMessage(alt_text="hello", contents=FlexContainer.from_json(bubble_string))
-    # line_bot_api.reply_message(
-    #     ReplyMessageRequest(
-    #         reply_token=event.reply_token,
-    #         messages=[message]
-    #     )
-    # )
-    
-    pass
-   
-    # line_bot_api.reply_message(reply, flex_message_options)
-   
-
-
-flex_message_find_products = None
-with open('product_message.json', 'r') as f:
-    content = dict()
-    content['type'] = 'carousel'
-    i = json.load(f)
-    content['contents'] = [i, i, i]
-    flex_message = FlexMessage(alt_text="Test", contents=content)
-
-
-
-def reply_flex_message_find_products(reply):
-   pass
-
-# message = dict()
-# message['type'] = 'carousel'
-# message['contents'] = [flex_message_json, flex_message_json]
-
-# flex_messages = FlexSendMessage(
-#     alt_text="Test", contents=message)
-
-# try:
-#     line_bot_api.broadcast(flex_messages)
-# except LineBotApiError as e:
-#     print('e.status_code:', e.status_code)
-#     print('e.error.message:', e.error.message)
-#     print('e.error.details:', e.error.details)
 
 
 def load_image_from_base64(base64_string):
@@ -618,11 +566,7 @@ def handle_text_message(event):
            
             return
             
-        
-        if len(re.findall("ค้นหาสินค้า", receiveMsg)) != 0:
-            reply_flex_message_options(event.reply_token)
-            return
-
+      
   
 
         if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
@@ -1105,15 +1049,4 @@ formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 print("Server is starting up...", flush=True)
 print(f"Server is running [{MODE}] - {formatted_time}", flush=True)
 if __name__ == '__main__':
-
-   
-        
-    arg_parser = ArgumentParser(
-        usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
-    )
-    arg_parser.add_argument('-p', '--port', type=int, default=8000, help='port')
-    arg_parser.add_argument('-d', '--debug', default=False, help='debug')
-    options = arg_parser.parse_args()
-
-
     app.run(debug=True, port=3000)
