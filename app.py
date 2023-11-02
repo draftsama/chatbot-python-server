@@ -42,7 +42,8 @@ from linebot.v3.messaging import (
     FlexMessage,
     LocationMessage,
     MessagingApiBlob,
-    ApiException
+    ApiException,
+    FlexContainer
     
 )
 from linebot.v3.webhooks import (
@@ -516,7 +517,7 @@ def handle_image_message(event):
                     
                 message['contents'] = contents
                 flex_message = FlexMessage(
-                    alt_text="Search", contents=message)
+                    alt_text="Search", contents=FlexContainer.from_dict(message))
 
                 
                 line_bot_api.reply_message_with_http_info(
