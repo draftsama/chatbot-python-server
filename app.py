@@ -70,7 +70,7 @@ ASSISTANT_NAME = "ดอลฟิน"
 # Load variables from .env file into environment
 load_dotenv()
 
-ssl._create_default_https_context = ssl._create_unverified_context
+os.environ['REQUESTS_CA_BUNDLE'] = "/etc/ssl/certs/ca-certificates.crt"
 
 def is_empty_string(s):
     return not bool(s and s.strip())
