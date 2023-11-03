@@ -56,6 +56,9 @@ from linebot.v3.messaging import (
     
     
 )
+from linebot.v3.models import (
+    UnknownEvent
+)
 from linebot.v3.webhooks import (
     MessageEvent,
     TextMessageContent,
@@ -122,6 +125,8 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
+
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['JSON_AS_ASCII'] = False
 
@@ -405,6 +410,9 @@ def get_binary_data(content) -> str:
 
     return file
 
+@handler.add(UnknownEvent)
+def handle_unknown_left(event):
+    app.logger.info(f"unknown event {event}")
 
 @handler.add(MessageEvent, message=ImageMessageContent)
 def handle_image_message(event):
@@ -498,16 +506,26 @@ def handle_image_message(event):
             
 
 
+def reply_message(token,msgs):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        
+        try:
+            line_bot_api.reply_message_with_http_info(
+                ReplyMessageRequest(
+                    reply_token=token,
+                    messages=msgs
+                ))
+        except Exception as e:
+                app.logger.info(f"error reply")
+                app.logger.info(e)
+
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
-    with ApiClient(configuration) as api_client:
-        
-        line_bot_api = MessagingApi(api_client)
-        profile = line_bot_api.get_profile(event.source.user_id)
+  
 
         app.logger.info(f"==============================")
         app.logger.info(f"type: {event.message.type}")
-        app.logger.info(f"user_name: {profile.display_name}")
         app.logger.info(f"user_id: {event.source.user_id}")
         app.logger.info(f"reply_token: {event.reply_token}")
         app.logger.info(f"message: {event.message.text}")
@@ -554,19 +572,11 @@ def handle_text_message(event):
             #                         action=LocationAction(label="label6")
             #                     ),
             #         ])
-            try:
-                line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(
+            
+            reply_message(event.reply_token,
+                        [TextMessage(
                         text=replyMsg,
-                        quick_reply=quick_reply)]
-
-                ))
-            except Exception as e:
-                app.logger.info(f"error reply")
-                app.logger.info(e)
-           
+                        quick_reply=quick_reply)])
             return
             
 
@@ -581,12 +591,9 @@ def handle_text_message(event):
                 latitude=13.7667711,
                 longitude=100.5488918
             )
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[location_message]
-                )
-            )
+            
+            reply_message(event.reply_token,[location_message])
+          
             return
 
         
@@ -619,15 +626,12 @@ def handle_text_message(event):
         elif context == "calculate":
             replyMsg = gpt_calculator(receiveMsg)
         elif context == "promotion":
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[ImageMessage(
+            reply_message(event.reply_token,
+                        [ImageMessage(
                         original_content_url='https://draft-dev.online/images/promotion.jpg',
                         preview_image_url='https://draft-dev.online/images/promotion.jpg'
-                    )]
-                )
-            )
+                    )])
+          
             return
         elif context == "search":
             
@@ -657,31 +661,14 @@ def handle_text_message(event):
                     alt_text="Search", contents=message)
 
                
-                line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[flex_message]
-                )
-                )
+                reply_message(event.reply_token,
+                        [flex_message])
                 return
 
        
         app.logger.info(f"reply : {replyMsg}")
-        try:
-            line_bot_api.reply_message
-            (
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text=replyMsg)]
-                )
-            )
-        except Exception as e:
-            app.logger.info(f"error reply")
-            app.logger.info(e)
-        
-
-        
-        return
+        reply_message(event.reply_token,
+                        [TextMessage(text=replyMsg)])
         
 
 
