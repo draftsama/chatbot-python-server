@@ -279,6 +279,8 @@ class PSQLConnect:
 #     "action_status": "insert"
 #   }])
 
+# print(results)
+
 
 # results =  psql.insert_data('chatbot_keyword',[{'text':'1331','dialog_id':6,'age':300},{'text':'312','dialog_id':8}])
 # data = psql.get_data('chatbot_dialog')

@@ -511,11 +511,12 @@ def reply_message(token,msgs):
         line_bot_api = MessagingApi(api_client)
         
         try:
-            line_bot_api.reply_message_with_http_info(
+            res = line_bot_api.reply_message_with_http_info(
                 ReplyMessageRequest(
                     reply_token=token,
                     messages=msgs
                 ))
+            app.logger.info(f"line response: {res}")
         except Exception as e:
                 app.logger.info(f"error reply")
                 app.logger.info(e)
