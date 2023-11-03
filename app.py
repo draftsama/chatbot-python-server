@@ -516,7 +516,7 @@ def reply_message(token,msgs):
                     reply_token=token,
                     messages=msgs
                 ))
-            app.logger.info(f"line response: {res}")
+            app.logger.info(f"line response: {res.data}")
         except Exception as e:
                 app.logger.info(f"error reply")
                 app.logger.info(e)
