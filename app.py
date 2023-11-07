@@ -519,8 +519,8 @@ def reply_message(token,msgs):
             app.logger.info(f"line response status_code: {res.status_code}")
             app.logger.info(f"line response data: {res.data}")
         except Exception as e:
-                app.logger.info(f"error reply")
-                app.logger.info(e)
+            app.logger.info(f"error reply")
+            app.logger.info(e)
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
@@ -809,8 +809,27 @@ def upload_image():
         "status": "success",
         "message": "upload image successfully"
     }))
+    
+    reduct_images('images', 20)
 
     return response
+
+def reduct_images(path, limit_image = 20):
+    images = []
+    
+    for f in os.listdir(path):
+        if f.endswith(('.png', '.jpg')):
+            images.append(f)
+            
+    #sort by date
+    images.sort(key=lambda x: os.path.getmtime(os.path.join(path, x)))
+    
+    #if image count > limit_image then remove another images
+    if len(images) > limit_image:
+        for i in range(len(images) - limit_image):
+            os.remove(os.path.join(path, images[i]))
+            images.pop(i)
+            
 
 # delete image
 
