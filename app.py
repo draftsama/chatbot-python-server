@@ -1068,6 +1068,33 @@ def line_sendmsg():
     
     return make_response(jsonify({"status": "success"}), 200)
 
+@app.route('/line_sendimg', methods=['POST'])
+def line_sendimg():
+
+    json_data = request.get_json()
+    
+    if 'user_id' not in json_data:
+       return make_response(jsonify({'error': 'user_id is require'}), 400)
+   
+    if 'img_url' not in json_data:
+       return make_response(jsonify({'error': 'img_url is require'}), 400)
+   
+    user_id = json_data['user_id']
+    img_url = json_data['img_url']
+    
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.push_message_with_http_info(
+            PushMessageRequest(
+                to=user_id,
+                messages=[ImageMessage(
+                        original_content_url=img_url,
+                        preview_image_url=img_url
+                    )]
+            ))
+        
+    return make_response(jsonify({"status": "success"}), 200)
+
     
    
   
