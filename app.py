@@ -53,7 +53,7 @@ from linebot.v3.messaging import (
     CameraAction,
     CameraRollAction,
     LocationAction,
-    
+    PushMessageRequest
     
 )
 from linebot.v3.models import (
@@ -1044,7 +1044,30 @@ def delete_data_from_database():
         return make_response(jsonify({"status": "failed"}), 400)
     
         
+@app.route('/line_sendmsg', methods=['POST'])
+def line_sendmsg():
+    json_data = request.get_json()
     
+    if 'user_id' not in json_data:
+       return make_response(jsonify({'error': 'user_id is require'}), 400)
+   
+    if 'msg' not in json_data:
+       return make_response(jsonify({'error': 'msg is require'}), 400)
+   
+    user_id = json_data['user_id']
+    msg = json_data['msg']
+    
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.push_message_with_http_info(
+            PushMessageRequest(
+                to=user_id,
+                messages=[TextMessage(text=msg)]
+            ))
+        
+    
+    return make_response(jsonify({"status": "success"}), 200)
+
     
    
   
