@@ -24,8 +24,10 @@ from flask_cors import CORS
 from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 from argparse import ArgumentParser
-import errno
+from werkzeug.utils import secure_filename
 import ssl
+
+
 
 from linebot.v3 import (
     WebhookHandler
@@ -1068,6 +1070,8 @@ def line_sendmsg():
     
     return make_response(jsonify({"status": "success"}), 200)
 
+
+
 @app.route('/line_sendimg', methods=['POST'])
 def line_sendimg():
 
@@ -1096,7 +1100,25 @@ def line_sendimg():
     return make_response(jsonify({"status": "success"}), 200)
 
     
-   
+@app.route('/update_marine_data', methods=['POST'])
+def update_marine_data():
+    # Check if the post request has the file part
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+
+    # If the user does not select a file, the browser submits an empty file without a filename
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+
+    # If the file is provided, save it to the upload folder
+    if file:
+        # Ensure a secure filename
+        filename = secure_filename(file.filename)
+        file.save(os.path.join('datas', filename))
+        
+        return jsonify({'message': 'File uploaded successfully'})
   
 
 
