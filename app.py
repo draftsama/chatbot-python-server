@@ -1113,11 +1113,12 @@ def update_marine_data():
         return jsonify({'error': 'No selected file'})
 
     # If the file is provided, save it to the 'datas' directory
-    
     if file:
       
         filename = secure_filename(file.filename)
-        file.save(os.path.join('datas', filename))
+        save_path = os.path.join('datas', filename)
+        app.logger.info(f'Saving file to {save_path}')
+        file.save(save_path)
         # Update the database
         # psql_connect.update_marine_data(os.path.join('datas', filename))
         return jsonify({'status': 'success'})
