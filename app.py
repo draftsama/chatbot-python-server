@@ -1123,7 +1123,7 @@ def update_marine_data():
     if file:
         save_path = os.path.join(folder_name, 'input.zip')
         app.logger.info(f'Saving file to {save_path}')
-        file.save(save_path, overwrite=True)
+        file.save(save_path)
         
         # Unzip the file
         app.logger.info(f'Unzipping file...')
