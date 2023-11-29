@@ -1,4 +1,5 @@
 import time
+import zipfile
 import urllib3
 from image_classification import ImageClassifucation
 from oepnai_manager import openai_manager
@@ -1112,12 +1113,34 @@ def update_marine_data():
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
 
+    
+    folder_name = 'datas'
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    
+    
     # If the file is provided, save it to the 'datas' directory
     if file:
-
-        save_path = os.path.join('datas', 'input.zip')
+        save_path = os.path.join(folder_name, 'input.zip')
         app.logger.info(f'Saving file to {save_path}')
-        file.save(save_path)
+        file.save(save_path, overwrite=True)
+        
+        # Unzip the file
+        app.logger.info(f'Unzipping file...')
+        with zipfile.ZipFile(save_path, 'r') as zip_ref:
+            zip_ref.extractall(folder_name)
+            
+        # Delete the zip file
+        app.logger.info(f'Deleting zip file...')
+        os.remove(save_path)
+        
+        # Get the name of the unzipped file
+        filename = os.listdir(folder_name)[0]
+        app.logger.info(f'Unzipped file name: {filename}')
+        
+
+            
+        
         # Update the database
         # psql_connect.update_marine_data(os.path.join('datas', filename))
         return jsonify({'status': 'success'})
