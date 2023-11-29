@@ -1114,9 +1114,8 @@ def update_marine_data():
 
     # If the file is provided, save it to the 'datas' directory
     if file:
-      
-        filename = secure_filename(file.filename)
-        save_path = os.path.join('datas', filename)
+
+        save_path = os.path.join('datas', 'input.zip')
         app.logger.info(f'Saving file to {save_path}')
         file.save(save_path)
         # Update the database
