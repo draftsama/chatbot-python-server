@@ -1134,9 +1134,19 @@ def update_marine_data():
         app.logger.info(f'Deleting zip file...')
         os.remove(save_path)
         
-        # Get the name of the unzipped file
-        filename = os.listdir(folder_name)[0]
-        app.logger.info(f'Unzipped file name: {filename}')
+        # find .xlsx file
+        filename = None
+        for f in os.listdir(folder_name):
+            if f.endswith('.xlsx'):
+                filename = f
+                break
+        
+        if filename is None:
+            return jsonify({'error': 'No .xlsx file found'})
+        
+        
+        app.logger.info(f'{filename} to database...')
+ 
         
 
             
