@@ -90,7 +90,7 @@ class DatabaseConnect:
         try:
             df = pd.read_excel(path, sheet_name=sheet_name)
         except Exception as e:
-            return {'status': 'failed', 'message': e}
+            return {'status': 'failed', 'message': e.message}
 
         #filtering the columns raw key
         df = df.filter(items=[column['raw_key'] for column in DatabaseConnect.tile_columns])
@@ -144,7 +144,7 @@ class DatabaseConnect:
             conn.close()
         
         except (Exception, psycopg2.DatabaseError) as error:
-            return {'status': 'failed', 'message': error}
+            return {'status': 'failed', 'message': error.message}
 
         return {'status': 'success', 'message': 'update success'}
             
