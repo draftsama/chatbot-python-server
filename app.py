@@ -375,20 +375,12 @@ def image_search_api():
 
     # Combine the SQL command
     sql_command = f"SELECT *\nFROM tiles\nWHERE sku IN ({sku_in_clause})\n{order_by_clause}"
-    app.logger.info(f"{sql_command}")
 
     df = DatabaseConnect.get_data(sql_command) 
-    
-    app.logger.info(f"{type(df)}")
-    
-  
-    json = df.to_json(orient='records')
-  
 
+  
+    return make_response(jsonify(df.to_dict(orient='records')), 200)
 
-    return make_response(jsonify(json), 200)
-    
-    
 
 
 @app.route('/get_products', methods=['POST'])
