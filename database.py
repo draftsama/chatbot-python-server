@@ -94,12 +94,14 @@ class DatabaseConnect:
         df.dropna(subset=['Item Code'], inplace=True)
 
         #converting the 'Item Code' to string with no decimal
-        df['Item Code'] = df['Item Code'].astype(int).astype(str)
-
+        df['Item Code'] = df['Item Code'].astype(int)
+        
 
         #rename the columns
         df.rename(columns={column['raw_key']: column['sql_key'] for column in DatabaseConnect.tile_columns}, inplace=True)
-       
+
+        #set sku as primary key
+        df.set_index('sku', inplace=True)
         
         #analyzing the package column to get unit_per_box and sqm
         #sample form "บรรจุกล่องละ 4 แผ่นปูได้ 1.44 ตรม."

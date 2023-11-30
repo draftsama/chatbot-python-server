@@ -382,11 +382,11 @@ def image_search_api():
     app.logger.info(f"{type(df)}")
     
   
-    # json = df.to_json(orient='records')
+    json = df.to_json(orient='records')
   
 
 
-    return make_response(jsonify([]), 200)
+    return make_response(jsonify(json), 200)
     
     
 
