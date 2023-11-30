@@ -677,77 +677,7 @@ def handle_text_message(event):
         
 
 
-@app.route('/replicate/prediction', methods=['POST'])
-def prediction():
-    json_data = request.get_json()
 
-    if json_data is None:
-        response = make_response(jsonify({
-            "status": "failed",
-            "error": "required json"
-        }))
-        response.status_code = 400
-        return response
-
-    if 'version' not in json_data:
-        response = make_response(
-            jsonify({"status": "failed", "error": "required version"}))
-        response.status_code = 400
-        return response
-
-    if 'model' not in json_data:
-        response = make_response(
-            jsonify({"status": "failed", "error": "required model"}))
-        response.status_code = 400
-        return response
-    try:
-        model = replicate.models.get(
-            json_data['model'])
-        version = model.versions.get(
-            json_data['version'])
-
-        res = replicate.predictions.create(
-            version,
-            input=json_data['input']
-        )
-    except Exception as e:
-        response = make_response(jsonify({"status": "failed", "error": e}))
-        response.status_code = 404
-        return response
-
-    return jsonify({
-        "status": res.status,
-        "id": res.id
-    })
-
-
-@app.route('/replicate/prediction', methods=['GET'])
-def get_prediction():
-    id = request.args.get('id')
-
-    if id is None or id == "":
-        response = make_response(
-            jsonify({"status": "failed", "error": "required id"}))
-        response.status_code = 400
-        return response
-
-    try:
-        res = replicate.predictions.get(id)
-    except Exception as e:
-        response = make_response(jsonify({"status": "failed", "error": e}))
-        response.status_code = 404
-        return response
-
-    response = make_response(jsonify({
-        "id": res.id,
-        "status": res.status,
-        "input": res.input,
-        "output": res.output,
-    }))
-    response.status_code = 200
-
-    return response
-# create route for get image
 
 
 @app.route('/images/<path:filename>', methods=['GET'])
@@ -1101,8 +1031,8 @@ def line_sendimg():
     return make_response(jsonify({"status": "success"}), 200)
 
     
-@app.route('/update_marine_data', methods=['POST'])
-def update_marine_data():
+@app.route('/update_marine_tiles_db', methods=['POST'])
+def update_marine_tiles_db():
     # Check if the post request has the file part
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
@@ -1119,19 +1049,28 @@ def update_marine_data():
         os.makedirs(folder_name)
     
     
+    #get table from request
+    table_name = request.form.get('table_name')
+    if table_name is None:
+        return jsonify({'error': 'No table name'})
+    
+    #get sheet name from request
+    sheet_name = request.form.get('sheet_name')
+    if sheet_name is None:
+        return jsonify({'error': 'No sheet name'})
+    
+    
+    
     # If the file is provided, save it to the 'datas' directory
     if file:
         save_path = os.path.join(folder_name, 'input.zip')
-        app.logger.info(f'Saving file to {save_path}')
         file.save(save_path)
         
         # Unzip the file
-        app.logger.info(f'Unzipping file...')
         with zipfile.ZipFile(save_path, 'r') as zip_ref:
             zip_ref.extractall(folder_name)
             
         # Delete the zip file
-        app.logger.info(f'Deleting zip file...')
         os.remove(save_path)
         
         # find .xlsx file
@@ -1145,15 +1084,13 @@ def update_marine_data():
             return jsonify({'error': 'No .xlsx file found'})
         
         
-        app.logger.info(f'{filename} to database...')
- 
+        is_success = DatabaseConnect.update_marine_tiles_db(os.path.join(folder_name, filename),table_name,sheet_name)
         
-
+        if is_success:
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'status': 'failed'})
             
-        
-        # Update the database
-        # psql_connect.update_marine_data(os.path.join('datas', filename))
-        return jsonify({'status': 'success'})
     
     return jsonify({'status': 'failed'})
  

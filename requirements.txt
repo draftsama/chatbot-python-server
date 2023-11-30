@@ -19,3 +19,4 @@ tensorflow
 cryptography
 certifi
 gevent
+openpyxl
