@@ -1095,7 +1095,7 @@ def update_marine_tiles_db():
         
         res = DatabaseConnect.update_marine_tiles_db(os.path.join(folder_name, filename),table_name,sheet_name)
         
-        return jsonify(res)
+        return res
             
     
     return jsonify({'status': 'failed'})
