@@ -11,8 +11,8 @@ import sys
 class DatabaseConnect:
     HOST = "localhost"
     DATABASE = "marine_db"
-    USER = "ubuntu"
-    PASSWORD = "ubuntu"
+    USER = "postgres"
+    PASSWORD = "postgres"
     TILE_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUKmtWleDEeUOIUxm0y-mKf7q91DOaWtC2NO3bUYGoDyuS8tS9nRVsfk339lbN_g/pub?gid=1689578933&single=true&output=csv"
 
     tile_columns = [

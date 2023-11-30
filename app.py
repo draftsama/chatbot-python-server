@@ -1,3 +1,4 @@
+import shutil
 import time
 import zipfile
 import urllib3
@@ -1048,8 +1049,13 @@ def update_marine_tiles_db():
 
     
     folder_name = 'datas'
-    if not os.path.exists(folder_name):
-        os.makedirs(folder_name)
+    if os.path.exists(folder_name):
+        #remove folder
+        shutil.rmtree(folder_name)
+        
+    #create folder
+    os.mkdir(folder_name)
+        
     
     
     #get table from request
