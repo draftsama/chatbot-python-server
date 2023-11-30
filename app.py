@@ -1093,12 +1093,9 @@ def update_marine_tiles_db():
             return jsonify({'error': 'No .xlsx file found'})
         
         
-        is_success = DatabaseConnect.update_marine_tiles_db(os.path.join(folder_name, filename),table_name,sheet_name)
+        res = DatabaseConnect.update_marine_tiles_db(os.path.join(folder_name, filename),table_name,sheet_name)
         
-        if is_success:
-            return jsonify({'status': 'success'})
-        else:
-            return jsonify({'status': 'failed'})
+        return jsonify(res)
             
     
     return jsonify({'status': 'failed'})

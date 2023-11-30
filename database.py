@@ -84,7 +84,13 @@ class DatabaseConnect:
      
     @staticmethod
     def update_marine_tiles_db(path,table_name,sheet_name):
-        df = pd.read_excel(path, sheet_name=sheet_name)
+        
+        df = None
+        
+        try:
+            df = pd.read_excel(path, sheet_name=sheet_name)
+        except Exception as e:
+            return {'status': 'failed', 'message': e}
 
         #filtering the columns raw key
         df = df.filter(items=[column['raw_key'] for column in DatabaseConnect.tile_columns])
@@ -138,10 +144,9 @@ class DatabaseConnect:
             conn.close()
         
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
-            return False
+            return {'status': 'failed', 'message': error}
 
-        return True
+        return {'status': 'success', 'message': 'update success'}
             
     
     
