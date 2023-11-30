@@ -90,7 +90,7 @@ class DatabaseConnect:
         try:
             df = pd.read_excel(path, sheet_name=sheet_name)
         except Exception as e:
-            return {'status': 'failed', 'message': e}
+            return {'status': 'failed', 'message': str(e)}
 
         #filtering the columns raw key
         df = df.filter(items=[column['raw_key'] for column in DatabaseConnect.tile_columns])
