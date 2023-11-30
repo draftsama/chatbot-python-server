@@ -100,8 +100,6 @@ class DatabaseConnect:
         #rename the columns
         df.rename(columns={column['raw_key']: column['sql_key'] for column in DatabaseConnect.tile_columns}, inplace=True)
 
-        #set sku as primary key
-        df.set_index('sku', inplace=True)
         
         #analyzing the package column to get unit_per_box and sqm
         #sample form "บรรจุกล่องละ 4 แผ่นปูได้ 1.44 ตรม."
