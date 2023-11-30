@@ -377,10 +377,11 @@ def image_search_api():
     sql_command = f"SELECT *\nFROM tiles\nWHERE sku IN ({sku_in_clause})\n{order_by_clause}"
     df = DatabaseConnect.get_data(sql_command) 
     
-    if not df.empty:
-        json = df.to_json(orient='records')
-    else:
-        json = []
+    app.logger.info(f"{df}")
+    
+  
+    json = df.to_json(orient='records')
+  
 
 
     return make_response(jsonify(json), 200)
