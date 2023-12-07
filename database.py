@@ -113,6 +113,8 @@ class DatabaseConnect:
         df['sqm']= ""
         for index, row in df.iterrows():
                 package = row['package']
+                if package is None or package == "":
+                    continue
                 #use regex to find all int and float type in text assign to array
                 numbers = re.findall(r"[-+]?\d*\.\d+|\d+", package)
                 if len(numbers) == 2:
