@@ -112,25 +112,32 @@ class DatabaseConnect:
         df['unit_per_box']= ""
         df['sqm']= ""
         for index, row in df.iterrows():
-                package = row['package']
+                package = str(row['package'])
                 if package is None or package == "":
                     continue
+                
+
                 #use regex to find all int and float type in text assign to array
                 numbers = re.findall(r"[-+]?\d*\.\d+|\d+", package)
-                if len(numbers) == 2:
+                if len(numbers) == 1:
+                    #assign value to unit_per_box and sqm column
+                    df.at[index, 'unit_per_box'] = str(numbers[0])
+                elif len(numbers) == 2:
                     #assign value to unit_per_box and sqm column
                     df.at[index, 'unit_per_box'] = str(numbers[0])
                     df.at[index, 'sqm'] = str(numbers[1])
+
+            
+
        
-       
-        #analyzing the random column to get random_count
+        # analyzing the random column to get random_count
         
         df['random_count'] = 0
+        
         #mapping random to random_count if random use regex to find number type in text then get that number assign to random_count else assign 0
         df['random_count'] = df['random'].str.extract('(\d+)', expand=False).fillna(0).astype(int)
-       
-       
-       
+    
+
         conn = None
         
         try:
