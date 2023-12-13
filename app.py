@@ -840,6 +840,10 @@ def clear_logs():
         return jsonify(success=False, error=str(e))
 
 
+    
+    
+
+
 @app.route('/db/get_data', methods=['POST'])
 def get_data_from_database():
     json_data = request.get_json()
@@ -860,8 +864,12 @@ def get_data_from_database():
     query = ""
     if 'query' in json_data:
         query = json_data['query']
+        
+    columns = "*" #default
+    if 'columns' in json_data:
+        columns = json_data['columns']
     
-    results = psql_connect.get_data(table,query)
+    results = psql_connect.get_data(table,columns,query)
 
     #list to json string
     return make_response(jsonify({"status": "success","datas":results}), 200)

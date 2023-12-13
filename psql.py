@@ -40,9 +40,12 @@ class PSQLConnect:
                 conn.close()
        
     
-    def get_data(self,table:str,query:str=""):
+    def get_data(self,table:str,columns:str="*",query:str=""):
         if query == None:
            query = ""
+           
+        if columns == None or columns == "":
+           columns = "*"
        
         conn = psycopg2.connect(
                 host=self.host,
@@ -53,7 +56,7 @@ class PSQLConnect:
         cur = conn.cursor()
         
         try:
-            query = f"SELECT * FROM {table} {query}"
+            query = f"SELECT {columns} FROM {table} {query}"
             
             cur.execute(query)
             records = cur.fetchall()
@@ -252,6 +255,8 @@ class PSQLConnect:
         finally:
             if conn is not None:
                 conn.close()
+                
+   
 
 # delete_data('chatbot_dialog',4)
 # psql = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
