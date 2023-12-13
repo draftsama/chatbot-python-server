@@ -869,10 +869,14 @@ def get_data_from_database():
     if 'columns' in json_data:
         columns = json_data['columns']
     
+    
     results = psql_connect.get_data(table,columns,query)
-
+    query =f"SELECT {columns} FROM {table} {query}"
+    if(results != None):
+        return make_response(jsonify({"status": "success","datas":results,"count":len(results),"query":query}), 200)
+    else:
+        return make_response(jsonify({"status": "failed","error":"not found","query":query}), 400)
     #list to json string
-    return make_response(jsonify({"status": "success","datas":results}), 200)
     
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():
