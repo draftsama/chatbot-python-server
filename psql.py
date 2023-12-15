@@ -51,9 +51,9 @@ class PSQLConnect:
           
            
         if query != None and query != "":
-            sql_query = f"SELECT * FROM {table} {query}"
+            sql_query = f"SELECT * FROM '{table}' {query};"
         else:
-            sql_query = f"SELECT * FROM {table}"
+            sql_query = f"SELECT * FROM '{table}';"
         
 
         try:
