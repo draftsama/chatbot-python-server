@@ -68,17 +68,17 @@ class PSQLConnect:
             cur.execute(sql_query)
             records = cur.fetchall()
             #get column 
-            columns = [desc[0] for desc in cur.description]
+            columns_names = [desc[0] for desc in cur.description]
             
             #convert to json
          
             for record in records:
                 data = {}
-                for i in range(len(columns)):
+                for i in range(len(columns_names)):
                     if isinstance(record[i], datetime.datetime):
-                        data[columns[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
+                        data[columns_names[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
                     else:
-                        data[columns[i]] = record[i]
+                        data[columns_names[i]] = record[i]
                         
                 res_datas.append(data)
             
