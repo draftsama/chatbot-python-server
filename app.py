@@ -860,21 +860,23 @@ def get_data_from_database():
             jsonify({"status": "failed", "error": "required table"}))
         response.status_code = 400
         return response
+    
     table = json_data['table']
-    query = ""
-    if 'query' in json_data:
-        query = json_data['query']
-        
+
     columns = "*" #default
     if 'columns' in json_data:
         columns = json_data['columns']
     
+    sql_query = f"SELECT {columns} FROM {table}"
     
-    results = psql_connect.get_data(table,columns,query)
-    query =f"SELECT {columns} FROM {table} {query}"
+    if 'query' in json_data:
+        sql_query +=f" {json_data['query']}"
+        
+
+    results = psql_connect.get_data(table,columns,sql_query)
    
     
-    return make_response(jsonify({"status": "success","datas":results,"count":len(results),"query":query}), 200)
+    return make_response(jsonify({"status": "success","datas":results,"count":len(results),"sql_query":sql_query}), 200)
     
     #list to json string
     
