@@ -55,7 +55,7 @@ class PSQLConnect:
         # else:
         #     sql_query = f"SELECT * FROM {table}"
         
-        sql_query = "SELECT {columns} FROM {table} {query}"
+        sql_query = "SELECT * FROM marine_user"
        
         conn = psycopg2.connect(
                 host=self.host,
