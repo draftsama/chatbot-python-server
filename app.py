@@ -868,12 +868,13 @@ def get_data_from_database():
         columns = json_data['columns']
     
     sql_query = f"SELECT {columns} FROM {table}"
-    
-    if 'query' in json_data:
-        sql_query +=f" {json_data['query']}"
-        
 
-    results = psql_connect.get_data(table,columns,sql_query)
+    query = ""    
+    if 'query' in json_data:
+        query =json_data['query']
+        sql_query += f" {query}"
+        
+    results = psql_connect.get_data(table,columns,query)
    
     
     return make_response(jsonify({"status": "success","datas":results,"count":len(results),"sql_query":sql_query}), 200)

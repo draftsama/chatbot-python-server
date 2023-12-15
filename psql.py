@@ -43,12 +43,17 @@ class PSQLConnect:
     def get_data(self,table:str,columns:str="*",query:str=""):
         
         res_datas = []
-        
-        if query == None:
-           query = ""
+        sql_query = ""
+
            
         if columns == None or columns == "":
            columns = "*"
+          
+           
+        if query != None:
+            sql_query = f"SELECT {columns} FROM {table} {query}"
+        else:
+            sql_query = f"SELECT {columns} FROM {table}"
        
         conn = psycopg2.connect(
                 host=self.host,
@@ -59,9 +64,8 @@ class PSQLConnect:
         cur = conn.cursor()
         
         try:
-            query = f"SELECT {columns} FROM {table} {query}"
             
-            cur.execute(query)
+            cur.execute(sql_query)
             records = cur.fetchall()
             #get column 
             columns = [desc[0] for desc in cur.description]
