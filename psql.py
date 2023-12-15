@@ -43,29 +43,28 @@ class PSQLConnect:
     def get_data(self,table:str,columns:str="*",query:str=""):
         
         res_datas = []
-        # sql_query = ""
+        sql_query = ""
 
            
-        # if columns == None or columns == "":
-        #    columns = "*"
+        if columns == None or columns == "":
+           columns = "*"
           
            
-        # if query != None:
-        #     sql_query = f"SELECT * FROM {table} {query}"
-        # else:
-        #     sql_query = f"SELECT * FROM {table}"
+        if query != None:
+            sql_query = f"SELECT * FROM {table} {query}"
+        else:
+            sql_query = f"SELECT * FROM {table}"
         
-        sql_query = "SELECT * FROM marine_user"
-       
-        conn = psycopg2.connect(
+
+        try:
+              
+            conn = psycopg2.connect(
                 host=self.host,
                 database=self.database,
                 user=self.user,
                 password=self.password)
 
-        cur = conn.cursor()
-        
-        try:
+            cur = conn.cursor()
             
             cur.execute(sql_query)
             records = cur.fetchall()
@@ -84,19 +83,23 @@ class PSQLConnect:
                         
                 res_datas.append(data)
             
-            cur.close()
-            conn.close()
+          
             
            
         except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
-            conn.close()
+            if conn is not None:
+                conn.close()
+            if cur is not None:
+                cur.close()
+            return {"status":"failed","datas":[],"sql_query":sql_query}
                 
         finally:
             if conn is not None:
                 conn.close()
-        
-        return res_datas
+            if cur is not None:
+                cur.close() 
+            return {"status":"success","datas":res_datas,"sql_query":sql_query}
+      
 
     def insert_data(self,table:str,json_data:list):
         

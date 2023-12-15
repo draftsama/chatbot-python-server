@@ -867,22 +867,17 @@ def get_data_from_database():
     if 'columns' in json_data:
         columns = json_data['columns']
     
-    res_query = f"SELECT {columns} FROM {table}"
     query = ""
     if 'query' in json_data:
         query =json_data['query']
-        res_query += f" {query}"
     
-    try:
-        results = psql_connect.get_data(table,columns,query)
-        
-        return make_response(jsonify({"status": "success","datas":results,"count":len(results),"sql_query":res_query}), 200)
+    
+    
+    results = psql_connect.get_data(table,columns,query)
+    app.logger.info(f"results: {results}")
 
-    except Exception as e:
-        response = make_response(
-            jsonify({"status": "failed", "error": str(e)}))
-        response.status_code = 400
-        return response
+    return make_response(jsonify(results), 200)
+
    
     
     
