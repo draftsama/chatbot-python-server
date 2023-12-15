@@ -869,7 +869,6 @@ def get_data_from_database():
     
     sql_query = f"SELECT {columns} FROM {table}"
 
-    query = ""    
     if 'query' in json_data:
         query =json_data['query']
         sql_query += f" {query}"

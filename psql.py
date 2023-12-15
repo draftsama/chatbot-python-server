@@ -46,14 +46,14 @@ class PSQLConnect:
         sql_query = ""
 
            
-        if columns == None or columns == "":
-           columns = "*"
+        # if columns == None or columns == "":
+        #    columns = "*"
           
            
         if query != None:
-            sql_query = f"SELECT {columns} FROM {table} {query}"
+            sql_query = f"SELECT * FROM {table} {query}"
         else:
-            sql_query = f"SELECT {columns} FROM {table}"
+            sql_query = f"SELECT * FROM {table}"
        
         conn = psycopg2.connect(
                 host=self.host,
