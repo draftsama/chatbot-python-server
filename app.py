@@ -878,10 +878,7 @@ def get_data_from_database():
 
     return make_response(jsonify(results), 200)
 
-   
-    
-    
-    #list to json string
+
     
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():

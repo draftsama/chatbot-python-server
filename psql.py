@@ -72,7 +72,7 @@ class PSQLConnect:
                         res_datas.append(data)
 
         except (Exception, psycopg2.DatabaseError) as error:
-            return {"status": "failed", "datas": [], "sql_query": sql_query}
+            return {"status": "failed", "error": error, "datas": [], "sql_query": sql_query}
 
         return {"status": "success", "datas": res_datas, "sql_query": sql_query}
         
