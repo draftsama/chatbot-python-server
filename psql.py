@@ -50,7 +50,7 @@ class PSQLConnect:
            columns = "*"
           
            
-        if query != None:
+        if query != None and query != "":
             sql_query = f"SELECT * FROM {table} {query}"
         else:
             sql_query = f"SELECT * FROM {table}"
