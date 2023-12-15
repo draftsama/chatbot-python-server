@@ -874,7 +874,6 @@ def get_data_from_database():
     
     
     results = psql_connect.get_data(table,columns,query)
-    app.logger.info(f"results: {results}")
 
     return make_response(jsonify(results), 200)
 
