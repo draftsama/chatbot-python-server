@@ -872,10 +872,9 @@ def get_data_from_database():
     
     results = psql_connect.get_data(table,columns,query)
     query =f"SELECT {columns} FROM {table} {query}"
-    if(results != None):
-        return make_response(jsonify({"status": "success","datas":results,"count":len(results),"query":query}), 200)
-    else:
-        return make_response(jsonify({"status": "failed","error":"not found","query":query}), 400)
+    
+    return make_response(jsonify({"status": "success","datas":results,"count":len(results),"query":query}), 200)
+    
     #list to json string
     
 @app.route('/db/insert_data', methods=['POST'])
