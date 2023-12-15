@@ -872,8 +872,7 @@ def get_data_from_database():
     
     results = psql_connect.get_data(table,columns,query)
     query =f"SELECT {columns} FROM {table} {query}"
-    if results is None:
-        results = []
+   
     
     return make_response(jsonify({"status": "success","datas":results,"count":len(results),"query":query}), 200)
     

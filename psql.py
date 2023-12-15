@@ -41,6 +41,9 @@ class PSQLConnect:
        
     
     def get_data(self,table:str,columns:str="*",query:str=""):
+        
+        res_datas = []
+        
         if query == None:
            query = ""
            
@@ -64,7 +67,7 @@ class PSQLConnect:
             columns = [desc[0] for desc in cur.description]
             
             #convert to json
-            datas = []
+         
             for record in records:
                 data = {}
                 for i in range(len(columns)):
@@ -73,12 +76,12 @@ class PSQLConnect:
                     else:
                         data[columns[i]] = record[i]
                         
-                datas.append(data)
+                res_datas.append(data)
             
             cur.close()
             conn.close()
             
-            return datas
+           
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             conn.close()
@@ -87,6 +90,7 @@ class PSQLConnect:
             if conn is not None:
                 conn.close()
         
+        return res_datas
 
     def insert_data(self,table:str,json_data:list):
         
