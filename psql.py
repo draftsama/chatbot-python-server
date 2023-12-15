@@ -40,66 +40,42 @@ class PSQLConnect:
                 conn.close()
        
     
-    def get_data(self,table:str,columns:str="*",query:str=""):
-        
+    def get_data(self, table: str, columns: str = "", query: str = ""):
         res_datas = []
         sql_query = ""
 
-           
-        if columns == None or columns == "":
-           columns = "*"
-          
-           
-        if query != None and query != "":
-            sql_query = f"SELECT * FROM {table} {query};"
+        if not columns:
+            columns = "*"
+
+        if query:
+            sql_query = f"SELECT {columns} FROM {table} {query};"
         else:
-            sql_query = f"SELECT * FROM {table};"
-        
+            sql_query = f"SELECT {columns} FROM {table};"
 
         try:
-              
-            conn = psycopg2.connect(
+            with psycopg2.connect(
                 host=self.host,
                 database=self.database,
                 user=self.user,
-                password=self.password)
+                password=self.password
+            ) as conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql_query)
+                    records = cur.fetchall()
+                    column_names = [desc[0] for desc in cur.description]
 
-            cur = conn.cursor()
-            
-            cur.execute(sql_query)
-            records = cur.fetchall()
-            #get column names
-            column_names = [desc[0] for desc in cur.description]
-            
-            #convert to json
-         
-            for record in records:
-                data = {}
-                for i in range(len(column_names)):
-                    if isinstance(record[i], datetime.datetime):
-                        data[column_names[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
-                    else:
-                        data[column_names[i]] = record[i]
-                        
-                res_datas.append(data)
-            
-          
-            
-           
+                    for record in records:
+                        data = dict(zip(column_names, record))
+                        for key, value in data.items():
+                            if isinstance(value, datetime.datetime):
+                                data[key] = value.strftime('%Y-%m-%d %H:%M:%S')
+                        res_datas.append(data)
+
         except (Exception, psycopg2.DatabaseError) as error:
-            if conn is not None:
-                conn.close()
-            if cur is not None:
-                cur.close()
-            return {"status":"failed","datas":[],"sql_query":sql_query}
-                
-        finally:
-            if conn is not None:
-                conn.close()
-            if cur is not None:
-                cur.close() 
-            return {"status":"success","datas":res_datas,"sql_query":sql_query}
-      
+            return {"status": "failed", "datas": [], "sql_query": sql_query}
+
+        return {"status": "success", "datas": res_datas, "sql_query": sql_query}
+        
 
     def insert_data(self,table:str,json_data:list):
         

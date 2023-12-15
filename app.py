@@ -863,7 +863,7 @@ def get_data_from_database():
     
     table = json_data['table']
 
-    columns = "*" #default
+    columns = ""
     if 'columns' in json_data:
         columns = json_data['columns']
     
