@@ -43,17 +43,19 @@ class PSQLConnect:
     def get_data(self,table:str,columns:str="*",query:str=""):
         
         res_datas = []
-        sql_query = ""
+        # sql_query = ""
 
            
         # if columns == None or columns == "":
         #    columns = "*"
           
            
-        if query != None:
-            sql_query = f"SELECT * FROM {table} {query}"
-        else:
-            sql_query = f"SELECT * FROM {table}"
+        # if query != None:
+        #     sql_query = f"SELECT * FROM {table} {query}"
+        # else:
+        #     sql_query = f"SELECT * FROM {table}"
+        
+        sql_query = "SELECT {columns} FROM {table} {query}"
        
         conn = psycopg2.connect(
                 host=self.host,
@@ -67,18 +69,18 @@ class PSQLConnect:
             
             cur.execute(sql_query)
             records = cur.fetchall()
-            #get column 
-            columns_names = [desc[0] for desc in cur.description]
+            #get column names
+            column_names = [desc[0] for desc in cur.description]
             
             #convert to json
          
             for record in records:
                 data = {}
-                for i in range(len(columns_names)):
+                for i in range(len(column_names)):
                     if isinstance(record[i], datetime.datetime):
-                        data[columns_names[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
+                        data[column_names[i]] = record[i].strftime('%Y-%m-%d %H:%M:%S')
                     else:
-                        data[columns_names[i]] = record[i]
+                        data[column_names[i]] = record[i]
                         
                 res_datas.append(data)
             
