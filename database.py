@@ -291,8 +291,9 @@ class DatabaseConnect:
 
             engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
 
-            # get all column names without create_at if not exists reture None
-            data.to_sql(table, engine, if_exists='append', index=False)
+            # dump dataframe to postgresql database table, if exists update data
+            data.to_sql(table, engine, if_exists='replace', index=False)
+            # data.to_sql(table, engine, if_exists='append', index=False)
             
             
 
