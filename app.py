@@ -898,21 +898,33 @@ def insert_data_to_database():
     if json_data is None:
         return make_response(jsonify({"status": "failed", "error": "required json"}), 400)
     
-
     if 'table' not in json_data:
-       return make_response(jsonify({'error': 'table be must empty'}), 400)
+        return make_response(jsonify({'error': 'table be must empty'}), 400)
    
     if 'datas' not in json_data:
-       return make_response(jsonify({'error': 'datas be must empty'}), 400)
+        return make_response(jsonify({'error': 'datas be must empty'}), 400)
+   
+    if 'target_key' not in json_data:
+        return make_response(jsonify({'error': 'target_key be must empty'}), 400)
    
    
     table = json_data['table']
     datas = json_data['datas']
-    results = psql_connect.insert_data(table,datas)
+    
+    if len(datas) == 0:
+        return make_response(jsonify({'error': 'datas be must empty'}), 400)
+    
+    if len(datas) > 100:
+        return make_response(jsonify({'error': 'datas must be less than 100'}), 400)
+    
+    target_key = json_data['target_key']
+    df = pd.DataFrame(datas)
+    
+    results = DatabaseConnect.insert_data(table,df,target_key)
     if len(results) > 0:
         return make_response(jsonify({
             "status": "success",
-            "datas": results
+            "datas": results.to_dict(orient='records')
             }), 200)
     else:
         return make_response(jsonify({"status": "failed"}), 400)

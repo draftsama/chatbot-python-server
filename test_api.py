@@ -88,6 +88,24 @@ def update_marine_data():
     
 
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=3000, debug=True)
+# if __name__ == '__main__':
+#     app.run(host='localhost', port=3000, debug=True)
 
+
+datas =[
+    {
+        "article":"222222",
+        "article_name":"222222"
+    },
+    {
+        "article":"333333",
+        "article_name":"test",
+        "mc2":"กระเบื้อเซรามิค",
+    }
+]
+
+df = pd.DataFrame(datas)
+
+res = DatabaseConnect.insert_data('marine_tiles',df,'article')
+
+print(res.to_dict(orient='records'))

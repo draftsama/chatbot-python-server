@@ -4,6 +4,9 @@ from urllib.request import urlopen
 import pandas as pd
 import json
 import psycopg2
+# from psycopg2 import sql
+from psycopg2.extras import execute_values
+
 from sqlalchemy import create_engine
 import sys
 
@@ -188,29 +191,54 @@ class DatabaseConnect:
         return dataframe
     
     @staticmethod
-    def insert_data(table, data):
-        conn = None
+    def insert_data(table:str, df:pd.DataFrame ,target_key:str):
+        
+        #target_key be must to NOT NULL and UNIQUE
+        
         # connect to postgresql database
-        try:
-            conn = psycopg2.connect(
-                host=DatabaseConnect.HOST,
-                database=DatabaseConnect.DATABASE,
-                user=DatabaseConnect.USER,
-                password=DatabaseConnect.PASSWORD)
+        with psycopg2.connect(
+            host=DatabaseConnect.HOST,
+            database=DatabaseConnect.DATABASE,
+            user=DatabaseConnect.USER,
+            password=DatabaseConnect.PASSWORD) as conn:
 
-            engine = create_engine('postgresql+psycopg2://', creator=lambda: conn)
+            with conn.cursor() as cur:
+                #build the query
+                
+                #get all column names without create_at and id
+                query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
+                cur.execute(query)
+                
+                column_names = cur.fetchall()
+                column_names = [column_name[0] for column_name in column_names]
+                
+                #if column_names is empty
+                if column_names == []:
+                    raise Exception('Table not found')
+                
+                # Prepare the insert query
+                keys = [key for key in df.keys() if key in column_names]
+                keys = ','.join(keys)
+                
+                query = f"INSERT INTO {table} ({keys}) VALUES %s ON CONFLICT ({target_key}) DO UPDATE SET "
+                query += ','.join(f"{key} = EXCLUDED.{key}" for key in column_names)
+                query += " RETURNING *"
 
-            # dump dataframe to postgresql database table, if exists update data
-            data.to_sql(table, engine, if_exists='replace', index=False)
-            # data.to_sql(table, engine, if_exists='append', index=False)
-            
-            
+                #Prepare the values
+                #if value is nan then replace to None
+                df = df.where(pd.notnull(df), None)
+                values = [tuple(row) for row in df.values]
 
-        except (Exception) as error:
-            print("Error : ", error)
+                # Execute the query
+                psycopg2.extras.execute_values(cur, query, values, template=None, page_size=100)
+                conn.commit()
 
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
+                # Fetch all the returned rows
+                rows = cur.fetchall()
 
-
+                # Convert the rows to a DataFrame
+                result = pd.DataFrame(rows, columns=column_names)
+                
+                return result
+        
+        
