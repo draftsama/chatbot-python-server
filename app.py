@@ -918,16 +918,26 @@ def insert_data_to_database():
         return make_response(jsonify({'error': 'datas must be less than 100'}), 400)
     
     target_key = json_data['target_key']
-    df = pd.DataFrame(datas)
     
-    results = DatabaseConnect.insert_data(table,df,target_key)
-    if len(results) > 0:
+    try:
+        df = pd.DataFrame(datas)
+        results = DatabaseConnect.insert_data(table,df,target_key)
+        
+        if len(results) > 0:
+            return make_response(jsonify({
+                "status": "success",
+                "datas": results.to_dict(orient='records')
+                }), 200)
+        else:
+            return make_response(jsonify({"status": "failed"}), 400)
+        
+    except Exception as e:
         return make_response(jsonify({
-            "status": "success",
-            "datas": results.to_dict(orient='records')
-            }), 200)
-    else:
-        return make_response(jsonify({"status": "failed"}), 400)
+            "status": "failed",
+            "error": str(e)
+            }), 400)
+   
+  
 
 @app.route('/db/update_data', methods=['POST'])
 def update_data_to_database():
