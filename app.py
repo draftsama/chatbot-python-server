@@ -904,7 +904,6 @@ def insert_data_to_database():
     if 'datas' not in json_data:
         return make_response(jsonify({'error': 'datas be must empty'}), 400)
    
-    if 'target_key' not in json_data:
         return make_response(jsonify({'error': 'target_key be must empty'}), 400)
    
    
@@ -916,8 +915,11 @@ def insert_data_to_database():
     
     if len(datas) > 100:
         return make_response(jsonify({'error': 'datas must be less than 100'}), 400)
+   
+    target_key = None
+    if 'target_key' in json_data:
+        target_key = json_data['target_key']
     
-    target_key = json_data['target_key']
     
     try:
         df = pd.DataFrame(datas)

@@ -205,7 +205,7 @@ class DatabaseConnect:
             with conn.cursor() as cur:
                 #build the query
                 
-                #get all column names without create_at and id
+                #get all column names without
                 query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
                 cur.execute(query)
                 
@@ -220,9 +220,12 @@ class DatabaseConnect:
                 keys = [key for key in df.keys() if key in column_names]
                 keys = ','.join(keys)
                 
-                query = f"INSERT INTO {table} ({keys}) VALUES %s ON CONFLICT ({target_key}) DO UPDATE SET "
-                query += ','.join(f"{key} = EXCLUDED.{key}" for key in column_names)
-                query += " RETURNING *"
+                if target_key is not None:
+                    query = f"INSERT INTO {table} ({keys}) VALUES %s ON CONFLICT ({target_key}) DO UPDATE SET "
+                    query += ','.join(f"{key} = EXCLUDED.{key}" for key in column_names)
+                    query += " RETURNING *"
+                else:
+                    query = f"INSERT INTO {table} ({keys}) VALUES %s RETURNING *"
 
                 #Prepare the values
                 #if value is nan then replace to None
