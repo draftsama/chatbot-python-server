@@ -735,19 +735,33 @@ def upload_image():
         response.status_code = 400
         return response
 
+        
     # save image
     image_data = json_data['image']
     image_data = image_data.split(',')[1]
     image_data = bytes(image_data, encoding="ascii")
     image_data = base64.b64decode(image_data)
     image = Image.open(BytesIO(image_data))
-    image.save(os.path.join('images', json_data['name']))
+    folder_image = 'images'
+    image_name = json_data['name']
+    
+    if 'is_save' in json_data:
+        image_name = 'save_' + image_name
+
+
+    image.save(os.path.join(folder_image , json_data['name']))
+    
+    #get base url
+    base_url = request.base_url
+    image_url = base_url + 'api/images/' + image_name
+   
     response = make_response(jsonify({
         "status": "success",
-        "message": "upload image successfully"
+        "message": "upload image successfully",
+        "image_url": image_url
     }))
     
-    reduct_images('images', 20)
+    reduct_images('images', 40)
 
     return response
 
@@ -755,7 +769,8 @@ def reduct_images(path, limit_image = 20):
     images = []
     
     for f in os.listdir(path):
-        if f.endswith(('.png', '.jpg')):
+        #get only image file and ignore file name start with "save_"
+        if f.endswith(('.png', '.jpg')) and not f.startswith('save_'):
             images.append(f)
             
     #sort by date
@@ -793,7 +808,7 @@ def del_image():
         os.remove(os.path.join('images', json_data['name']))
         response = make_response(jsonify({
             "status": "success",
-            "message": "image deleted successfully"
+            "message": "image deleted successfully",
 
         }))
         return response
