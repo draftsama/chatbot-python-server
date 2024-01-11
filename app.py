@@ -744,9 +744,6 @@ def upload_image():
     image = Image.open(BytesIO(image_data))
     folder_image = 'images'
     image_name = json_data['name']
-    
-    if 'is_save' in json_data:
-        image_name = 'save_' + image_name
 
 
     image.save(os.path.join(folder_image , json_data['name']))
