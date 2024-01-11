@@ -745,6 +745,10 @@ def upload_image():
     folder_image = 'images'
     image_name = json_data['name']
 
+    file_extension = os.path.splitext(image_name)[1].lower()
+    
+    if file_extension in ['.jpg', '.jpeg']:
+            image = image.convert("RGB")
 
     image.save(os.path.join(folder_image , json_data['name']))
     
