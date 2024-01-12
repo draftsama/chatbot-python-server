@@ -258,46 +258,74 @@ class DatabaseConnect:
             raise Exception('Data must be not empty')
         
         
-        conn = psycopg2.connect(
-            host=DatabaseConnect.HOST,
-            database=DatabaseConnect.DATABASE,
-            user=DatabaseConnect.USER,
-            password=DatabaseConnect.PASSWORD)
-
-        cur = conn.cursor()
         
-         #get all column names without create_at and id
-        query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
-        cur.execute(query)
+        with psycopg2.connect(
+                host=DatabaseConnect.HOST,
+                database=DatabaseConnect.DATABASE,
+                user=DatabaseConnect.USER,
+                password=DatabaseConnect.PASSWORD) as conn:
+
+            with conn.cursor() as cur:
         
-        column_names = cur.fetchall()
-        column_names = [column_name[0] for column_name in column_names]
-        if column_names == []:
-            raise Exception('Table not found')
-        
-
-        try:
-
-            #update data
-            for index, row in df.iterrows():
-                #check column_names in json_data
-                if not all(column_name in df.columns for column_name in column_names):
-                    raise Exception('Data must be contains all column_names')
-
-                #get all values
-                values = ','.join(f"{column_name} = '{str(row[column_name])}'" for column_name in column_names if column_name != primary_key)
+                #get value of primary_key from df
+                primary_key_values = df[primary_key].to_list()
                 
-                query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]}"
-                # print(query)
+                #get data from database where primary_key in primary_key_values
+                query = f"SELECT * FROM {table} WHERE {primary_key} IN ({','.join(str(value) for value in primary_key_values)})"
                 cur.execute(query)
+                
+                current_datas = cur.fetchall()
+                current_datas = pd.DataFrame(current_datas)
+                
+                result_datas = []
+                #update data by primary_key in df
+                for index, row in df.iterrows():
+                    #get current data by primary_key
+                    current_data = current_datas[current_datas[0] == row[primary_key]]
+                    
+                    #if current_data is empty
+                    if current_data.empty:
+                        continue
+                    
+                    #check column_names in df
+                    column_names = [column_name for column_name in df.columns if column_name != primary_key]
+                    
+                    #get all values
+                    values = ','.join(f"{column_name} = '{str(row[column_name])}'" for column_name in column_names)
+                    
+                    #build the query to update and return that data
+                    query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]} RETURNING *"
+                    cur.execute(query)
+                    
+                    conn.commit()
+                    
+                    # Fetch all the returned row
+                    row_updated = cur.fetchall()
+                    
+                    #add to result_datas
+                    result_datas.append(row_updated)
+                    
+                    
+                # Convert the rows to a DataFrame
+                result = pd.DataFrame(result_datas)
+                
+                return result
+                    
+
+                    
+                    
+                    
+                    
+                    
+     
+                    
+               
+                    
+                
+                
+
+                
    
-            conn.commit()
-            cur.close()
-            conn.close()
-        except (Exception, psycopg2.DatabaseError) as error:
-            cur.close()
-            conn.close()
-            raise Exception(error)
             
-        return {'status': 'success', 'message': 'update success'}
+        
        
