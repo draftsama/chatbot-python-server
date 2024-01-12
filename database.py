@@ -284,17 +284,14 @@ class DatabaseConnect:
                     #check column_names in df
                     column_names = [column_name for column_name in df.columns if column_name != primary_key]
                     
-                    #setup the keys
-                    keys = ','.join(column_names)
-                    
-                    #setup values
+                    #get all values
                     #if value is string then add single quote 
                     #if value is null then replace to NULL
+                    values = ','.join(f"{column_name} = '{str(row[column_name])}'" if type(row[column_name]) == str else f"{column_name} = {row[column_name]}" if row[column_name] is not None else f"{column_name} = NULL" for column_name in column_names)
                     
-                    values = ','.join(f"{column_name} = '{str(row[column_name])}'" if type(row[column_name]) == str else f"{column_name} = {row[column_name]}" if row[column_name] is not None else f"{column_name} = NULL" for column_name in column_names)                    
                     
                     #build the query to update and return that data
-                    query = f"UPDATE {table} ({keys}) VALUES ({values}) WHERE {primary_key} = {row[primary_key]} RETURNING *"
+                    query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]} RETURNING *"
                     cur.execute(query)
                     
                     conn.commit()
