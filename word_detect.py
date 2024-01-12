@@ -44,11 +44,19 @@ class WordDetect:
             
             df_answers = pd.DataFrame(answers, columns=['id','text'])
             
-            options = self.database.get_data('chatbot_dialog_option', f"WHERE dialog_id = {dialog_id}")
+            res = self.database.get_data('chatbot_dialog_option',"*", f"WHERE dialog_id = {dialog_id}")
             result_options = None
-            if options is not None and len(options) > 0:
-                df_options = pd.DataFrame(options, columns=['id','text'])
-                result_options = df_options['text'].to_list()
+            print(res)
+            if res is not None and res['status'] == 'success':
+                options = res['datas']
+                if options is not None and len(options) > 0:
+                    df_options = pd.DataFrame(options, columns=['id','text'])
+                    result_options = df_options['text'].to_list()
+                  
+            
+            
+            
+           
             
             reslut_answer = df_answers['text'].to_list()[0]
             break
@@ -57,17 +65,17 @@ class WordDetect:
                
     
 
-# db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 
-# # #get time run
+# #get time run
 
-# start_time = datetime.datetime.now()
-# wd = WordDetect(db)
-# reply,options = wd.keyword_detect("ดีคับ")
-# end_time = datetime.datetime.now()
+start_time = datetime.datetime.now()
+wd = WordDetect(db)
+reply,options = wd.keyword_detect("ดีครับ")
+end_time = datetime.datetime.now()
 
-# #report time as milisecond
-# ms = (end_time - start_time).total_seconds() * 1000
-# print(f"Time: {ms} ms")
-# print(reply)
-# print(options)
+#report time as milisecond
+ms = (end_time - start_time).total_seconds() * 1000
+print(f"Time: {ms} ms")
+print(reply)
+print(options)
