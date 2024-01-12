@@ -297,7 +297,7 @@ class DatabaseConnect:
         except (Exception, psycopg2.DatabaseError) as error:
             cur.close()
             conn.close()
-            return {'status': 'failed', 'message': error.message}
+            raise Exception(error)
             
         return {'status': 'success', 'message': 'update success'}
        
