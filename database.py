@@ -280,21 +280,21 @@ class DatabaseConnect:
                 result_datas = []
                 #update data by primary_key in df
                 for index, row in df.iterrows():
-                    #get current data by primary_key
-                    current_data = current_datas[current_datas[0] == row[primary_key]]
-                    
-                    #if current_data is empty
-                    if current_data.empty:
-                        continue
-                    
+                 
                     #check column_names in df
                     column_names = [column_name for column_name in df.columns if column_name != primary_key]
                     
-                    #get all values
-                    values = ','.join(f"{column_name} = '{str(row[column_name])}'" for column_name in column_names)
+                    #setup the keys
+                    keys = ','.join(column_names)
+                    
+                    #setup values
+                    #if value is string then add single quote 
+                    #if value is null then replace to NULL
+                    
+                    values = ','.join(f"{column_name} = '{str(row[column_name])}'" if type(row[column_name]) == str else f"{column_name} = {row[column_name]}" if row[column_name] is not None else f"{column_name} = NULL" for column_name in column_names)                    
                     
                     #build the query to update and return that data
-                    query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]} RETURNING *"
+                    query = f"UPDATE {table} ({keys}) VALUES ({values}) WHERE {primary_key} = {row[primary_key]} RETURNING *"
                     cur.execute(query)
                     
                     conn.commit()
