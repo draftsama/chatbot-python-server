@@ -267,7 +267,7 @@ class DatabaseConnect:
         cur = conn.cursor()
         
          #get all column names without create_at and id
-        query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT IN ('id','create_at');"
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}"
         cur.execute(query)
         
         column_names = cur.fetchall()
