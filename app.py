@@ -558,7 +558,7 @@ def handle_text_message(event):
                 
                 quick_reply = QuickReply(items=quickReplayItems)
             app.logger.info(f"options : {options}")
-            app.logger.info(f"quick_reply : {quick_reply}")
+            # app.logger.info(f"quick_reply : {quick_reply}")
 
             # QuickReply(items=[
             #              QuickReplyItem(
@@ -585,7 +585,7 @@ def handle_text_message(event):
             reply_message(event.reply_token,
                         [TextMessage(
                         text=replyMsg,
-                        quick_reply=quick_reply)])
+                        quick_reply=None)])
             return
             
 
