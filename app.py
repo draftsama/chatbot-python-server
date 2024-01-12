@@ -516,7 +516,6 @@ def handle_image_message(event):
 def reply_message(token,msgs):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
-        app.logger.info(f"line response status_code: {res.status_code}")
         try:
             res = line_bot_api.reply_message_with_http_info(
                 ReplyMessageRequest(
@@ -585,7 +584,7 @@ def handle_text_message(event):
             reply_message(event.reply_token,
                         [TextMessage(
                         text=replyMsg,
-                        quick_reply=None)])
+                        quick_reply=quick_reply)])
             return
             
 
