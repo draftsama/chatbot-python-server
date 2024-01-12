@@ -243,5 +243,61 @@ class DatabaseConnect:
                 result = pd.DataFrame(rows, columns=column_names)
                 
                 return result
+            
+            
+    @staticmethod
+    def update_data(table:str,df:pd.DataFrame, primary_key:str="id"):
+        #primary_key is empty
+        if primary_key == "" or primary_key == None:
+            primary_key = "id"
+        
+        if type(df) != pd.DataFrame:
+            raise Exception('Data must be a DataFrame')
+        
+        if df.empty:
+            raise Exception('Data must be not empty')
         
         
+        conn = psycopg2.connect(
+            host=DatabaseConnect.HOST,
+            database=DatabaseConnect.DATABASE,
+            user=DatabaseConnect.USER,
+            password=DatabaseConnect.PASSWORD)
+
+        cur = conn.cursor()
+        
+         #get all column names without create_at and id
+        query = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}' AND column_name NOT IN ('id','create_at');"
+        cur.execute(query)
+        
+        column_names = cur.fetchall()
+        column_names = [column_name[0] for column_name in column_names]
+        if column_names == []:
+            raise Exception('Table not found')
+        
+
+        try:
+
+            #update data
+            for index, row in df.iterrows():
+                #check column_names in json_data
+                if not all(column_name in df.columns for column_name in column_names):
+                    raise Exception('Data must be contains all column_names')
+
+                #get all values
+                values = ','.join(f"{column_name} = '{str(row[column_name])}'" for column_name in column_names if column_name != primary_key)
+                
+                query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]}"
+                # print(query)
+                cur.execute(query)
+   
+            conn.commit()
+            cur.close()
+            conn.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            cur.close()
+            conn.close()
+            return {'status': 'failed', 'message': error.message}
+            
+        return {'status': 'success', 'message': 'update success'}
+       
