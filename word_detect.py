@@ -13,20 +13,31 @@ class WordDetect:
         reslut_answer = None
         result_options = []
       
-        keywords = self.database.get_data('chatbot_keyword')
-     
+        res = self.database.get_data('chatbot_keyword')
+        if res is None or  res['status'] == 'failed':
+          return None,None
+        
+        keywords = res['datas']
         if keywords is None or len(keywords) == 0:
           return None,None
       #check text is equals to keyword.text
         df_keywords = pd.DataFrame(keywords, columns=['id','text','dialog_id'])
 
         for index, row in df_keywords.iterrows():
-    
+
           if row['text'] == text:
+            
             dialog_id = row['dialog_id']
-              
+            
+            # print("dialog_id:",dialog_id)
+            
             #get answer by dialog_id first row
-            answers = self.database.get_data('chatbot_answer', f"WHERE id = {dialog_id} LIMIT 1")
+            res = self.database.get_data('chatbot_answer',"*", f"WHERE id = {dialog_id} LIMIT 1")
+            
+            if res is None or res['status'] == 'failed':
+                return None,None
+              
+            answers = res['datas']
    
             if answers is None or len(answers) == 0:
                 return None,None
@@ -47,11 +58,12 @@ class WordDetect:
     
 
 # db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+
 # # #get time run
 
 # start_time = datetime.datetime.now()
 # wd = WordDetect(db)
-# reply,options = wd.keyword_detect("test")
+# reply,options = wd.keyword_detect("ดีคับ")
 # end_time = datetime.datetime.now()
 
 # #report time as milisecond

@@ -605,7 +605,7 @@ def handle_text_message(event):
           
             return
 
-        
+        return
         #GPT
         data = context_analysis(receiveMsg)
         if data is None:
