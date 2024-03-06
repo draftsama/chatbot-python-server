@@ -65,17 +65,17 @@ class WordDetect:
                
     
 
-db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
+# db = PSQLConnect("localhost","marine_db","ubuntu","ubuntu")
 
 # #get time run
 
-start_time = datetime.datetime.now()
-wd = WordDetect(db)
-reply,options = wd.keyword_detect("ดีครับ")
-end_time = datetime.datetime.now()
+# start_time = datetime.datetime.now()
+# wd = WordDetect(db)
+# reply,options = wd.keyword_detect("ดีครับ")
+# end_time = datetime.datetime.now()
 
 #report time as milisecond
-ms = (end_time - start_time).total_seconds() * 1000
-print(f"Time: {ms} ms")
-print(reply)
-print(options)
+# ms = (end_time - start_time).total_seconds() * 1000
+# print(f"Time: {ms} ms")
+# print(reply)
+# print(options)

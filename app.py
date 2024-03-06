@@ -2,8 +2,6 @@ import shutil
 import time
 import zipfile
 import urllib3
-from image_classification import ImageClassifucation
-from oepnai_manager import openai_manager
 from aes import AES
 import hashlib
 import logging
@@ -11,8 +9,6 @@ import copy
 import pandas as pd
 import datetime
 import pytz
-import replicate
-import openai
 import re
 import json
 import tempfile
@@ -106,13 +102,7 @@ CHANNEL_ACCESS_TOKEN = os.getenv('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
 MODE = os.getenv('MODE')
 IMAGE_SIZE = int(os.getenv('IMAGE_SIZE'))
-# check empty string
-OPENAI_API_KEY_ENCRYPTED = os.getenv('OPENAI_API_KEY_ENCRYPTED')
-if is_empty_string(OPENAI_API_KEY_ENCRYPTED):
-    print("OPENAI_API_KEY is empty")
-    exit()
-    
-openai.api_key = AES.decrypt(OPENAI_API_KEY_ENCRYPTED)
+
 
 DATABASE_HOST = os.getenv('DATABASE_HOST')
 DATABASE_NAME = os.getenv('DATABASE_NAME')
@@ -155,7 +145,6 @@ logging.basicConfig(
 np.set_printoptions(suppress=True)
 
 
-ic = ImageClassifucation("./models/model.keras", "./models/labels.txt",IMAGE_SIZE)
 
 psql_connect = PSQLConnect(DATABASE_HOST,DATABASE_NAME,DATABASE_USER,DATABASE_PASSWORD)
 word_detect = WordDetect(psql_connect)
@@ -163,159 +152,6 @@ word_detect = WordDetect(psql_connect)
 if not psql_connect.test_connection():
     app.logger.info("Can't connect to database")
     
-
-
-
-# def context_analysis(msg):
-#     embedding_path = "./embeddings/embeddings_context.csv"
-#     indexes_sort, similarities = openai_manager.get_similarity_data(
-#         msg, embedding_path)
-#     df = pandas.read_csv(embedding_path)
-#     df = df.drop(columns=["embedding"])
-#     return df.iloc[indexes_sort[0]]["context"]
-def gpt_calculator(msg):
-    system = """You are an excellent Tile Calculator, You must think step by step, Keep a short and concise, You are always convert the unit to meter first, Your must using to following datas
-
-Conversion:
-- 1 m = 1000cm = 39.3701 inch
-- 1 sq.m. = 10000 sq.cm. = 1550 sq.in.
-
-In 1 box:
-- tile 15x80 cm = 10 pieces.
-- tile 30x60 or 15x90 cm= 8 pieces.
-- tile 30x45 or 20x100 cm = 6 pieces.
-- tile 50x50 or 60x60 or 20x120 cm = 4 pieces. 
-- tile 60x120 cm = 2 pieces.
-- tile 80x80 cm = 3 pieces.
-- tile 10x16 inch = 10 pieces.
-- tile 12x12 inch = 11 pieces.
-- tile 16x16 inch  = 6 pieces.
-
-Q: area 3x4 m, How many use  box of tiles size 60x60cm?
-A: -Calculate the area: 3 * 4 = 12 sq.m.
--Calculate the tile area: 60 * 60 = 3600 sq.cm.
--Convert unit of tile from sq.cm to sq.m : 3600 / 10000 = 0.36 sq.m.
--Calculate the number of tiles required per area: 12 / 0.36 = 33.33 pieces.
--Each box of 60x60 tiles contains 4 tiles, so we would need a total of 33.33 / 4 = 8.33 boxes.
--Since there is a fractional part, rounding up, we would need a total of 9 boxes."""
-
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": msg},
-        ],
-        temperature=0.8,
-        max_tokens=2048
-
-    )
-    # app.logger.info(res)
-
-    # check if the response is empty
-    if len(res.choices) == 0:
-        return "ไม่เข้าใจคำถามของคุณ"
-    # return the first choice
-    return str(res.choices[0].message['content'])
-
-
-def context_analysis(msg):
-    system = """You are an excellent context analyzer who can analyze sentences in various forms, your responses must be in the format of JSON only, Don't explain
-
-The types of context can be as follows:
-["none","greeting","search","complaint","information","recommend","technician","location","promotion","calculate"]
-
-Q:Recommend a tile for bathroom
-A:{"context":"recommend"}
-Q:Where is store?
-A:{"context":"location"}
-Q:tile 20*30
-A:{"context":"search","keyword":"tile 20*30"}
-Q:please help me find marble tile 60*60
-A:{"context":"search","keyword":"marble tile 60*60"}
-Q:How is the marble tile
-A:{"context":"information"}
-Q:3s6igiu*&กด(_0
-A:{"context":"none"}
-Q:Recommend how to install tile
-A:{"context":"recommend"}
-Q:What is Marine Studio?
-A:{"context":"information"}
-Q: Marine Studio has how many branches?
-A:{"context":"location"}
-Q: What is you sell?
-A:{"context":"information"}
-            """
-    # ผู้ช่วย DoHome
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": msg},
-        ],
-        temperature=0.8,
-    )
-    # check if the response is empty
-    if len(res.choices) == 0:
-        return None
-    # return the first choice
-    msg = str(res.choices[0]['message']['content'])
-    # Find the JSON string using regular expressions
-    match = re.search(r'({.*})', msg)
-
-    json_object = None
-    if match:
-        json_object = json.loads(match.group(1))
-    else:
-        return None
-
-    return json_object
-
-
-# content = context_analysis("แนะนำกระเบื้องห้องนอน")
-# print(content)
-# exit()
-
-
-def find_product(msg):
-    embedding_path = "./embeddings/embeddings_products.csv"
-    indexes_sort, similarities = openai_manager.get_similarity_data(
-        msg, embedding_path)
-    df = pd.read_csv(embedding_path)
-    df = df.drop(columns=["embedding"])
-    # get 3 most similar product
-    return df.iloc[indexes_sort[0:3]]
-
-
-def chat_gpt_reply(msg):
-
-    system = f"""You are helpful assistant of Marine Studio,  You are an expert in tiles and bathroom sanitary.,refer datas below
-website:www.marine-studio.co.th
-tel:02-234-5555
-open:every day 7.00-19.00
-
-Q:Hello
-A:My name is {ASSISTANT_NAME}, Infrom about what ครับ
-Q:What's มารีน ?
-A:Marine Studio - The Central Hub for Decorative Materials, featuring over 2,500 items including floor and wall tiles, paint, chemicals, sanitary ware, gardening tools, along with professional installation services provided by skilled craftsmen. 
-Q:Who are you?
-A:My name is {ASSISTANT_NAME} I'm an assistant of Marine Studio ครับ
-            """
-    # ผู้ช่วย DoHome
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": msg},
-        ],
-        temperature=0.8,
-
-    )
-    
-    # check if the response is empty
-    if len(res.choices) == 0:
-        return "ไม่เข้าใจคำถามของคุณ"
-    # return the first choice
-    return str(res.choices[0].message['content'])
 
 
 
@@ -328,6 +164,7 @@ def load_image_from_base64(base64_string):
 @app.route('/test_post', methods=['POST'])
 def test_post():
     #get json data and return it
+    print(request.get_json())
     json_data = request.get_json()
     return make_response(jsonify(json_data), 200)
 
@@ -351,36 +188,6 @@ def lineWebhook():
 
     return 'OK'
 
-@app.route('/image_search', methods=['POST'])
-def image_search_api():
-    json_data = request.get_json()
-    max = 5
-    #check if image_base64 is in json_data
-    if 'image_base64' not in json_data:
-        return make_response(jsonify({'error': 'image_base64 not found'}), 400)
-    
-    if 'max' in json_data:
-        max = json_data['max']
-        
-    
-    base64_string = json_data['image_base64']
-    result = ic.predict(base64_string, max)
-    
-    skus = [r['class'] for r in result]    
-     # Create the comma-separated string of sku values for the IN clause
-    sku_in_clause = ", ".join(skus)
-
-    # Create the CASE statement for ORDER BY
-    case_statement = "\n".join([f"WHEN {sku} THEN {index + 1}" for index, sku in enumerate(skus)])
-    order_by_clause = f"ORDER BY CASE sku\n{case_statement}\nELSE {len(skus) + 1}\nEND;"
-
-    # Combine the SQL command
-    sql_command = f"SELECT *\nFROM tiles\nWHERE sku IN ({sku_in_clause})\n{order_by_clause}"
-
-    df = DatabaseConnect.get_data(sql_command) 
-
-  
-    return make_response(jsonify(df.to_dict(orient='records')), 200)
 
 
 
@@ -421,96 +228,6 @@ def get_binary_data(content) -> str:
 def handle_unknown_left(event):
     app.logger.info(f"unknown event {event}")
 
-@handler.add(MessageEvent, message=ImageMessageContent)
-def handle_image_message(event):
-     with ApiClient(configuration) as api_client:
-        line_bot_blob_api = MessagingApiBlob(api_client)
-        line_bot_api = MessagingApi(api_client)
-        profile = line_bot_api.get_profile(event.source.user_id)
-       
-       
-        ext = 'jpg'
-
-        #check if static_tmp_path directory is exists or not
-        if not os.path.isdir(static_tmp_path):
-            os.mkdir(static_tmp_path)
-        
-        file_binary = line_bot_blob_api.get_message_content(message_id=event.message.id)
-        # with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
-        #         tf.write(file_binary)
-        #         tempfile_path = tf.name
-       
-        # dist_path = tempfile_path + '.' + ext
-        # dist_name = os.path.basename(dist_path)
-        # os.rename(tempfile_path, dist_path)
-        
-        # convert to base64
-        base64_string = base64.b64encode(file_binary).decode('utf-8')
-        # write to base64.txt
-        # save image
-   
-        # reply image to user
-        app.logger.info(f"==============================")
-        app.logger.info(f"type: {event.message.type}")
-        app.logger.info(f"user_name: {profile.display_name}")
-        app.logger.info(f"user_id: {event.source.user_id}")
-        app.logger.info(f"reply_token: {event.reply_token}")
-        app.logger.info(f"==============================")
-
-        result = ic.predict(base64_string, 5)
-        
-        #clear ram
-        del file_binary
-        del base64_string
-        
-        #list to json string
-        app.logger.info(f"{json.dumps(result,indent=4)}")
-        
-      
-        # connect to postgresql database
-    
-        with open('product_message.json', 'r') as f:
-                message = dict()
-                message['type'] = 'carousel'
-
-                itemTemplate = json.load(f)
-                contents = []
-                for i in range(0, len(result)):
-                    # clone itemTemplate
-                    item = copy.deepcopy(itemTemplate)
-                    sku = result[i]['class']
-                    query = f"SELECT * FROM tiles WHERE sku = {sku}"
-                    
-                    
-                    df = DatabaseConnect.get_data(query) 
-                    if len(df) == 0:
-                        continue
-                    
-                    card_image_url =f"https://mkt-app.dohome.co.th/images/cards/{sku}.jpg"
-                    
-                    text = f"{df.iloc[0]['sku']} - {df.iloc[0]['product_name']}"
-                    item['hero']['url'] = card_image_url
-                    item['body']['contents'][0]['text'] = text
-                    # add item to contents
-                    contents.append(item)
-            
-                if len(contents) == 0:
-                    return
-                    
-                message['contents'] = contents
-                flex_message = FlexMessage(
-                    alt_text="Search", contents=FlexContainer.from_dict(message))
-
-                
-                line_bot_api.reply_message_with_http_info(
-                    ReplyMessageRequest(
-                        reply_token=event.reply_token,
-                        messages=[flex_message]
-                    ))
-                
-
-                    # end method
-            
 
 
 def reply_message(token,msgs):
@@ -588,98 +305,7 @@ def handle_text_message(event):
             return
             
 
-      
-  
-
-        if len(re.findall("ค้นหาร้านค้า", receiveMsg)) != 0:
-            
-            location_message = LocationMessage(
-                title='DoHome',
-                address='DoHome',
-                latitude=13.7667711,
-                longitude=100.5488918
-            )
-            
-            reply_message(event.reply_token,[location_message])
-          
-            return
-
-        return
-        #GPT
-        data = context_analysis(receiveMsg)
-        if data is None:
-            data = {"context": "none"}
-
-        context = data["context"]
-    
-        
-        app.logger.info(f"context: {data}")
-
-        if context == "none":
-            replyMsg = f"{ASSISTANT_NAME} รบกวนสอบถามใหม่อีกครั้งนะครับ เนื่องจาก{ASSISTANT_NAME}ไม่สามารเข้าใจได้ครับ"
-        elif context == "complaint":
-            replyMsg = f"{ASSISTANT_NAME} ขอแสดงความเสียใจกับเหตุการณ์ที่เกิดขึ้นนะครับ รบกวนลูกค้าเลือกเรื่องที่ต้องการทำรายการได้เลยครับ"
-        elif context == "location":
-            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-        elif context == "technician":
-            replyMsg = f"""{ASSISTANT_NAME} ขอแนะนำงานบริการคุณภาพเยี่ยม จาก นายช่างดูโฮม
-    เรามีหลากหลายบริการ ตั้งแต่บริการปรับปรุงที่พักอาศัย บริการติดตั้งเครื่องใช้ไฟฟ้า
-    และบริการทำความสะอาดบำรุงรักษา ลูกค้าเลือกบริการที่ต้องการได้เลยครับ"""
-        elif context == "greeting":
-            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-        elif context == "information":
-            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-        elif context == "recommend":
-            replyMsg = f"{ASSISTANT_NAME} {chat_gpt_reply(receiveMsg)}"
-        elif context == "calculate":
-            replyMsg = gpt_calculator(receiveMsg)
-        elif context == "promotion":
-            reply_message(event.reply_token,
-                        [ImageMessage(
-                        original_content_url='https://draft-dev.online/images/promotion.jpg',
-                        preview_image_url='https://draft-dev.online/images/promotion.jpg'
-                    )])
-          
-            return
-        elif context == "search":
-            
-            keyword = receiveMsg
-            #check key in data
-            if "keyword" in data:
-                keyword = data["keyword"]
-            
-            products = find_product(keyword)
-        
-
-            with open('product_message.json', 'r') as f:
-                message = dict()
-                message['type'] = 'carousel'
-
-                itemTemplate = json.load(f)
-                contents = []
-                for i in range(0, len(products)):
-                    # clone itemTemplate
-                    item = copy.deepcopy(itemTemplate)
-                    item['body']['contents'][0]['text'] = products.iloc[i]["tile_name"]
-                    # add item to contents
-                    contents.append(item)
-
-                message['contents'] = contents
-                flex_message = FlexMessage(
-                    alt_text="Search", contents=message)
-
-               
-                reply_message(event.reply_token,
-                        [flex_message])
-                return
-
-       
-        app.logger.info(f"reply : {replyMsg}")
-        reply_message(event.reply_token,
-                        [TextMessage(text=replyMsg)])
-        
-
-
+ 
 
 
 
@@ -699,15 +325,6 @@ def check_image(filename):
 
 # create route for upload image
 
-
-@app.route('/test', methods=['POST'])
-def post_test():
-    # return app status
-    response = make_response(jsonify({
-        "status": "test"
-    }))
-
-    return response
 
 
 @app.route('/upload_image', methods=['POST'])
@@ -1071,6 +688,40 @@ def line_sendmsg():
     
     return make_response(jsonify({"status": "success"}), 200)
 
+@app.route('/line_send_flexmsg', methods=['POST'])
+def line_send_flexmsg():
+    json_data = request.get_json()
+    
+    flex_name = 'New Message'
+    
+    if 'user_id' not in json_data:
+       return make_response(jsonify({'error': 'user_id is require'}), 400)
+
+   
+    if 'flex_msg' not in json_data:
+       return make_response(jsonify({'error': 'flex_msg is require'}), 400)
+   
+
+    if 'flex_name' in json_data:
+        if not is_empty_string(json_data['flex_name']):
+            flex_name = json_data['flex_name']
+   
+    user_id = json_data['user_id']
+    flex_msg = json_data['flex_msg']
+    
+    
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.push_message_with_http_info(
+            PushMessageRequest(
+                to=user_id,
+                messages=[FlexMessage(
+                    alt_text=flex_name,
+                    contents=flex_msg
+                )]
+            ))
+        
+    return make_response(jsonify({"status": "success"}), 200)
 
 
 @app.route('/line_sendimg', methods=['POST'])
@@ -1099,74 +750,6 @@ def line_sendimg():
             ))
         
     return make_response(jsonify({"status": "success"}), 200)
-
-    
-@app.route('/update_marine_tiles_db', methods=['POST'])
-def update_marine_tiles_db():
-    # Check if the post request has the file part
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
-
-    file = request.files['file']
-
-    # If the user does not select a file, the browser submits an empty file without a filename
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
-
-    
-    folder_name = 'datas'
-    if os.path.exists(folder_name):
-        #remove folder
-        shutil.rmtree(folder_name)
-        
-    #create folder
-    os.mkdir(folder_name)
-        
-    
-    
-    #get table from request
-    table_name = request.form.get('table_name')
-    if table_name is None:
-        return jsonify({'error': 'No table name'})
-    
-    #get sheet name from request
-    sheet_name = request.form.get('sheet_name')
-    if sheet_name is None:
-        return jsonify({'error': 'No sheet name'})
-    
-    
-    
-    # If the file is provided, save it to the 'datas' directory
-    if file:
-        save_path = os.path.join(folder_name, 'input.zip')
-        file.save(save_path)
-        
-        # Unzip the file
-        with zipfile.ZipFile(save_path, 'r') as zip_ref:
-            zip_ref.extractall(folder_name)
-            
-        # Delete the zip file
-        os.remove(save_path)
-        
-        # find .xlsx file
-        filename = None
-        for f in os.listdir(folder_name):
-            if f.endswith('.xlsx'):
-                filename = f
-                break
-        
-        if filename is None:
-            return jsonify({'error': 'No .xlsx file found'})
-        
-        
-        res = DatabaseConnect.update_marine_tiles_db(os.path.join(folder_name, filename),table_name,sheet_name)
-        #dlist to json string
-        return jsonify(res)
-            
-    
-    return jsonify({'status': 'failed'})
- 
-  
 
 
 # Get the current date and time in the specified time zone
