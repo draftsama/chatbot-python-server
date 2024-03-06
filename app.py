@@ -708,7 +708,7 @@ def line_send_flexmsg():
    
     user_id = json_data['user_id']
     flex_msg = json_data['flex_msg']
-    
+
     
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
@@ -717,7 +717,7 @@ def line_send_flexmsg():
                 to=user_id,
                 messages=[FlexMessage(
                     alt_text=flex_name,
-                    contents=flex_msg
+                    contents=FlexContainer.from_dict(flex_msg)
                 )]
             ))
         
