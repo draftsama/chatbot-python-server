@@ -9,6 +9,7 @@ from psycopg2.extras import execute_values
 
 from sqlalchemy import create_engine
 import sys
+import datetime
 
 
 class DatabaseConnect:
@@ -161,7 +162,33 @@ class DatabaseConnect:
         return {'status': 'success', 'message': 'update success'}
             
     
-    
+    # @staticmethod
+    # def backup_db():
+    #     #backup database and save to file
+        
+    #     #connect to database
+    #     conn = None
+    #     try:
+    #         conn = psycopg2.connect(
+    #             host=DatabaseConnect.HOST,
+    #             database=DatabaseConnect.DATABASE,
+    #             user=DatabaseConnect.USER,
+    #             password=DatabaseConnect.PASSWORD)
+
+    #         #save in 7 days
+    #         conn.autocommit = True
+
+    #         #dump database to file with date name
+    #         date = datetime.datetime.now().strftime("%Y-%m-%d")
+    #         file_name = f"backup_{date}.sql"
+    #         with open(file_name, 'w') as file:
+    #             conn.dump(file)
+                
+    #         conn.close()
+         
+    #     except (Exception, psycopg2.DatabaseError) as error:
+    #         return {'status': 'failed', 'message': error.message}       
+
 
     @staticmethod
     def get_data(query):
@@ -243,8 +270,10 @@ class DatabaseConnect:
                 result = pd.DataFrame(rows, columns=column_names)
                 
                 return result
-            
-            
+   
+    def toStr( value):
+        return f"'{str(value)}'"
+    
     @staticmethod
     def update_data(table:str,df:pd.DataFrame, primary_key:str="id"):
         #primary_key is empty
@@ -271,7 +300,7 @@ class DatabaseConnect:
                 primary_key_values = df[primary_key].to_list()
                 
                 #get data from database where primary_key in primary_key_values
-                query = f"SELECT * FROM {table} WHERE {primary_key} IN ({','.join(str(value) for value in primary_key_values)})"
+                query = f"SELECT * FROM {table} WHERE {primary_key} IN ({','.join(DatabaseConnect.toStr(value) for value in primary_key_values)})"
                 cur.execute(query)
                 
                 current_datas = cur.fetchall()
