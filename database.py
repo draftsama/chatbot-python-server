@@ -301,10 +301,14 @@ class DatabaseConnect:
                 
                 #get data from database where primary_key in primary_key_values
                 query = f"SELECT * FROM {table} WHERE {primary_key} IN ({','.join(DatabaseConnect.toStr(value) for value in primary_key_values)})"
+               
+          
                 cur.execute(query)
                 
                 current_datas = cur.fetchall()
                 current_datas = pd.DataFrame(current_datas)
+                
+                
                 
                 result_datas = []
                 #update data by primary_key in df
@@ -320,9 +324,10 @@ class DatabaseConnect:
                     
                     
                     #build the query to update and return that data
-                    query = f"UPDATE {table} SET {values} WHERE {primary_key} = {row[primary_key]} RETURNING *"
-                    cur.execute(query)
+                    query = f"UPDATE {table} SET {values} WHERE {primary_key} = {DatabaseConnect.toStr(row[primary_key])} RETURNING *"
                     
+                    
+                    cur.execute(query)
                     conn.commit()
                     
                     # Fetch all the returned row
