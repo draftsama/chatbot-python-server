@@ -2,3 +2,179 @@
 2024-03-06 10:21:11,968 [INFO] 127.0.0.1 - - [06/Mar/2024 10:21:11] "GET /fetch_logs HTTP/1.1" 200 -
 2024-03-06 10:21:16,972 [INFO] 127.0.0.1 - - [06/Mar/2024 10:21:16] "GET /fetch_logs HTTP/1.1" 200 -
 2024-03-06 10:21:21,966 [INFO] 127.0.0.1 - - [06/Mar/2024 10:21:21] "GET /fetch_logs HTTP/1.1" 200 -
+2024-04-29 15:10:41,435 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:3000
+2024-04-29 15:10:41,435 [INFO] [33mPress CTRL+C to quit[0m
+2024-04-29 15:10:41,436 [INFO]  * Restarting with stat
+2024-04-29 15:10:42,199 [WARNING]  * Debugger is active!
+2024-04-29 15:10:42,212 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:11:00,286 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:00] "[35m[1mGET /api/log HTTP/1.1[0m" 500 -
+2024-04-29 15:11:00,325 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:00] "GET /api/log?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2024-04-29 15:11:00,328 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:00] "GET /api/log?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2024-04-29 15:11:00,360 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:00] "GET /api/log?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2024-04-29 15:11:00,401 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:00] "[36mGET /api/log?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-04-29 15:11:09,246 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:09] "[35m[1mGET /log HTTP/1.1[0m" 500 -
+2024-04-29 15:11:09,273 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:09] "GET /log?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+2024-04-29 15:11:09,278 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:09] "GET /log?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+2024-04-29 15:11:09,290 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:09] "GET /log?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+2024-04-29 15:11:09,305 [INFO] 127.0.0.1 - - [29/Apr/2024 15:11:09] "[36mGET /log?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+2024-04-29 15:12:49,631 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:12:49,840 [INFO]  * Restarting with stat
+2024-04-29 15:12:50,941 [WARNING]  * Debugger is active!
+2024-04-29 15:12:50,948 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:13:08,327 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:13:08,513 [INFO]  * Restarting with stat
+2024-04-29 15:13:09,386 [WARNING]  * Debugger is active!
+2024-04-29 15:13:09,393 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:13:17,557 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:13:17,768 [INFO]  * Restarting with stat
+2024-04-29 15:13:18,647 [WARNING]  * Debugger is active!
+2024-04-29 15:13:18,657 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:13:21,706 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:13:21,885 [INFO]  * Restarting with stat
+2024-04-29 15:13:22,659 [WARNING]  * Debugger is active!
+2024-04-29 15:13:22,666 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:14:01,414 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:14:01,610 [INFO]  * Restarting with stat
+2024-04-29 15:14:02,634 [WARNING]  * Debugger is active!
+2024-04-29 15:14:02,642 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:15:43,729 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:15:43,940 [INFO]  * Restarting with stat
+2024-04-29 15:15:44,781 [WARNING]  * Debugger is active!
+2024-04-29 15:15:44,789 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:16:03,374 [INFO] 127.0.0.1 - - [29/Apr/2024 15:16:03] "[35m[1mGET /api/test_get HTTP/1.1[0m" 500 -
+2024-04-29 15:16:53,667 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:16:53,846 [INFO]  * Restarting with stat
+2024-04-29 15:16:54,839 [WARNING]  * Debugger is active!
+2024-04-29 15:16:54,852 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:16:57,398 [INFO] 127.0.0.1 - - [29/Apr/2024 15:16:57] "[31m[1mGET /api/test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:17:24,528 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:17:24,748 [INFO]  * Restarting with stat
+2024-04-29 15:17:25,710 [WARNING]  * Debugger is active!
+2024-04-29 15:17:25,717 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:17:28,934 [INFO] 127.0.0.1 - - [29/Apr/2024 15:17:28] "[33mGET /api/test_get HTTP/1.1[0m" 404 -
+2024-04-29 15:17:47,715 [INFO] 127.0.0.1 - - [29/Apr/2024 15:17:47] "[33mGET /api/test_get HTTP/1.1[0m" 404 -
+2024-04-29 15:17:56,772 [INFO] 127.0.0.1 - - [29/Apr/2024 15:17:56] "GET /test_get HTTP/1.1" 200 -
+2024-04-29 15:19:23,402 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:19:23,622 [INFO]  * Restarting with stat
+2024-04-29 15:19:24,793 [WARNING]  * Debugger is active!
+2024-04-29 15:19:24,801 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:19:36,279 [INFO] 127.0.0.1 - - [29/Apr/2024 15:19:36] "GET /test_get HTTP/1.1" 200 -
+2024-04-29 15:20:14,999 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:20:15,224 [INFO]  * Restarting with stat
+2024-04-29 15:20:16,179 [WARNING]  * Debugger is active!
+2024-04-29 15:20:16,187 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:20:53,952 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:20:54,160 [INFO]  * Restarting with stat
+2024-04-29 15:20:55,139 [WARNING]  * Debugger is active!
+2024-04-29 15:20:55,146 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:21:04,329 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:21:04,527 [INFO]  * Restarting with stat
+2024-04-29 15:21:05,420 [WARNING]  * Debugger is active!
+2024-04-29 15:21:05,426 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:21:08,197 [INFO] 127.0.0.1 - - [29/Apr/2024 15:21:08] "GET /test_get HTTP/1.1" 200 -
+2024-04-29 15:21:39,178 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:21:39,406 [INFO]  * Restarting with stat
+2024-04-29 15:21:40,410 [WARNING]  * Debugger is active!
+2024-04-29 15:21:40,418 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:21:45,527 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:21:45,735 [INFO]  * Restarting with stat
+2024-04-29 15:21:46,642 [WARNING]  * Debugger is active!
+2024-04-29 15:21:46,650 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:21:49,796 [INFO] 127.0.0.1 - - [29/Apr/2024 15:21:49] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:22:27,545 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:22:27,748 [INFO]  * Restarting with stat
+2024-04-29 15:22:28,742 [WARNING]  * Debugger is active!
+2024-04-29 15:22:28,757 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:22:30,451 [INFO] 127.0.0.1 - - [29/Apr/2024 15:22:30] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:22:47,251 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:22:47,461 [INFO]  * Restarting with stat
+2024-04-29 15:22:48,436 [WARNING]  * Debugger is active!
+2024-04-29 15:22:48,443 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:22:48,919 [INFO] 127.0.0.1 - - [29/Apr/2024 15:22:48] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:23:24,291 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:23:24,480 [INFO]  * Restarting with stat
+2024-04-29 15:23:25,536 [WARNING]  * Debugger is active!
+2024-04-29 15:23:25,544 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:23:26,114 [INFO] 127.0.0.1 - - [29/Apr/2024 15:23:26] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:24:06,409 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:24:06,638 [INFO]  * Restarting with stat
+2024-04-29 15:24:07,579 [WARNING]  * Debugger is active!
+2024-04-29 15:24:07,587 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:24:08,620 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:24:08,810 [INFO]  * Restarting with stat
+2024-04-29 15:24:09,669 [WARNING]  * Debugger is active!
+2024-04-29 15:24:09,677 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:24:42,332 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:24:42,512 [INFO]  * Restarting with stat
+2024-04-29 15:24:43,442 [WARNING]  * Debugger is active!
+2024-04-29 15:24:43,450 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:25:28,379 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:25:28,573 [INFO]  * Restarting with stat
+2024-04-29 15:25:29,517 [WARNING]  * Debugger is active!
+2024-04-29 15:25:29,525 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:25:32,439 [INFO] 127.0.0.1 - - [29/Apr/2024 15:25:32] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:25:35,653 [INFO] 127.0.0.1 - - [29/Apr/2024 15:25:35] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:25:52,124 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:25:52,336 [INFO]  * Restarting with stat
+2024-04-29 15:25:53,234 [WARNING]  * Debugger is active!
+2024-04-29 15:25:53,243 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:25:56,392 [INFO] 127.0.0.1 - - [29/Apr/2024 15:25:56] "[31m[1mGET /test_get HTTP/1.1[0m" 401 -
+2024-04-29 15:26:08,617 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:26:08,821 [INFO]  * Restarting with stat
+2024-04-29 15:26:09,862 [WARNING]  * Debugger is active!
+2024-04-29 15:26:09,873 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:26:23,756 [INFO] 127.0.0.1 - - [29/Apr/2024 15:26:23] "GET /test_get HTTP/1.1" 200 -
+2024-04-29 15:26:50,802 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:26:50,993 [INFO]  * Restarting with stat
+2024-04-29 15:26:51,979 [WARNING]  * Debugger is active!
+2024-04-29 15:26:51,988 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:45:04,226 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:3000
+2024-04-29 15:45:04,226 [INFO] [33mPress CTRL+C to quit[0m
+2024-04-29 15:45:04,227 [INFO]  * Restarting with stat
+2024-04-29 15:45:05,011 [WARNING]  * Debugger is active!
+2024-04-29 15:45:05,023 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:45:08,368 [INFO] 127.0.0.1 - - [29/Apr/2024 15:45:08] "[31m[1mGET / HTTP/1.1[0m" 401 -
+2024-04-29 15:45:08,404 [INFO] 127.0.0.1 - - [29/Apr/2024 15:45:08] "[31m[1mGET /order/MR4419034171237 HTTP/1.1[0m" 401 -
+2024-04-29 15:45:08,769 [INFO] 127.0.0.1 - - [29/Apr/2024 15:45:08] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:45:18,045 [INFO] 127.0.0.1 - - [29/Apr/2024 15:45:18] "[31m[1mGET /api/logs HTTP/1.1[0m" 401 -
+2024-04-29 15:45:18,186 [INFO] 127.0.0.1 - - [29/Apr/2024 15:45:18] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:48:08,151 [INFO] 127.0.0.1 - - [29/Apr/2024 15:48:08] "[31m[1mGET /logs HTTP/1.1[0m" 401 -
+2024-04-29 15:48:08,197 [INFO] 127.0.0.1 - - [29/Apr/2024 15:48:08] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:48:48,702 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:48:48,949 [INFO]  * Restarting with stat
+2024-04-29 15:48:50,145 [WARNING]  * Debugger is active!
+2024-04-29 15:48:50,153 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:48:53,899 [INFO] 127.0.0.1 - - [29/Apr/2024 15:48:53] "[31m[1mGET /logs HTTP/1.1[0m" 401 -
+2024-04-29 15:48:53,973 [INFO] 127.0.0.1 - - [29/Apr/2024 15:48:53] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:51:34,607 [INFO] 127.0.0.1 - - [29/Apr/2024 15:51:34] "[31m[1mGET /logs HTTP/1.1[0m" 401 -
+2024-04-29 15:51:34,655 [INFO] 127.0.0.1 - - [29/Apr/2024 15:51:34] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:53:39,520 [INFO] 127.0.0.1 - - [29/Apr/2024 15:53:39] "[31m[1mGET /order/MR4419034171237 HTTP/1.1[0m" 401 -
+2024-04-29 15:53:39,739 [INFO] 127.0.0.1 - - [29/Apr/2024 15:53:39] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:56:19,796 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-04-29 15:56:20,085 [INFO]  * Restarting with stat
+2024-04-29 15:56:21,354 [WARNING]  * Debugger is active!
+2024-04-29 15:56:21,365 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:56:38,169 [INFO] 127.0.0.1 - - [29/Apr/2024 15:56:38] "GET /test_get HTTP/1.1" 200 -
+2024-04-29 15:57:13,499 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:57:13,690 [INFO]  * Restarting with stat
+2024-04-29 15:57:14,615 [WARNING]  * Debugger is active!
+2024-04-29 15:57:14,629 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:58:14,807 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:58:15,000 [INFO]  * Restarting with stat
+2024-04-29 15:58:15,932 [WARNING]  * Debugger is active!
+2024-04-29 15:58:15,939 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:58:19,011 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:58:19,218 [INFO]  * Restarting with stat
+2024-04-29 15:58:19,982 [WARNING]  * Debugger is active!
+2024-04-29 15:58:19,988 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:58:30,178 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/middleware.py', reloading
+2024-04-29 15:58:30,354 [INFO]  * Restarting with stat
+2024-04-29 15:58:31,202 [WARNING]  * Debugger is active!
+2024-04-29 15:58:31,210 [INFO]  * Debugger PIN: 105-794-640
+2024-04-29 15:58:38,479 [INFO] 127.0.0.1 - - [29/Apr/2024 15:58:38] "GET /logs HTTP/1.1" 200 -
+2024-04-29 15:58:38,681 [INFO] 127.0.0.1 - - [29/Apr/2024 15:58:38] "[31m[1mGET /favicon.ico HTTP/1.1[0m" 401 -
+2024-04-29 15:58:43,672 [INFO] 127.0.0.1 - - [29/Apr/2024 15:58:43] "GET /fetch_logs HTTP/1.1" 200 -
+2024-04-29 15:58:48,675 [INFO] 127.0.0.1 - - [29/Apr/2024 15:58:48] "GET /fetch_logs HTTP/1.1" 200 -
+2024-04-29 15:58:53,677 [INFO] 127.0.0.1 - - [29/Apr/2024 15:58:53] "GET /fetch_logs HTTP/1.1" 200 -

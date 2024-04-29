@@ -67,6 +67,9 @@ from linebot.v3.webhooks import (
     
 )
 
+from middleware import middleware
+
+
 #TODO FIX ISUSSE LINE SDK V3 : SSL CERTIFICATE_VERIFY_FAILED
 #$ sudo update-ca-certificates --fresh
 #$ export SSL_CERT_DIR=/etc/ssl/certs
@@ -119,10 +122,13 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
+app.wsgi_app = middleware(app.wsgi_app)
+
+# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['JSON_AS_ASCII'] = False
+
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -161,6 +167,12 @@ def load_image_from_base64(base64_string):
     return img
 
 # =================== ROUTE ===================
+@app.route('/test_get', methods=['GET'])
+def test_get():
+    #get json data and return it
+    return make_response(jsonify({'message': 'Hello World'}), 200)
+
+
 @app.route('/test_post', methods=['POST'])
 def test_post():
     #get json data and return it
