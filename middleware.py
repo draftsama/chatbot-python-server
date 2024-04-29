@@ -15,6 +15,9 @@ class middleware():
         request = Request(environ)
         
         
+        
+        return self.app(environ, start_response)
+        
         for path in self.ignore_paths:
             if request.path == path:
                 return self.app(environ, start_response)
