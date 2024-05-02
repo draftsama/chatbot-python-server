@@ -174,10 +174,17 @@ def before_request_func():
     
     #NOTICE: i don't know why i can't response 401
     api_key = request.headers.get('Api-Key')
+    print(request.path)
+    
+    
     # return make_response(jsonify({'message': 'Hello World'}), 200)
     for path in ignore_paths:
-            if request.path == path:
-                return None
+        
+        #get prefix path
+        if request.path.startswith(path):
+            return None
+            
+            
     if api_key is None:
         return make_response(jsonify({
             "error": "Unauthorized",

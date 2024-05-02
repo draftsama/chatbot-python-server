@@ -186,3 +186,43 @@
 2024-05-02 11:37:17,949 [INFO]  * Debugger PIN: 105-794-640
 2024-05-02 11:37:31,237 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
 2024-05-02 11:37:31,446 [INFO]  * Restarting with stat
+2024-05-02 11:38:58,219 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:3000
+2024-05-02 11:38:58,219 [INFO] [33mPress CTRL+C to quit[0m
+2024-05-02 11:38:58,220 [INFO]  * Restarting with stat
+2024-05-02 11:38:58,998 [WARNING]  * Debugger is active!
+2024-05-02 11:38:59,008 [INFO]  * Debugger PIN: 105-794-640
+2024-05-02 11:39:22,279 [INFO] 127.0.0.1 - - [02/May/2024 11:39:22] "GET /api/images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:39:22,415 [INFO] 127.0.0.1 - - [02/May/2024 11:39:22] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:39:25,738 [INFO] 127.0.0.1 - - [02/May/2024 11:39:25] "GET /api/images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:39:25,793 [INFO] 127.0.0.1 - - [02/May/2024 11:39:25] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:39:29,104 [INFO] 127.0.0.1 - - [02/May/2024 11:39:29] "GET /api/images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:39:29,135 [INFO] 127.0.0.1 - - [02/May/2024 11:39:29] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:39:33,450 [INFO] 127.0.0.1 - - [02/May/2024 11:39:33] "GET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:39:33,502 [INFO] 127.0.0.1 - - [02/May/2024 11:39:33] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:39:36,141 [INFO] 127.0.0.1 - - [02/May/2024 11:39:36] "GET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:39:36,165 [INFO] 127.0.0.1 - - [02/May/2024 11:39:36] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:39:58,698 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-05-02 11:39:58,947 [INFO]  * Restarting with stat
+2024-05-02 11:39:59,952 [WARNING]  * Debugger is active!
+2024-05-02 11:39:59,963 [INFO]  * Debugger PIN: 105-794-640
+2024-05-02 11:40:15,252 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-05-02 11:40:15,485 [INFO]  * Restarting with stat
+2024-05-02 11:40:16,371 [WARNING]  * Debugger is active!
+2024-05-02 11:40:16,378 [INFO]  * Debugger PIN: 105-794-640
+2024-05-02 11:40:19,770 [INFO] 127.0.0.1 - - [02/May/2024 11:40:19] "GET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1" 200 -
+2024-05-02 11:40:19,818 [INFO] 127.0.0.1 - - [02/May/2024 11:40:19] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:40:58,270 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-05-02 11:40:58,471 [INFO]  * Restarting with stat
+2024-05-02 11:40:59,470 [WARNING]  * Debugger is active!
+2024-05-02 11:40:59,477 [INFO]  * Debugger PIN: 105-794-640
+2024-05-02 11:41:01,886 [INFO] 127.0.0.1 - - [02/May/2024 11:41:01] "[33mGET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1[0m" 404 -
+2024-05-02 11:41:01,982 [INFO] 127.0.0.1 - - [02/May/2024 11:41:01] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:42:18,054 [INFO]  * Detected change in '/Users/draftsama/Works/Python/chatbot-python-server/app.py', reloading
+2024-05-02 11:42:18,305 [INFO]  * Restarting with stat
+2024-05-02 11:42:19,304 [WARNING]  * Debugger is active!
+2024-05-02 11:42:19,313 [INFO]  * Debugger PIN: 105-794-640
+2024-05-02 11:42:20,341 [INFO] 127.0.0.1 - - [02/May/2024 11:42:20] "[33mGET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1[0m" 404 -
+2024-05-02 11:42:20,395 [INFO] 127.0.0.1 - - [02/May/2024 11:42:20] "GET /favicon.ico HTTP/1.1" 200 -
+2024-05-02 11:42:22,063 [INFO] 127.0.0.1 - - [02/May/2024 11:42:22] "[33mGET /images/save_6f19e6b061ee46c2bcb66e4599556746.jpg HTTP/1.1[0m" 404 -
+2024-05-02 11:42:22,095 [INFO] 127.0.0.1 - - [02/May/2024 11:42:22] "GET /favicon.ico HTTP/1.1" 200 -
