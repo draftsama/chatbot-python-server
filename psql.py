@@ -48,10 +48,10 @@ class PSQLConnect:
             columns = "*"
 
         if query:
-            sql_query = f"SELECT {columns} FROM {table} {query};"
+            sql_query = f"SELECT {columns} FROM {table}{query};"
         else:
             sql_query = f"SELECT {columns} FROM {table};"
-
+            
         try:
             with psycopg2.connect(
                 host=self.host,
@@ -63,7 +63,6 @@ class PSQLConnect:
                     cur.execute(sql_query)
                     records = cur.fetchall()
                     column_names = [desc[0] for desc in cur.description]
-
                     for record in records:
                         data = dict(zip(column_names, record))
                         for key, value in data.items():
@@ -72,6 +71,7 @@ class PSQLConnect:
                         res_datas.append(data)
 
         except (Exception, psycopg2.DatabaseError) as error:
+            print("-------> GET DATA Error : ", error)
             return {"status": "failed", "error": error, "datas": [], "sql_query": sql_query}
 
         return {"status": "success", "datas": res_datas, "sql_query": sql_query}

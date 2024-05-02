@@ -20,7 +20,6 @@ import numpy as np
 from PIL import Image, ImageOps
 from flask_cors import CORS
 from flask import Flask, jsonify, request, abort, make_response, render_template, send_from_directory
-from werkzeug.middleware.proxy_fix import ProxyFix
 from argparse import ArgumentParser
 from werkzeug.utils import secure_filename
 import ssl
@@ -67,7 +66,6 @@ from linebot.v3.webhooks import (
     
 )
 
-from middleware import middleware
 
 
 #TODO FIX ISUSSE LINE SDK V3 : SSL CERTIFICATE_VERIFY_FAILED
@@ -81,6 +79,7 @@ from middleware import middleware
 from database import DatabaseConnect
 from psql import PSQLConnect
 from word_detect import WordDetect
+from werkzeug.middleware.proxy_fix import ProxyFix
 # from pythainlp.spell import correct
 
 
@@ -118,17 +117,16 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
     
 
-# Specify the time zone for Bangkok
 timezone = pytz.timezone('Asia/Bangkok')
 
 app = Flask(__name__)
-app.wsgi_app = middleware(app.wsgi_app)
+# app.wsgi_app = middleware(app.wsgi_app)
 
-# app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_host=1, x_proto=1)
 
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['JSON_AS_ASCII'] = False
-
+  
 
 configuration = Configuration(access_token=CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -167,10 +165,46 @@ def load_image_from_base64(base64_string):
     return img
 
 # =================== ROUTE ===================
+
+ignore_paths = ['/logs', '/clear','/fetch_logs']
+
+@app.before_request
+def before_request_func():
+    
+    
+    #NOTICE: i don't know why i can't response 401
+    api_key = request.headers.get('Api-Key')
+    # return make_response(jsonify({'message': 'Hello World'}), 200)
+    for path in ignore_paths:
+            if request.path == path:
+                return None
+    if api_key is None:
+        return make_response(jsonify({
+            "error": "Unauthorized",
+            "message": "API Key is required"
+        }), 200)
+    
+    if api_key != os.getenv('MARINE_API_KEY'):
+        return make_response(jsonify({
+            "error": "Unauthorized",
+            "message": "Invalid API Key"
+        }), 200)
+    
+    
+    
+   
+# @app.after_request
+# def after_request_func(response):
+#     print("after_request executing!")
+#     return response
+        
+
 @app.route('/test_get', methods=['GET'])
 def test_get():
-    #get json data and return it
-    return make_response(jsonify({'message': 'Hello World'}), 200)
+    
+    api_key = request.headers.get('Api-Key')
+
+    return make_response(jsonify({'api_key': api_key}), 200)
 
 
 @app.route('/test_post', methods=['POST'])
@@ -517,11 +551,75 @@ def get_data_from_database():
     
     
     
+    
     results = psql_connect.get_data(table,columns,query)
 
     return make_response(jsonify(results), 200)
 
+#-------- new get_data2 ----------
+@app.route('/db/get_data2', methods=['POST'])
+def get_data_from_database2():
+    json_data = request.get_json()
+    if json_data is None:
+        response = make_response(jsonify({
+            "status": "failed",
+            "error": "required json"
+        }))
+        response.status_code = 400
+        return response
 
+    if 'table' not in json_data:
+        response = make_response(
+            jsonify({"status": "failed", "error": "required table"}))
+        response.status_code = 400
+        return response
+    
+    table = json_data['table']
+
+ 
+    columns = ""
+    if 'columns' in json_data:
+        columns = json_data['columns']
+        
+    query = ""
+    where = ""
+    if 'where' in json_data:
+        where =json_data['where']
+        query = f" WHERE {where}"
+    
+    order_by = ""
+    if 'order_by' in json_data:
+        order_by =json_data['order_by']
+        query += f" ORDER BY {order_by}"
+   
+    if 'offset' in json_data: 
+        offset = None
+        try:
+            offset = int(json_data['offset'])
+        except:
+            offset = None
+        finally:
+            if offset is not None:
+                query += f" OFFSET {offset}"
+        
+  
+    if 'limit' in json_data:
+        limit = None
+        try:
+            limit = int(json_data['limit'])
+        except:
+            limit = None
+        finally:
+            if limit is not None:
+                query += f" LIMIT {limit}"
+    
+    
+
+    
+    
+    results = psql_connect.get_data(table,columns,query)
+
+    return make_response(jsonify(results), 200)
     
 @app.route('/db/insert_data', methods=['POST'])
 def insert_data_to_database():
