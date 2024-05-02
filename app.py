@@ -166,7 +166,7 @@ def load_image_from_base64(base64_string):
 
 # =================== ROUTE ===================
 
-ignore_paths = ['/logs', '/clear','/fetch_logs']
+ignore_paths = ['/logs', '/clear','/fetch_logs','images','/check_image']
 
 @app.before_request
 def before_request_func():
