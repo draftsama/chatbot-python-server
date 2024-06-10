@@ -593,7 +593,6 @@ def get_data_from_database2():
     if 'where' in json_data:
         where =json_data['where']
         if where is not None and where != "":
-            print("where==============>",where)
             query = f" WHERE {where}"
     
     order_by = ""
