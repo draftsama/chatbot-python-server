@@ -592,13 +592,17 @@ def get_data_from_database2():
     where = ""
     if 'where' in json_data:
         where =json_data['where']
-        query = f" WHERE {where}"
+        if where is not None and where != "":
+            print("where==============>",where)
+            query = f" WHERE {where}"
     
     order_by = ""
     if 'order_by' in json_data:
         order_by =json_data['order_by']
-        query += f" ORDER BY {order_by}"
+        if order_by is not None and order_by != "":
+            query += f" ORDER BY {order_by}"
    
+
     if 'offset' in json_data: 
         offset = None
         try:
